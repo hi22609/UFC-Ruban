@@ -9,17 +9,15 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-# Install Node dependencies
-COPY package.json .
-RUN npm install
-
-# Install Python dependencies
-COPY requirements.txt .
-RUN pip3 install -r requirements.txt --break-system-packages
-
-# Copy all files
+# Copy everything first
 COPY . .
 
-EXPOSE 3000
+# Install Node dependencies
+RUN npm install --prefix ufc-ruban
 
-CMD ["node", "server/index.js"]
+# Install Python dependencies
+RUN pip3 install -r ufc-ruban/requirements.txt --break-system-packages
+
+EXPOSE 8080
+
+CMD ["node", "ufc-ruban/server/index.js"]
