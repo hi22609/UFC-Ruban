@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UFC Ruban — Built on Data. Backed by Odds.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #E8002A;
+    --red-dark: #B00020;
+    --gold: #C9A84C;
+    --bg: #0A0A0B;
+    --bg2: #111113;
+    --bg3: #18181C;
+    --border: #2A2A30;
+    --text: #F0F0F0;
+    --muted: #888890;
+    --green: #00C851;
+    --blue: #2196F3;
+    --orange: #FF9800;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+    line-height: 1.6;
+  }
+
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999; opacity: 0.35;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; width: 100%; z-index: 100;
+    padding: 20px 48px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: linear-gradient(to bottom, rgba(10,10,11,0.95) 0%, transparent 100%);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 3px;
+    color: var(--text);
+  }
+  .nav-logo span { color: var(--red); }
+
+  .nav-actions { display: flex; gap: 16px; align-items: center; }
+  .nav-login { color: var(--muted); font-size: 14px; cursor: pointer; background: none; border: none; }
+  .nav-login:hover { color: var(--text); }
+  .btn-nav {
+    padding: 8px 20px;
+    background: var(--red);
+    color: white; border: none; border-radius: 4px;
+    font-size: 13px; font-weight: 600; letter-spacing: 0.5px;
+    cursor: pointer; text-decoration: none;
+    transition: background 0.2s;
+  }
+  .btn-nav:hover { background: var(--red-dark); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: grid; grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding: 120px 48px 80px;
+    gap: 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute; top: -200px; right: -200px;
+    width: 800px; height: 800px;
+    background: radial-gradient(circle, rgba(232,0,42,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--red);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(64px, 7vw, 96px);
+    line-height: 0.92;
+    letter-spacing: 2px;
+    margin-bottom: 24px;
+  }
+
+  .hero-title .accent { color: var(--red); }
+
+  .hero-sub {
+    font-size: 18px;
+    color: var(--muted);
+    font-weight: 300;
+    max-width: 480px;
+    margin-bottom: 48px;
+    line-height: 1.7;
+  }
+
+  .hero-cta { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+
+  .btn-primary {
+    padding: 16px 36px;
+    background: var(--red);
+    color: white; border: none; border-radius: 4px;
+    font-size: 15px; font-weight: 600; letter-spacing: 0.5px;
+    cursor: pointer; text-decoration: none;
+    transition: all 0.2s;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: var(--red-dark); transform: translateY(-1px); }
+
+  .hero-tagline {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  /* ── HERO STATS ── */
+  .hero-stats {
+    display: flex; gap: 40px; margin-bottom: 48px;
+  }
+  .stat-block { }
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    line-height: 1;
+    color: var(--text);
+  }
+  .stat-num.green { color: var(--green); }
+  .stat-label {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-top: 4px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ── TEASER CARD ── */
+  .teaser-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .teaser-header {
+    padding: 20px 24px;
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+
+  .teaser-event {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .live-badge {
+    background: var(--red);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    padding: 3px 10px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+
+  .teaser-fight {
+    padding: 24px;
+  }
+
+  .fight-header {
+    display: flex; align-items: center; justify-content: center;
+    gap: 20px; margin-bottom: 28px;
+  }
+
+  .fighter-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 2px;
+    text-align: center;
+    flex: 1;
+  }
+
+  .vs-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+
+  .prediction-reveal {
+    background: rgba(232,0,42,0.08);
+    border: 1px solid rgba(232,0,42,0.2);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+
+  .pred-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .pred-winner {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    color: var(--red);
+    letter-spacing: 2px;
+  }
+
+  .tier-lock { font-size: 16px; }
+
+  /* Blurred locked content */
+  .locked-row {
+    display: flex; gap: 12px; margin-bottom: 12px;
+    position: relative;
+  }
+
+  .locked-item {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 16px;
+    flex: 1;
+    filter: blur(5px);
+    user-select: none;
+    pointer-events: none;
+  }
+
+  .locked-overlay {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(10,10,11,0.4);
+    border-radius: 8px;
+  }
+
+  .lock-cta {
+    background: var(--red);
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+  }
+
+  .fake-stat { font-size: 20px; font-weight: 700; }
+  .fake-label { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  /* ── SIGNAL STACK SECTION ── */
+  section {
+    padding: 100px 48px;
+  }
+
+  .section-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--red);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(40px, 5vw, 64px);
+    letter-spacing: 2px;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+
+  .section-sub {
+    text-align: center;
+    color: var(--muted);
+    max-width: 560px;
+    margin: 0 auto 64px;
+    font-size: 16px;
+    line-height: 1.7;
+  }
+
+  /* Signal stack */
+  .signal-stack {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 1px; background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 12px; overflow: hidden;
+    max-width: 900px; margin: 0 auto;
+  }
+
+  .signal-item {
+    background: var(--bg2);
+    padding: 32px 28px;
+  }
+
+  .signal-weight {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    color: var(--red);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .signal-name {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+
+  .signal-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* ── ACCURACY TRACKER ── */
+  .accuracy-section {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .accuracy-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1px; background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 12px; overflow: hidden;
+    max-width: 700px; margin: 0 auto;
+  }
+
+  .acc-item {
+    background: var(--bg3);
+    padding: 40px 32px;
+    text-align: center;
+  }
+
+  .acc-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 56px;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .acc-num.green { color: var(--green); }
+  .acc-num.blue { color: var(--blue); }
+  .acc-num.orange { color: var(--orange); }
+
+  .acc-label {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .acc-tier {
+    font-size: 12px;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+
+  /* ── PRICING ── */
+  .pricing-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 24px; max-width: 800px; margin: 0 auto;
+  }
+
+  .pricing-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 40px 36px;
+    position: relative;
+    transition: border-color 0.2s;
+  }
+
+  .pricing-card.featured {
+    border-color: var(--red);
+    background: var(--bg3);
+  }
+
+  .pricing-badge {
+    position: absolute; top: -12px; right: 24px;
+    background: var(--red);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    padding: 4px 14px;
+    border-radius: 3px;
+    text-transform: uppercase;
+  }
+
+  .pricing-tier {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .pricing-price {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 56px;
+    letter-spacing: 1px;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .pricing-period {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 32px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .feature-list {
+    list-style: none;
+    margin-bottom: 32px;
+  }
+
+  .feature-list li {
+    padding: 10px 0;
+    font-size: 14px;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .feature-list li:last-child { border-bottom: none; }
+  .feature-list .check { color: var(--green); font-size: 16px; }
+  .feature-list .cross { color: var(--border); font-size: 16px; }
+  .feature-list .active { color: var(--text); }
+
+  .btn-full {
+    width: 100%;
+    padding: 16px;
+    background: var(--red);
+    color: white; border: none; border-radius: 4px;
+    font-size: 15px; font-weight: 600; letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .btn-full:hover { background: var(--red-dark); }
+
+  .btn-full.ghost {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 48px;
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+    color: var(--muted); font-size: 13px;
+  }
+
+  .footer-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 3px;
+  }
+
+  .footer-logo span { color: var(--red); }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.8);
+    z-index: 200;
+    display: none; align-items: center; justify-content: center;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 48px 40px;
+    width: 100%; max-width: 440px;
+    position: relative;
+  }
+
+  .modal-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+
+  .modal-sub {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 32px;
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 14px 16px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    margin-bottom: 16px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .form-input:focus { border-color: var(--red); }
+
+  .modal-close {
+    position: absolute; top: 20px; right: 20px;
+    background: none; border: none;
+    color: var(--muted); font-size: 20px; cursor: pointer;
+  }
+
+  .modal-close:hover { color: var(--text); }
+
+  .plan-toggle {
+    display: flex; gap: 0;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+
+  .plan-btn {
+    flex: 1; padding: 10px;
+    background: none; border: none;
+    color: var(--muted); font-size: 13px;
+    cursor: pointer; transition: all 0.2s;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .plan-btn.active {
+    background: var(--red);
+    color: white;
+  }
+
+  .plan-price-display {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--muted);
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
+  .plan-price-display strong { color: var(--text); }
+
+  .msg { font-size: 13px; padding: 10px 14px; border-radius: 6px; margin-top: 12px; display: none; }
+  .msg.error { background: rgba(232,0,42,0.1); color: var(--red); border: 1px solid rgba(232,0,42,0.2); }
+  .msg.success { background: rgba(0,200,81,0.1); color: var(--green); border: 1px solid rgba(0,200,81,0.2); }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; padding: 120px 24px 60px; gap: 48px; }
+    .signal-stack { grid-template-columns: 1fr 1fr; }
+    .pricing-grid { grid-template-columns: 1fr; }
+    .accuracy-grid { grid-template-columns: 1fr; }
+    section { padding: 60px 24px; }
+    nav { padding: 20px 24px; }
+    footer { flex-direction: column; gap: 16px; text-align: center; }
+    .hero-stats { gap: 24px; }
+  }
+
+  @media (max-width: 600px) {
+    .signal-stack { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">UFC <span>RUBAN</span></div>
+  <div class="nav-actions">
+    <button class="nav-login" onclick="openLoginModal()">Log in</button>
+    <a class="btn-nav" href="#pricing" onclick="openSubscribeModal()">Subscribe</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow">MMA Prediction Analytics</div>
+    <h1 class="hero-title">
+      BUILT ON<br>
+      DATA.<br>
+      <span class="accent">BACKED</span><br>
+      BY ODDS.
+    </h1>
+    <p class="hero-sub">
+      The most accurate UFC prediction platform available.
+      Sharp money + ensemble ML + FightMatrix ELO.
+      Honest about uncertainty — always.
+    </p>
+    <div class="hero-stats">
+      <div class="stat-block">
+        <div class="stat-num green" id="stat-lock">—%</div>
+        <div class="stat-label">Lock Accuracy</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-num" id="stat-overall">—%</div>
+        <div class="stat-label">Overall</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-num" id="stat-picks">—</div>
+        <div class="stat-label">Tracked Picks</div>
+      </div>
+    </div>
+    <div class="hero-cta">
+      <button class="btn-primary" onclick="openSubscribeModal()">Get Full Access</button>
+      <span class="hero-tagline">$9.99/mo · Cancel anytime</span>
+    </div>
+  </div>
+
+  <!-- TEASER CARD -->
+  <div class="teaser-card">
+    <div class="teaser-header">
+      <div class="teaser-event" id="event-name">Loading next event...</div>
+      <div class="live-badge">LIVE PICK</div>
+    </div>
+    <div class="teaser-fight">
+      <div class="fight-header">
+        <div class="fighter-name" id="f1-name">—</div>
+        <div class="vs-badge">VS</div>
+        <div class="fighter-name" id="f2-name">—</div>
+      </div>
+
+      <div class="prediction-reveal">
+        <div>
+          <div class="pred-label">Prediction</div>
+          <div class="pred-winner" id="pred-winner">Loading...</div>
+        </div>
+        <div style="text-align:right">
+          <div class="pred-label">Tier</div>
+          <div class="tier-lock" id="pred-tier">—</div>
+        </div>
+      </div>
+
+      <div class="locked-row" style="margin-bottom: 16px;">
+        <div class="locked-item">
+          <div class="fake-stat">68%</div>
+          <div class="fake-label">Confidence</div>
+        </div>
+        <div class="locked-item">
+          <div class="fake-stat">KO/TKO</div>
+          <div class="fake-label">Method</div>
+        </div>
+        <div class="locked-overlay">
+          <button class="lock-cta" onclick="openSubscribeModal()">🔒 Subscribe to Unlock</button>
+        </div>
+      </div>
+
+      <div class="locked-row">
+        <div class="locked-item" style="flex:1">
+          <div class="fake-stat" style="font-size:14px; color: #888">Key Factors &amp; Analysis</div>
+          <div class="fake-label" style="margin-top:8px">Stat-backed edge analysis, method breakdown, stylistic read</div>
+        </div>
+        <div class="locked-overlay">
+          <button class="lock-cta" onclick="openSubscribeModal()">🔒 Pro Only</button>
+        </div>
+      </div>
+
+      <div id="no-predictions" style="display:none; text-align:center; padding:40px 20px; color:var(--muted)">
+        <div style="font-size:32px; margin-bottom:8px">📅</div>
+        <div style="font-size:14px">No event data yet</div>
+        <div style="font-size:12px; margin-top:8px">Predictions post fight week</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SIGNAL STACK -->
+<section>
+  <div class="section-eyebrow">Methodology</div>
+  <h2 class="section-title">THE SIGNAL STACK</h2>
+  <p class="section-sub">Four independent layers. Blended with precision. Capped at 76% — because honesty is the product.</p>
+
+  <div class="signal-stack">
+    <div class="signal-item">
+      <div class="signal-weight">50%</div>
+      <div class="signal-name">Ensemble ML</div>
+      <div class="signal-desc">XGBoost + GradientBoosting + RandomForest + Logistic. Isotonic calibration. 32 features.</div>
+    </div>
+    <div class="signal-item">
+      <div class="signal-weight">35%</div>
+      <div class="signal-name">Market Consensus</div>
+      <div class="signal-desc">BestFightOdds vig-removed implied probability. Sharp money aggregates what models can't see.</div>
+    </div>
+    <div class="signal-item">
+      <div class="signal-weight">15%</div>
+      <div class="signal-name">FightMatrix ELO</div>
+      <div class="signal-desc">Opponent-quality-adjusted divisional ratings. Best external ranking signal in MMA.</div>
+    </div>
+    <div class="signal-item">
+      <div class="signal-weight">+AI</div>
+      <div class="signal-name">Claude Review</div>
+      <div class="signal-desc">Style-specific qualitative layer. Identifies mismatches the model can't quantify. Capped at 74%.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ACCURACY -->
+<section class="accuracy-section">
+  <div class="section-eyebrow">Track Record</div>
+  <h2 class="section-title">ACCURACY TRACKER</h2>
+  <p class="section-sub">Every prediction logged. Every result recorded. No cherry-picking.</p>
+
+  <div class="accuracy-grid">
+    <div class="acc-item">
+      <div class="acc-tier">🔒 LOCK TIER</div>
+      <div class="acc-num green" id="acc-lock">—%</div>
+      <div class="acc-label">≥65% confidence</div>
+    </div>
+    <div class="acc-item">
+      <div class="acc-tier">✅ LEAN TIER</div>
+      <div class="acc-num blue" id="acc-lean">—%</div>
+      <div class="acc-label">54–64% confidence</div>
+    </div>
+    <div class="acc-item">
+      <div class="acc-tier">⚖️ OVERALL</div>
+      <div class="acc-num" id="acc-overall">—%</div>
+      <div class="acc-label">All tracked picks</div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="section-eyebrow">Plans</div>
+  <h2 class="section-title">SIMPLE PRICING</h2>
+  <p class="section-sub">Free tier shows you we're real. Pro tier shows you everything.</p>
+
+  <div class="pricing-grid">
+    <div class="pricing-card">
+      <div class="pricing-tier">Free</div>
+      <div class="pricing-price">$0</div>
+      <div class="pricing-period">Forever free</div>
+      <ul class="feature-list">
+        <li><span class="check">✓</span><span class="active">Main event pick + winner</span></li>
+        <li><span class="check">✓</span><span class="active">Tier label (Lock/Lean/Toss-Up)</span></li>
+        <li><span class="cross">✕</span> Confidence percentage</li>
+        <li><span class="cross">✕</span> Method breakdown</li>
+        <li><span class="cross">✕</span> Full card predictions</li>
+        <li><span class="cross">✕</span> Key Factors + Analysis</li>
+        <li><span class="cross">✕</span> Parlay builder</li>
+        <li><span class="cross">✕</span> Discord access</li>
+      </ul>
+      <button class="btn-full ghost" onclick="openLoginModal()">Log in Free</button>
+    </div>
+    <div class="pricing-card featured">
+      <div class="pricing-badge">Most Popular</div>
+      <div class="pricing-tier">Pro</div>
+      <div class="pricing-price">$9.99</div>
+      <div class="pricing-period">/month · or $79.99/year (save 33%)</div>
+      <ul class="feature-list">
+        <li><span class="check">✓</span><span class="active">Everything in Free</span></li>
+        <li><span class="check">✓</span><span class="active">Full card predictions</span></li>
+        <li><span class="check">✓</span><span class="active">Confidence percentages</span></li>
+        <li><span class="check">✓</span><span class="active">Method breakdown (KO/Sub/Dec %)</span></li>
+        <li><span class="check">✓</span><span class="active">Stat-backed Key Factors</span></li>
+        <li><span class="check">✓</span><span class="active">Sharp analysis text</span></li>
+        <li><span class="check">✓</span><span class="active">Parlay builder (≥60% picks)</span></li>
+        <li><span class="check">✓</span><span class="active">Discord predictions channel</span></li>
+      </ul>
+      <button class="btn-full" onclick="openSubscribeModal()">Get Full Access →</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">UFC <span>RUBAN</span></div>
+  <div>Built on data. Backed by odds. Honest about uncertainty.</div>
+  <div>Not affiliated with UFC® or Zuffa LLC.</div>
+</footer>
+
+<!-- SUBSCRIBE MODAL -->
+<div class="modal-overlay" id="subscribe-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('subscribe-modal')">✕</button>
+    <div class="modal-title">GET FULL ACCESS</div>
+    <div class="modal-sub">Enter your email to start your Pro subscription.</div>
+
+    <div class="plan-toggle">
+      <button class="plan-btn active" id="plan-monthly" onclick="selectPlan('monthly')">Monthly</button>
+      <button class="plan-btn" id="plan-yearly" onclick="selectPlan('yearly')">Yearly</button>
+    </div>
+
+    <div class="plan-price-display" id="plan-price">
+      <strong>$9.99/month</strong> · Cancel anytime
+    </div>
+
+    <input type="email" class="form-input" id="subscribe-email" placeholder="your@email.com">
+    <button class="btn-full" onclick="handleSubscribe()">Continue to Payment →</button>
+    <div class="msg" id="subscribe-msg"></div>
+  </div>
+</div>
+
+<!-- LOGIN MODAL -->
+<div class="modal-overlay" id="login-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('login-modal')">✕</button>
+    <div class="modal-title">LOG IN</div>
+    <div class="modal-sub">Enter the email you subscribed with.</div>
+    <input type="email" class="form-input" id="login-email" placeholder="your@email.com">
+    <button class="btn-full" onclick="handleLogin()">Access Dashboard →</button>
+    <div class="msg" id="login-msg"></div>
+    <div style="text-align:center; margin-top:20px; font-size:13px; color:var(--muted)">
+      Don't have an account? <a href="#" onclick="openSubscribeModal(); return false;" style="color:var(--red)">Subscribe</a>
+    </div>
+  </div>
+</div>
+
+<script>
+let selectedPlan = 'monthly';
+
+function openSubscribeModal() {
+  document.getElementById('subscribe-modal').classList.add('open');
+}
+
+function openLoginModal() {
+  document.getElementById('login-modal').classList.add('open');
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+function selectPlan(plan) {
+  selectedPlan = plan;
+  document.getElementById('plan-monthly').classList.toggle('active', plan === 'monthly');
+  document.getElementById('plan-yearly').classList.toggle('active', plan === 'yearly');
+  document.getElementById('plan-price').innerHTML = plan === 'monthly'
+    ? '<strong>$9.99/month</strong> · Cancel anytime'
+    : '<strong>$79.99/year</strong> · Save 33% · Cancel anytime';
+}
+
+async function handleSubscribe() {
+  const email = document.getElementById('subscribe-email').value.trim();
+  const msg = document.getElementById('subscribe-msg');
+  msg.style.display = 'none';
+
+  if (!email || !email.includes('@')) {
+    showMsg('subscribe-msg', 'error', 'Please enter a valid email.');
+    return;
+  }
+
+  const btn = document.querySelector('#subscribe-modal .btn-full');
+  btn.textContent = 'Redirecting to payment...';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch('/api/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, plan: selectedPlan })
+    });
+    const data = await res.json();
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      showMsg('subscribe-msg', 'error', data.error || 'Something went wrong. Try again.');
+      btn.textContent = 'Continue to Payment →';
+      btn.disabled = false;
+    }
+  } catch (err) {
+    showMsg('subscribe-msg', 'error', 'Network error. Please try again.');
+    btn.textContent = 'Continue to Payment →';
+    btn.disabled = false;
+  }
+}
+
+async function handleLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  if (!email) return;
+
+  try {
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    const data = await res.json();
+    if (data.success) {
+      window.location.href = '/dashboard';
+    } else {
+      showMsg('login-msg', 'error', data.error || 'Login failed. Check your email.');
+    }
+  } catch {
+    showMsg('login-msg', 'error', 'Network error. Try again.');
+  }
+}
+
+function showMsg(id, type, text) {
+  const el = document.getElementById(id);
+  el.className = `msg ${type}`;
+  el.textContent = text;
+  el.style.display = 'block';
+}
+
+// Load teaser predictions
+async function loadTeaser() {
+  try {
+    const res = await fetch('/api/predictions/teaser');
+    const data = await res.json();
+
+    if (!data.available) {
+      document.getElementById('event-name').textContent = 'No upcoming event';
+      document.getElementById('pred-winner').textContent = 'Check back fight week';
+      document.getElementById('f1-name').textContent = '—';
+      document.getElementById('f2-name').textContent = '—';
+      return;
+    }
+
+    document.getElementById('event-name').textContent = data.event_name;
+    if (data.main_event) {
+      document.getElementById('f1-name').textContent = data.main_event.fighter1.split(' ').pop().toUpperCase();
+      document.getElementById('f2-name').textContent = data.main_event.fighter2.split(' ').pop().toUpperCase();
+      document.getElementById('pred-winner').textContent = data.main_event.winner;
+
+      const tierMap = { 'LOCK': '🔒 LOCK', 'LEAN': '✅ LEAN', 'TOSS-UP': '⚖️ TOSS-UP' };
+      document.getElementById('pred-tier').textContent = tierMap[data.main_event.tier] || data.main_event.tier;
+    }
+  } catch (e) {
+    document.getElementById('event-name').textContent = 'Next event coming soon';
+  }
+}
+
+// Load accuracy stats
+async function loadStats() {
+  try {
+    const res = await fetch('/api/stats/accuracy');
+    const data = await res.json();
+
+    if (data.overall.pct !== null) {
+      document.getElementById('stat-overall').textContent = data.overall.pct + '%';
+      document.getElementById('stat-picks').textContent = data.overall.total;
+      document.getElementById('acc-overall').textContent = data.overall.pct + '%';
+    }
+    if (data.lock.pct !== null) {
+      document.getElementById('stat-lock').textContent = data.lock.pct + '%';
+      document.getElementById('acc-lock').textContent = data.lock.pct + '%';
+    }
+    if (data.lean.pct !== null) {
+      document.getElementById('acc-lean').textContent = data.lean.pct + '%';
+    }
+  } catch {}
+}
+
+// Check URL params
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('upgrade') === 'true') openSubscribeModal();
+if (urlParams.get('subscribed') === 'true') window.location.href = '/dashboard';
+
+loadTeaser();
+loadStats();
+
+// Refresh teaser every 5 minutes
+setInterval(loadTeaser, 5 * 60 * 1000);
+
+// Close modals on backdrop click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) overlay.classList.remove('open');
+  });
+});
+</script>
+</body>
+</html>
