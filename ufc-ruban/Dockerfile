@@ -1,6 +1,5 @@
 FROM node:20-slim
 
-# Install Python and pip
 RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
@@ -9,14 +8,14 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-# Copy everything first
 COPY . .
 
-# Install Node dependencies
 RUN npm install --prefix ufc-ruban
 
-# Install Python dependencies
 RUN pip3 install -r ufc-ruban/requirements.txt --break-system-packages
+
+# Create required directories
+RUN mkdir -p ufc-ruban/database ufc-ruban/website
 
 EXPOSE 8080
 
