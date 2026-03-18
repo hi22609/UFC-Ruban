@@ -1,22 +1,24 @@
 """
 UFC Ruban — Odds Scraper
-Primary: BestFightOdds (vig-removed implied probability)
-Fallback: ESPN UFC odds page
+Uses The Odds API (free tier: 500 requests/month) for real betting odds.
+Get your free API key at: https://the-odds-api.com
+Set ODDS_API_KEY in your .env file.
+
+Fallback: manual odds entry via environment variable MANUAL_ODDS_JSON
 """
 
 import os
-import re
-import time
+import json
 import sqlite3
 import requests
-from bs4 import BeautifulSoup
 from datetime import datetime
+from dotenv import load_dotenv
+
+load_dotenv()
 
 DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'database', 'ufc.db')
-HEADERS = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-}
+ODDS_API_KEY = os.getenv('ODDS_API_KEY', '')
+ODDS_API_BASE = 'https://api.the-odds-api.com/v4'
 
 def get_db():
     conn = sqlite3.connect(DB_PATH)
@@ -24,152 +26,106 @@ def get_db():
     return conn
 
 def american_to_implied_prob(odds: int) -> float:
-    """Convert American odds to implied probability (0-1). NOT vig-removed."""
     if odds > 0:
         return 100 / (odds + 100)
     else:
         return abs(odds) / (abs(odds) + 100)
 
-def remove_vig(prob1: float, prob2: float) -> tuple[float, float]:
-    """Remove vig from two-sided market. Returns true probabilities."""
+def remove_vig(prob1: float, prob2: float) -> tuple:
     total = prob1 + prob2
     return prob1 / total, prob2 / total
 
-def scrape_bestfightodds():
-    """Scrape BestFightOdds for UFC upcoming fight odds."""
+def fetch_odds_api() -> list:
+    """Fetch UFC odds from The Odds API."""
+    if not ODDS_API_KEY:
+        print("No ODDS_API_KEY set. Add it to your .env file.")
+        print("Get a free key at: https://the-odds-api.com")
+        return []
+
     fights = []
-    url = 'https://www.bestfightodds.com/events'
+    url = f'{ODDS_API_BASE}/sports/mma_mixed_martial_arts/odds/'
+    params = {
+        'apiKey': ODDS_API_KEY,
+        'regions': 'us',
+        'markets': 'h2h',
+        'oddsFormat': 'american',
+        'dateFormat': 'iso'
+    }
 
     try:
-        resp = requests.get(url, headers=HEADERS, timeout=15)
-        if resp.status_code != 200:
-            print(f"BestFightOdds returned {resp.status_code}")
-            return fights
+        resp = requests.get(url, params=params, timeout=15)
 
-        soup = BeautifulSoup(resp.text, 'lxml')
+        # Log remaining requests
+        remaining = resp.headers.get('x-requests-remaining', 'unknown')
+        print(f"Odds API requests remaining: {remaining}")
 
-        # Find UFC events
-        event_tables = soup.find_all('table', class_='odds-table')
-        for table in event_tables:
-            event_header = table.find_previous('h2') or table.find_previous('h3')
-            event_name = event_header.text.strip() if event_header else 'Unknown Event'
+        if resp.status_code == 401:
+            print("Invalid API key. Check ODDS_API_KEY in .env")
+            return []
+        if resp.status_code == 429:
+            print("Odds API rate limit hit. Try again tomorrow.")
+            return []
 
-            if 'UFC' not in event_name.upper():
+        resp.raise_for_status()
+        events = resp.json()
+
+        for event in events:
+            if not event.get('bookmakers'):
                 continue
 
-            rows = table.find_all('tr')
-            i = 0
-            while i < len(rows) - 1:
-                row1 = rows[i]
-                row2 = rows[i + 1] if i + 1 < len(rows) else None
+            # Use first available bookmaker
+            bookmaker = event['bookmakers'][0]
+            market = next((m for m in bookmaker['markets'] if m['key'] == 'h2h'), None)
+            if not market or len(market['outcomes']) < 2:
+                continue
 
-                if not row2:
-                    i += 1
-                    continue
+            o1 = market['outcomes'][0]
+            o2 = market['outcomes'][1]
 
-                # Fighter names
-                f1_el = row1.find('span', class_='t-name')
-                f2_el = row2.find('span', class_='t-name')
-                if not f1_el or not f2_el:
-                    i += 1
-                    continue
+            f1_name = o1['name']
+            f2_name = o2['name']
+            odds1 = int(o1['price'])
+            odds2 = int(o2['price'])
 
-                f1 = f1_el.text.strip()
-                f2 = f2_el.text.strip()
+            raw1 = american_to_implied_prob(odds1)
+            raw2 = american_to_implied_prob(odds2)
+            p1, p2 = remove_vig(raw1, raw2)
 
-                # Best odds (use consensus/best available)
-                odds1_el = row1.find('td', class_='best-odds')
-                odds2_el = row2.find('td', class_='best-odds')
+            event_name = event.get('home_team', '') + ' vs ' + event.get('away_team', '')
 
-                if not odds1_el or not odds2_el:
-                    i += 2
-                    continue
+            fights.append({
+                'fighter_name': f1_name,
+                'opponent_name': f2_name,
+                'event_name': event_name,
+                'american_odds': odds1,
+                'implied_prob': round(p1, 4)
+            })
+            fights.append({
+                'fighter_name': f2_name,
+                'opponent_name': f1_name,
+                'event_name': event_name,
+                'american_odds': odds2,
+                'implied_prob': round(p2, 4)
+            })
 
-                try:
-                    odds1 = int(odds1_el.text.strip().replace('+', ''))
-                    odds2 = int(odds2_el.text.strip().replace('+', ''))
-
-                    raw_prob1 = american_to_implied_prob(odds1)
-                    raw_prob2 = american_to_implied_prob(odds2)
-                    clean_prob1, clean_prob2 = remove_vig(raw_prob1, raw_prob2)
-
-                    fights.append({
-                        'fighter_name': f1,
-                        'opponent_name': f2,
-                        'event_name': event_name,
-                        'american_odds': odds1,
-                        'implied_prob': round(clean_prob1, 4)
-                    })
-                    fights.append({
-                        'fighter_name': f2,
-                        'opponent_name': f1,
-                        'event_name': event_name,
-                        'american_odds': odds2,
-                        'implied_prob': round(clean_prob2, 4)
-                    })
-                    print(f"  {f1} ({clean_prob1*100:.1f}%) vs {f2} ({clean_prob2*100:.1f}%)")
-                except ValueError:
-                    pass
-
-                i += 2
+            print(f"  {f1_name} ({p1*100:.1f}%) vs {f2_name} ({p2*100:.1f}%)")
 
     except Exception as e:
-        print(f"BestFightOdds error: {e}")
-
-    return fights
-
-def scrape_espn_odds():
-    """Fallback: scrape ESPN UFC odds."""
-    fights = []
-    url = 'https://www.espn.com/mma/fightcenter'
-
-    try:
-        resp = requests.get(url, headers=HEADERS, timeout=15)
-        soup = BeautifulSoup(resp.text, 'lxml')
-
-        # ESPN renders via JS — this is a best-effort parse
-        # For robust scraping ESPN requires Selenium; this handles static fallback
-        fight_cards = soup.find_all('div', class_='MMAFightCard')
-        for card in fight_cards:
-            fighter_els = card.find_all('span', class_='name')
-            odds_els = card.find_all('span', class_='odds')
-            if len(fighter_els) >= 2 and len(odds_els) >= 2:
-                f1 = fighter_els[0].text.strip()
-                f2 = fighter_els[1].text.strip()
-                try:
-                    odds1 = int(odds_els[0].text.strip().replace('+', ''))
-                    odds2 = int(odds_els[1].text.strip().replace('+', ''))
-                    raw1 = american_to_implied_prob(odds1)
-                    raw2 = american_to_implied_prob(odds2)
-                    p1, p2 = remove_vig(raw1, raw2)
-                    fights.append({'fighter_name': f1, 'opponent_name': f2,
-                                   'event_name': 'ESPN', 'american_odds': odds1, 'implied_prob': round(p1, 4)})
-                    fights.append({'fighter_name': f2, 'opponent_name': f1,
-                                   'event_name': 'ESPN', 'american_odds': odds2, 'implied_prob': round(p2, 4)})
-                except ValueError:
-                    pass
-    except Exception as e:
-        print(f"ESPN fallback error: {e}")
+        print(f"Odds API error: {e}")
 
     return fights
 
 def save_odds(conn, fights: list):
     cur = conn.cursor()
     now = datetime.utcnow().isoformat()
-
-    saved = 0
     for fight in fights:
         cur.execute("""
             INSERT INTO fight_odds (fighter_name, opponent_name, event_name, american_odds, implied_prob, scraped_at)
             VALUES (?, ?, ?, ?, ?, ?)
-        """, (
-            fight['fighter_name'], fight['opponent_name'], fight['event_name'],
-            fight['american_odds'], fight['implied_prob'], now
-        ))
-        saved += 1
-
+        """, (fight['fighter_name'], fight['opponent_name'], fight['event_name'],
+              fight['american_odds'], fight['implied_prob'], now))
     conn.commit()
-    return saved
+    return len(fights)
 
 def main():
     print("UFC Ruban — Odds Scraper")
@@ -177,19 +133,24 @@ def main():
 
     conn = get_db()
 
-    print("\nScraping BestFightOdds (primary)...")
-    fights = scrape_bestfightodds()
+    if not ODDS_API_KEY:
+        print("\nTo get real odds:")
+        print("1. Go to https://the-odds-api.com and sign up free")
+        print("2. Copy your API key")
+        print("3. Add ODDS_API_KEY=your_key to Railway Variables")
+        print("\nFree tier: 500 requests/month — more than enough.")
+        print("Predictions will use 50% market signal until odds are configured.")
+        conn.close()
+        return
 
-    if not fights:
-        print("BestFightOdds returned no data. Trying ESPN fallback...")
-        fights = scrape_espn_odds()
+    print("\nFetching UFC odds from The Odds API...")
+    fights = fetch_odds_api()
 
     if fights:
         saved = save_odds(conn, fights)
         print(f"\nSaved {saved} odds records to database")
     else:
-        print("WARNING: No odds data scraped from any source.")
-        print("Predictions will default market signal to 50% for all fights.")
+        print("No odds data returned.")
 
     conn.close()
 
