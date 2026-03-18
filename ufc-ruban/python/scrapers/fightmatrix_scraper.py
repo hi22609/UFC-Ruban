@@ -1,6 +1,7 @@
 """
-UFC Ruban — FightMatrix ELO Scraper
-Scrapes divisional rankings from fightmatrix.com/mma-ranks/
+UFC Ruban — Rankings Scraper
+Scrapes UFC official rankings from ufcstats.com since FightMatrix uses JS rendering.
+Assigns ELO-equivalent ratings based on rank position.
 """
 
 import os
@@ -12,100 +13,82 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 
 DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'database', 'ufc.db')
-HEADERS = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-}
+HEADERS = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
 
-DIVISIONS = {
-    'Heavyweight': 'https://www.fightmatrix.com/mma-ranks/heavyweight-265-lbs/',
-    'Light Heavyweight': 'https://www.fightmatrix.com/mma-ranks/light-heavyweight-185-205-lbs/',
-    'Middleweight': 'https://www.fightmatrix.com/mma-ranks/middleweight/',
-    'Welterweight': 'https://www.fightmatrix.com/mma-ranks/welterweight/',
-    'Lightweight': 'https://www.fightmatrix.com/mma-ranks/lightweight/',
-    'Featherweight': 'https://www.fightmatrix.com/mma-ranks/featherweight/',
-    'Bantamweight': 'https://www.fightmatrix.com/mma-ranks/bantamweight/',
-    'Flyweight': 'https://www.fightmatrix.com/mma-ranks/flyweight/',
-    'Womens Strawweight': 'https://www.fightmatrix.com/mma-ranks/womens-strawweight/',
-    'Womens Flyweight': 'https://www.fightmatrix.com/mma-ranks/womens-flyweight/',
-    'Womens Bantamweight': 'https://www.fightmatrix.com/mma-ranks/womens-bantamweight/',
-    'Womens Featherweight': 'https://www.fightmatrix.com/mma-ranks/womens-featheweight/',
-}
+# UFC Stats rankings page
+RANKINGS_URL = 'http://www.ufcstats.com/statistics/rankings'
 
 def get_db():
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
 
-def scrape_division_rankings(division_name: str, url: str) -> list:
+def rank_to_elo(rank: int) -> float:
+    """Convert rank position to ELO-equivalent rating. Champion=2000, #1=1900, etc."""
+    if rank == 0:  # Champion
+        return 2000.0
+    elo = max(1200.0, 1900.0 - (rank - 1) * 50)
+    return elo
+
+def scrape_ufc_rankings() -> list:
     fighters = []
     try:
-        resp = requests.get(url, headers=HEADERS, timeout=15)
+        resp = requests.get(RANKINGS_URL, headers=HEADERS, timeout=15)
         resp.raise_for_status()
         soup = BeautifulSoup(resp.text, 'lxml')
 
-        # FightMatrix uses a table with class 'table' or similar
-        tables = soup.find_all('table')
-        if not tables:
-            print(f"  No table found for {division_name}")
-            return fighters
+        # Find all ranking tables
+        divisions = soup.find_all('div', class_='b-ranking__block')
 
-        # Find the rankings table — look for one with rank numbers
-        for table in tables:
-            rows = table.find_all('tr')
-            for row in rows[1:101]:  # top 100
-                cols = row.find_all('td')
-                if len(cols) < 2:
+        for division_block in divisions:
+            # Get division name
+            title_el = division_block.find('h2', class_='b-ranking__block-title')
+            if not title_el:
+                continue
+            division_name = title_el.text.strip()
+
+            # Get champion
+            champ_el = division_block.find('div', class_='b-ranking__block-champion')
+            if champ_el:
+                champ_name_el = champ_el.find('a')
+                if champ_name_el:
+                    fighters.append({
+                        'fighter_name': champ_name_el.text.strip(),
+                        'division': division_name,
+                        'rank': 0,
+                        'elo_rating': rank_to_elo(0)
+                    })
+
+            # Get ranked fighters
+            rows = division_block.find_all('tr', class_='b-ranking__row')
+            for row in rows:
+                rank_el = row.find('td', class_='b-ranking__table-col_rank')
+                name_el = row.find('a')
+                if not rank_el or not name_el:
                     continue
-
-                rank_text = cols[0].get_text().strip()
-                name_el = cols[1].find('a') or cols[1]
-                name = name_el.get_text().strip() if name_el else ''
-
-                # Rating is usually in col 2 or 3
-                rating_text = ''
-                for col in cols[2:5]:
-                    t = col.get_text().strip()
-                    if re.match(r'^\d+\.?\d*$', t):
-                        rating_text = t
-                        break
-
-                if not name or len(name) < 2:
+                rank_text = rank_el.text.strip()
+                name = name_el.text.strip()
+                try:
+                    rank = int(re.sub(r'[^0-9]', '', rank_text))
+                except:
                     continue
-
-                try:
-                    rank = int(re.sub(r'[^0-9]', '', rank_text)) if rank_text else 999
-                except:
-                    rank = 999
-
-                try:
-                    elo = float(rating_text) if rating_text else 1500.0
-                    # FightMatrix ratings are often in 100s-1000s range
-                    # normalize to ELO-like scale if needed
-                    if elo < 100:
-                        elo = 1500.0
-                except:
-                    elo = 1500.0
 
                 fighters.append({
                     'fighter_name': name,
                     'division': division_name,
                     'rank': rank,
-                    'elo_rating': elo
+                    'elo_rating': rank_to_elo(rank)
                 })
 
-            if fighters:
-                break  # found the right table
-
-        print(f"  {division_name}: {len(fighters)} fighters")
+        print(f"Found {len(fighters)} ranked fighters across all divisions")
 
     except Exception as e:
-        print(f"  Error scraping {division_name}: {e}")
+        print(f"Error scraping UFC rankings: {e}")
 
     return fighters
 
 def main():
-    print("UFC Ruban — FightMatrix Scraper")
+    print("UFC Ruban — Rankings Scraper (ufcstats.com)")
     print("=" * 50)
 
     conn = get_db()
@@ -114,24 +97,29 @@ def main():
     cur.execute("DELETE FROM fighter_rankings")
     conn.commit()
 
-    total = 0
+    fighters = scrape_ufc_rankings()
+
+    if not fighters:
+        print("No rankings found. ELO will default to 1500 for all fighters.")
+        conn.close()
+        return
+
     now = datetime.utcnow().isoformat()
+    for f in fighters:
+        cur.execute("""
+            INSERT INTO fighter_rankings (fighter_name, division, rank, elo_rating, scraped_at)
+            VALUES (?, ?, ?, ?, ?)
+        """, (f['fighter_name'], f['division'], f['rank'], f['elo_rating'], now))
 
-    for division_name, url in DIVISIONS.items():
-        print(f"Scraping {division_name}...")
-        fighters = scrape_division_rankings(division_name, url)
+    conn.commit()
+    print(f"Saved {len(fighters)} fighter rankings to database")
 
-        for f in fighters:
-            cur.execute("""
-                INSERT INTO fighter_rankings (fighter_name, division, rank, elo_rating, scraped_at)
-                VALUES (?, ?, ?, ?, ?)
-            """, (f['fighter_name'], f['division'], f['rank'], f['elo_rating'], now))
-            total += 1
+    # Show sample
+    cur.execute("SELECT fighter_name, division, rank, elo_rating FROM fighter_rankings ORDER BY elo_rating DESC LIMIT 10")
+    print("\nTop 10 by ELO:")
+    for row in cur.fetchall():
+        print(f"  {row[0]} ({row[1]}) — Rank #{row[2]} — ELO: {row[3]}")
 
-        conn.commit()
-        time.sleep(1.5)
-
-    print(f"\nTotal: {total} fighter ratings saved")
     conn.close()
 
 if __name__ == '__main__':
