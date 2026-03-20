@@ -69,7 +69,7 @@ function runPredictions() {
   console.log('[Scheduler] Running prediction pipeline...');
   try {
     const output = execSync(
-      `python python/model/predict.py --card`,
+      `python3 python/model/predict.py --card`,
       { cwd: __dirname, timeout: 300000, encoding: 'utf8' }
     );
     return JSON.parse(output);
