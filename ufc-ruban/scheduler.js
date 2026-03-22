@@ -63,6 +63,28 @@ function isEventPosted(eventName) {
 }
 
 // ─────────────────────────────────────────────
+// AUTO-RUN SCRAPERS
+// ─────────────────────────────────────────────
+function runScrapers() {
+  const scrapers = [
+    'python/scrapers/upcoming_card_scraper.py',
+    'python/scrapers/odds_scraper.py',
+    'python/scrapers/fightmatrix_scraper.py',
+  ];
+
+  for (const scraper of scrapers) {
+    console.log(`[Scheduler] Running ${scraper}...`);
+    try {
+      execSync(`python3 ${scraper}`, { cwd: __dirname, timeout: 120000, stdio: 'inherit' });
+      console.log(`[Scheduler] ${scraper} done`);
+    } catch (err) {
+      console.error(`[Scheduler] ${scraper} failed: ${err.message}`);
+      // Continue to next scraper — partial data is better than none
+    }
+  }
+}
+
+// ─────────────────────────────────────────────
 // RUN PREDICTION PIPELINE
 // ─────────────────────────────────────────────
 function runPredictions() {
@@ -181,6 +203,9 @@ function getNextEventFromDB() {
 // ─────────────────────────────────────────────
 async function runCycle() {
   console.log(`\n[Scheduler] ${new Date().toISOString()} — Running cycle`);
+
+  // Auto-run scrapers to pull latest card + odds + rankings
+  runScrapers();
 
   const eventName = getNextEventFromDB();
   if (!eventName) {

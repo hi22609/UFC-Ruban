@@ -147,11 +147,11 @@ def load_or_train_model(conn):
         with open(MODEL_PATH, 'rb') as f:
             return pickle.load(f)
 
-    print("No trained model found. Run with --train to train first.")
+    print("No trained model found. Run with --train to train first.", file=sys.stderr)
     return None
 
 def train_model(conn):
-    print("Training ensemble model on historical fight data...")
+    print("Training ensemble model on historical fight data...", file=sys.stderr)
     cur = conn.cursor()
     cur.execute("""
         SELECT f1.*, f2.*, fights.winner
@@ -163,9 +163,9 @@ def train_model(conn):
     rows = cur.fetchall()
 
     if len(rows) < 100:
-        print(f"WARNING: Only {len(rows)} fights in DB. Minimum 100 required for reliable training.")
+        print(f"WARNING: Only {len(rows)} fights in DB. Minimum 100 required for reliable training.", file=sys.stderr)
         if len(rows) < 20:
-            print("CRITICAL: Not enough data to train. Run scrapers first.")
+            print("CRITICAL: Not enough data to train. Run scrapers first.", file=sys.stderr)
             return None
 
     X, y = [], []
@@ -200,7 +200,7 @@ def train_model(conn):
     with open(MODEL_PATH, 'wb') as f:
         pickle.dump(model, f)
 
-    print(f"Model trained on {len(X)} fights and saved to {MODEL_PATH}")
+    print(f"Model trained on {len(X)} fights and saved to {MODEL_PATH}", file=sys.stderr)
     return model
 
 def ml_predict(f1: dict, f2: dict, elo1: float, elo2: float, model: dict) -> float:
@@ -303,7 +303,7 @@ Return this JSON:
         return result
 
     except Exception as e:
-        print(f"Claude review error: {e}")
+        print(f"Claude review error: {e}", file=sys.stderr)
         return {
             'adjusted_confidence': min(blended_prob, CLAUDE_MAX_CONFIDENCE),
             'method_ko_pct': 33,
@@ -393,7 +393,7 @@ def predict_fight(fighter1: str, fighter2: str, weight_class: str, conn, model: 
         market_prob = float(odds1) * 100
     else:
         market_prob = 50.0  # No market data available
-        print(f"WARNING: No odds data for {fighter1}. Market signal defaulting to 50%.")
+        print(f"WARNING: No odds data for {fighter1}. Market signal defaulting to 50%.", file=sys.stderr)
 
     # ── Layer 3: ELO (15% weight) ──
     elo_prob = elo_to_prob(elo1, elo2)
@@ -492,7 +492,7 @@ def predict_card(conn, model: dict) -> dict:
 
     for fight in fights:
         fight = dict(fight)
-        print(f"Predicting: {fight['fighter1']} vs {fight['fighter2']}...")
+        print(f"Predicting: {fight['fighter1']} vs {fight['fighter2']}...", file=sys.stderr)
         pred = predict_fight(
             fight['fighter1'],
             fight['fighter2'],

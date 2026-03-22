@@ -72,9 +72,23 @@ function getAccuracyStats() {
   };
 }
 
+function getPredictionHistory() {
+  const db = getDb();
+  const rows = db.prepare(`
+    SELECT event_name, fighter1, fighter2, predicted_winner, actual_winner,
+           confidence, tier, correct, predicted_at
+    FROM prediction_results
+    ORDER BY predicted_at DESC
+    LIMIT 200
+  `).all();
+  db.close();
+  return rows;
+}
+
 module.exports = {
   getSubscriberByEmail,
   upsertSubscriber,
   updateSubscriberTier,
-  getAccuracyStats
+  getAccuracyStats,
+  getPredictionHistory
 };

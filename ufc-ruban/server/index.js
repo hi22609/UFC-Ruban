@@ -151,6 +151,18 @@ app.get('/api/predictions/full', (req, res) => {
 });
 
 // ─────────────────────────────────────────────
+// HISTORY API (public — shows recorded results)
+// ─────────────────────────────────────────────
+app.get('/api/history', (req, res) => {
+  try {
+    const rows = db.getPredictionHistory();
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to load history' });
+  }
+});
+
+// ─────────────────────────────────────────────
 // ACCURACY STATS API (public)
 // ─────────────────────────────────────────────
 app.get('/api/stats/accuracy', (req, res) => {
@@ -170,10 +182,19 @@ app.get('/', (req, res) => {
 });
 
 app.get('/dashboard', (req, res) => {
+  // If coming from Stripe (subscribed=true), serve the page and let the frontend
+  // show a login form — the webhook has already activated their subscription.
+  if (req.query.subscribed === 'true') {
+    return res.sendFile(path.join(__dirname, '..', 'website', 'dashboard.html'));
+  }
   if (!req.session.email || !isProSubscriber(req.session.email)) {
     return res.redirect('/?upgrade=true');
   }
   res.sendFile(path.join(__dirname, '..', 'website', 'dashboard.html'));
+});
+
+app.get('/history', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'website', 'history.html'));
 });
 
 // ─────────────────────────────────────────────
