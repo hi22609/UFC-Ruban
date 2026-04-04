@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -630,6 +630,7 @@
 </nav>
 
 <!-- HERO -->
+  <canvas id="hero-canvas" style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;"></canvas>
 <section class="hero">
   <div class="hero-left">
     <div class="hero-eyebrow">MMA Prediction Analytics</div>
@@ -660,7 +661,7 @@
     </div>
     <div class="hero-cta">
       <button class="btn-primary" onclick="openSubscribeModal()">Get Full Access</button>
-      <span class="hero-tagline">$9.99/mo · Cancel anytime</span>
+      <span class="hero-tagline">$20.00/mo · Cancel anytime</span>
     </div>
   </div>
 
@@ -802,7 +803,7 @@
     <div class="pricing-card featured">
       <div class="pricing-badge">Most Popular</div>
       <div class="pricing-tier">Pro</div>
-      <div class="pricing-price">$9.99</div>
+      <div class="pricing-price">$20.00</div>
       <div class="pricing-period">/month · or $79.99/year (save 33%)</div>
       <ul class="feature-list">
         <li><span class="check">✓</span><span class="active">Everything in Free</span></li>
@@ -839,7 +840,7 @@
     </div>
 
     <div class="plan-price-display" id="plan-price">
-      <strong>$9.99/month</strong> · Cancel anytime
+      <strong>$20.00/month</strong> · Cancel anytime
     </div>
 
     <input type="email" class="form-input" id="subscribe-email" placeholder="your@email.com">
@@ -883,7 +884,7 @@ function selectPlan(plan) {
   document.getElementById('plan-monthly').classList.toggle('active', plan === 'monthly');
   document.getElementById('plan-yearly').classList.toggle('active', plan === 'yearly');
   document.getElementById('plan-price').innerHTML = plan === 'monthly'
-    ? '<strong>$9.99/month</strong> · Cancel anytime'
+    ? '<strong>$20.00/month</strong> · Cancel anytime'
     : '<strong>$79.99/year</strong> · Save 33% · Cancel anytime';
 }
 
@@ -1017,5 +1018,41 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
   });
 });
 </script>
-</body>
+
+  <script>
+    (function() {
+      var canvas = document.getElementById('hero-canvas');
+      if (!canvas || typeof THREE === 'undefined') return;
+      var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setClearColor(0x000000, 0);
+      var scene = new THREE.Scene();
+      var camera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
+      camera.position.set(0, 0, 5);
+      var red = 0xFF3B30;
+      function ring(r, opacity) {
+        var pts = [];
+        for (var i = 0; i <= 8; i++) { var a = (i/8)*Math.PI*2; pts.push(new THREE.Vector3(Math.cos(a)*r, Math.sin(a)*r, 0)); }
+        var mat = new THREE.LineBasicMaterial({ color: red, transparent: opacity < 1, opacity: opacity });
+        return new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(pts), mat);
+      }
+      var outer = ring(1.8, 1); scene.add(outer);
+      var inner = ring(1.2, 0.45); scene.add(inner);
+      for (var i = 0; i < 8; i++) {
+        var a = (i/8)*Math.PI*2;
+        var pts = [new THREE.Vector3(Math.cos(a)*1.2, Math.sin(a)*1.2, 0), new THREE.Vector3(Math.cos(a)*1.8, Math.sin(a)*1.8, 0)];
+        scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({ color: red, transparent: true, opacity: 0.2 })));
+      }
+      var pc = 200, pos = new Float32Array(pc*3);
+      for (var j = 0; j < pc; j++) { pos[j*3]=(Math.random()-.5)*14; pos[j*3+1]=(Math.random()-.5)*14; pos[j*3+2]=(Math.random()-.5)*8; }
+      var pg = new THREE.BufferGeometry(); pg.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+      scene.add(new THREE.Points(pg, new THREE.PointsMaterial({ color: red, size: 0.04, transparent: true, opacity: 0.55 })));
+      function resize() { var w=canvas.clientWidth, h=canvas.clientHeight||window.innerHeight; renderer.setSize(w,h,false); camera.aspect=w/h; camera.updateProjectionMatrix(); }
+      resize(); window.addEventListener('resize', resize);
+      var t = 0;
+      (function animate() { requestAnimationFrame(animate); t+=0.005; scene.children.forEach(function(o){ if(o.isLine||o.isLineLoop){ o.rotation.z=t*0.35; o.rotation.x=Math.sin(t*0.28)*0.22; } }); renderer.render(scene, camera); })();
+    })();
+  </script></body>
 </html>
+
+
