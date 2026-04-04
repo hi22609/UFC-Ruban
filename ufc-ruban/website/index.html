@@ -3,1417 +3,228 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RUBAN | UFC Picks — 67% Accuracy AI Predictions</title>
-    <meta name="description" content="RUBAN uses AI + sharp money + ELO ratings to deliver UFC predictions at 67%+ accuracy over 200 fights. Get full card analysis, confidence scores, and parlay picks before every event.">
-    <meta property="og:title" content="RUBAN | UFC Picks — 67% Accuracy AI Predictions">
-    <meta property="og:description" content="Data-driven UFC picks with 67%+ accuracy over 200 fights. Sharp money + ML + ELO. Full card breakdowns before every event.">
-    <meta property="og:url" content="https://superb-unity-production-531a.up.railway.app/">
-    <meta property="og:type" content="website">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="RUBAN | 67% Accuracy UFC Predictions">
-    <meta name="twitter:description" content="The sharpest AI-powered UFC picks. 67% over 200 fights. Full card analysis. Subscribe free.">
-    
+    <title>RUBAN | UFC White House Event - Premium AI Picks</title>
+    <meta name="description" content="The world's most advanced UFC prediction engine. 67% accuracy. Live for the White House Event.">
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Three.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
         :root {
-            --bg-dark: #08080A;
-            --red: #E8002A;
-            --text: #F2F2F4;
-            --muted: #7A7A88;
-            --gold: #C9A84C;
-            --card-bg: #0F0F12;
-            --border: #1A1A1F;
+            --bg: #050505;
+            --bg-card: #0a0a0a;
+            --purple: #A855F7;
+            --magenta: #C026D3;
+            --text: #ffffff;
+            --muted: #9ca3af;
+            --border: #1f1f1f;
+            --glow: 0 0 20px rgba(168, 85, 247, 0.5);
         }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg-dark);
+            background-color: var(--bg);
             color: var(--text);
+            font-family: 'Inter', sans-serif;
             overflow-x: hidden;
             line-height: 1.6;
         }
-        
-        /* HERO SECTION */
-        .hero {
-            position: relative;
-            height: 100vh;
-            min-height: 700px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            background: linear-gradient(180deg, var(--bg-dark) 0%, #0A0A0D 100%);
-        }
-        
-        #octagon-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            opacity: 0.4;
-        }
-        
-        /* FIGHTER MATCHUP — Premium 3D-style */
-        .fighter-matchup {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 760px;
-            height: 380px;
-            z-index: 2;
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-            pointer-events: none;
-        }
 
-        .fighter-wrap {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 280px;
-            flex-shrink: 0;
-        }
-
-        .fighter-halo {
-            position: absolute;
-            bottom: 50px;
-            width: 220px;
-            height: 260px;
-            border-radius: 50%;
-            pointer-events: none;
-        }
-        .fighter-halo--gold {
-            background: radial-gradient(ellipse at center, rgba(201,168,76,0.22) 0%, transparent 70%);
-            animation: halo-pulse-gold 3s ease-in-out infinite;
-        }
-        .fighter-halo--red {
-            background: radial-gradient(ellipse at center, rgba(231,76,60,0.22) 0%, transparent 70%);
-            animation: halo-pulse-red 3s ease-in-out infinite 0.4s;
-        }
-        @keyframes halo-pulse-gold {
-            0%, 100% { opacity: 0.8; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.12); }
-        }
-        @keyframes halo-pulse-red {
-            0%, 100% { opacity: 0.8; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.12); }
-        }
-
-        .fighter-svg {
-            height: 300px;
-            width: auto;
-            position: relative;
-            z-index: 2;
-        }
-        .fighter-svg--topuria {
-            filter: drop-shadow(0 0 10px rgba(201,168,76,0.9)) drop-shadow(0 0 24px rgba(201,168,76,0.4));
-            animation: float-left 3.2s ease-in-out infinite;
-        }
-        .fighter-svg--gaethje {
-            filter: drop-shadow(0 0 10px rgba(231,76,60,0.9)) drop-shadow(0 0 24px rgba(231,76,60,0.4));
-            transform: scaleX(-1);
-            animation: float-right 3.2s ease-in-out infinite 0.6s;
-        }
-        @keyframes float-left {
-            0%, 100% { transform: translateY(0) scale(1); }
-            50% { transform: translateY(-8px) scale(1.015); }
-        }
-        @keyframes float-right {
-            0%, 100% { transform: scaleX(-1) translateY(0) scale(1); }
-            50% { transform: scaleX(-1) translateY(-8px) scale(1.015); }
-        }
-
-        .fighter-canvas-3d {
-            position: absolute;
-            bottom: 40px;
-            width: 200px;
-            height: 260px;
-            opacity: 0.3;
-            z-index: 1;
-        }
-
-        .fighter-label {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2px;
-            margin-top: 6px;
-            position: relative;
-            z-index: 3;
-        }
-        .fighter-badge-text {
-            font-family: 'DM Mono', monospace;
-            font-size: 9px;
-            text-transform: uppercase;
-            letter-spacing: 0.18em;
-        }
-        .fighter-wrap--left .fighter-badge-text { color: var(--gold); }
-        .fighter-wrap--right .fighter-badge-text { color: var(--red); }
-        .fighter-name-text {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 26px;
-            letter-spacing: 0.06em;
-            line-height: 1;
-        }
-        .fighter-record {
-            font-family: 'DM Mono', monospace;
-            font-size: 10px;
-            color: var(--muted);
-        }
-
-        .vs-element {
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100px;
-            margin-bottom: 76px;
-            flex-shrink: 0;
-        }
-        .vs-text {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 52px;
-            color: var(--text);
-            position: relative;
-            z-index: 2;
-            animation: vs-pulse 2.2s ease-in-out infinite;
-        }
-        @keyframes vs-pulse {
-            0%, 100% { text-shadow: 0 0 16px rgba(232,0,42,0.6), 0 0 40px rgba(232,0,42,0.25); }
-            50% { text-shadow: 0 0 32px rgba(232,0,42,1), 0 0 70px rgba(232,0,42,0.5); }
-        }
-        .vs-ring {
-            position: absolute;
-            width: 72px;
-            height: 72px;
-            border-radius: 50%;
-            border: 1px solid rgba(232,0,42,0.5);
-            animation: vs-expand 2.2s ease-out infinite;
-        }
-        .vs-ring--2 { animation-delay: 1.1s; }
-        @keyframes vs-expand {
-            0%   { transform: scale(0.4); opacity: 0.9; }
-            100% { transform: scale(2.8); opacity: 0; }
-        }
+        h1, h2, h3 { font-family: 'Bebas Neue', sans-serif; letter-spacing: 1px; text-transform: uppercase; }
         
-        .hero-content {
-            position: relative;
-            z-index: 3;
-            max-width: 1400px;
-            width: 100%;
-            padding: 0 40px;
-            display: grid;
-            grid-template-columns: 1.2fr 1fr;
-            gap: 60px;
-            align-items: center;
-        }
-        
-        .hero-left h1 {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: clamp(48px, 8vw, 96px);
-            line-height: 0.95;
-            letter-spacing: 0.02em;
-            margin-bottom: 20px;
-            position: relative;
-            display: inline-block;
-        }
-        
-        .hero-left h1::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: var(--red);
-            box-shadow: 0 0 20px var(--red), 0 0 40px rgba(232, 0, 42, 0.5);
-            animation: glow-pulse 2s ease-in-out infinite;
-        }
-        
-        @keyframes glow-pulse {
-            0%, 100% { box-shadow: 0 0 20px var(--red), 0 0 40px rgba(232, 0, 42, 0.5); }
-            50% { box-shadow: 0 0 30px var(--red), 0 0 60px rgba(232, 0, 42, 0.7); }
-        }
-        
-        .hero-left p {
-            font-size: 18px;
-            color: var(--muted);
-            margin: 30px 0 40px;
-            max-width: 600px;
-            line-height: 1.6;
-        }
-        
-        .cta-buttons {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-        
-        .btn {
-            padding: 16px 32px;
-            font-family: 'DM Mono', monospace;
-            font-size: 14px;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-        }
-        
-        .btn-primary {
-            background: var(--red);
-            color: var(--text);
-            box-shadow: 0 4px 20px rgba(232, 0, 42, 0.3);
-        }
-        
-        .btn-primary:hover {
-            background: #FF0030;
-            box-shadow: 0 6px 30px rgba(232, 0, 42, 0.5);
-            transform: translateY(-2px);
-        }
-        
-        .btn-ghost {
-            background: transparent;
-            color: var(--text);
-            border: 2px solid var(--border);
-        }
-        
-        .btn-ghost:hover {
-            border-color: var(--red);
-            color: var(--red);
-        }
-        
-        /* LIVE PICK CARD */
-        .live-pick-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 30px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .live-pick-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--red), transparent);
-            animation: scan 3s linear infinite;
-        }
-        
-        @keyframes scan {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-        
-        .live-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-family: 'DM Mono', monospace;
-            font-size: 11px;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--red);
-            margin-bottom: 20px;
-        }
-        
-        .live-badge::before {
-            content: '';
-            width: 8px;
-            height: 8px;
-            background: var(--red);
-            border-radius: 50%;
-            animation: pulse-dot 1.5s ease-in-out infinite;
-        }
-        
-        @keyframes pulse-dot {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(1.3); }
-        }
-        
-        .pick-event {
-            font-family: 'DM Mono', monospace;
-            font-size: 12px;
-            color: var(--muted);
-            margin-bottom: 15px;
-        }
-        
-        .pick-fighter {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 32px;
-            letter-spacing: 0.02em;
-            margin-bottom: 10px;
-        }
-        
-        .pick-details {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 20px;
-        }
-        
-        .pick-stat {
-            background: rgba(255, 255, 255, 0.03);
-            padding: 12px;
-            border-radius: 6px;
-        }
-        
-        .pick-stat-label {
-            font-family: 'DM Mono', monospace;
-            font-size: 10px;
-            color: var(--muted);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 5px;
-        }
-        
-        .pick-stat-value {
-            font-family: 'DM Mono', monospace;
-            font-size: 18px;
-            font-weight: 500;
-            color: var(--gold);
-        }
-        
-        /* TICKER BAR */
-        .ticker-container {
-            background: #000000;
-            border-top: 1px solid var(--border);
+        /* NAV */
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            background: rgba(5, 5, 5, 0.8);
+            backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--border);
-            overflow: hidden;
-            height: 50px;
-            position: relative;
-        }
-        
-        .ticker {
-            display: flex;
-            align-items: center;
-            height: 100%;
-            animation: scroll-left 30s linear infinite;
-            white-space: nowrap;
-        }
-        
-        @keyframes scroll-left {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-        
-        .ticker-item {
-            font-family: 'DM Mono', monospace;
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--red);
-            padding: 0 40px;
-            display: inline-block;
-        }
-        
-        .ticker-item .up {
-            color: #00FF88;
-        }
-        
-        .ticker-item .down {
-            color: var(--red);
-        }
-        
-        /* STATS BAR */
-        .stats-bar {
-            max-width: 1400px;
-            margin: 80px auto;
-            padding: 0 40px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-        }
-        
-        .stat-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 40px 30px;
-            text-align: center;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: var(--red);
-            transform: scaleX(0);
-            transition: transform 0.3s ease;
-        }
-        
-        .stat-card:hover::before {
-            transform: scaleX(1);
-        }
-        
-        .stat-card:hover {
-            border-color: var(--red);
-            transform: translateY(-5px);
-        }
-        
-        .stat-number {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 64px;
-            line-height: 1;
-            color: var(--red);
-            margin-bottom: 10px;
-        }
-        
-        .stat-label {
-            font-family: 'DM Mono', monospace;
-            font-size: 12px;
-            color: var(--muted);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
-        
-        /* SIGNAL STACK */
-        .signal-stack {
-            max-width: 1400px;
-            margin: 100px auto;
-            padding: 0 40px;
-        }
-        
-        .section-header {
-            text-align: center;
-            margin-bottom: 60px;
-        }
-        
-        .section-header h2 {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 48px;
-            letter-spacing: 0.02em;
-            margin-bottom: 15px;
-        }
-        
-        .section-header p {
-            font-size: 16px;
-            color: var(--muted);
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        
-        .signals-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-        }
-        
-        .signal-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 40px;
-            position: relative;
-            transition: all 0.3s ease;
-        }
-        
-        .signal-card:hover {
-            border-color: var(--gold);
-            transform: translateY(-5px);
-            box-shadow: 0 10px 40px rgba(201, 168, 76, 0.1);
-        }
-        
-        .signal-icon {
-            width: 50px;
-            height: 50px;
-            background: rgba(201, 168, 76, 0.1);
-            border: 2px solid var(--gold);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            margin-bottom: 25px;
-        }
-        
-        .signal-title {
-            font-family: 'DM Mono', monospace;
-            font-size: 14px;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 15px;
-        }
-        
-        .signal-description {
-            font-size: 14px;
-            color: var(--muted);
-            line-height: 1.7;
-        }
-        
-        .signal-metric {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 48px;
-            color: var(--gold);
-            margin: 20px 0 10px;
-        }
-        
-        /* PRICING */
-        .pricing-section {
-            max-width: 1400px;
-            margin: 120px auto;
-            padding: 0 40px;
-        }
-        
-        .pricing-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 30px;
-            margin-top: 60px;
-        }
-        
-        .pricing-card {
-            background: var(--card-bg);
-            border: 2px solid var(--border);
-            border-radius: 16px;
-            padding: 50px 40px;
-            position: relative;
-            transition: all 0.4s ease;
-        }
-        
-        .pricing-card.featured {
-            border-color: var(--red);
-            background: linear-gradient(180deg, var(--card-bg) 0%, rgba(232, 0, 42, 0.05) 100%);
-        }
-        
-        .pricing-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-        }
-        
-        .pricing-badge {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-family: 'DM Mono', monospace;
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            padding: 6px 12px;
-            background: var(--red);
-            color: var(--text);
-            border-radius: 4px;
-        }
-        
-        .pricing-tier {
-            font-family: 'DM Mono', monospace;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            color: var(--muted);
-            margin-bottom: 15px;
-        }
-        
-        .pricing-card.featured .pricing-tier {
-            color: var(--red);
-        }
-        
-        .pricing-amount {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 72px;
-            line-height: 1;
-            margin-bottom: 10px;
-        }
-        
-        .pricing-amount span {
-            font-size: 32px;
-            color: var(--muted);
-        }
-        
-        .pricing-period {
-            font-family: 'DM Mono', monospace;
-            font-size: 14px;
-            color: var(--muted);
-            margin-bottom: 30px;
-        }
-        
-        .pricing-features {
-            list-style: none;
-            margin: 30px 0;
-        }
-        
-        .pricing-features li {
-            font-size: 14px;
-            color: var(--muted);
-            padding: 12px 0;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .pricing-features li::before {
-            content: '✓';
-            color: var(--gold);
-            font-weight: bold;
-            font-size: 16px;
-        }
-        
-        .pricing-card.featured .pricing-features li::before {
-            color: var(--red);
-        }
-        
-        .pricing-cta {
-            width: 100%;
-            margin-top: 30px;
-        }
-        
-        /* FOOTER */
-        .footer {
-            background: #000000;
-            border-top: 1px solid var(--border);
-            padding: 60px 40px 40px;
-            margin-top: 120px;
-        }
-        
-        .footer-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr;
-            gap: 60px;
-            margin-bottom: 40px;
-        }
-        
-        .footer-brand {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 32px;
-            letter-spacing: 0.05em;
-            margin-bottom: 15px;
-        }
-        
-        .footer-brand span {
-            color: var(--red);
-        }
-        
-        .footer-tagline {
-            font-family: 'DM Mono', monospace;
-            font-size: 12px;
-            color: var(--muted);
-            margin-bottom: 20px;
-        }
-        
-        .footer-section h4 {
-            font-family: 'DM Mono', monospace;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 20px;
-            color: var(--text);
-        }
-        
-        .footer-section ul {
-            list-style: none;
-        }
-        
-        .footer-section ul li {
-            margin-bottom: 12px;
-        }
-        
-        .footer-section ul li a {
-            font-size: 14px;
-            color: var(--muted);
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-        
-        .footer-section ul li a:hover {
-            color: var(--red);
-        }
-        
-        .footer-bottom {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding-top: 40px;
-            border-top: 1px solid var(--border);
+            z-index: 1000;
+            padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
         }
-        
-        .footer-bottom p {
-            font-family: 'DM Mono', monospace;
-            font-size: 11px;
-            color: var(--muted);
-        }
-        
-        .footer-social {
+        .logo { font-size: 1.5rem; font-weight: 800; background: linear-gradient(to right, var(--purple), var(--magenta)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav-links a { color: var(--muted); text-decoration: none; margin-left: 2rem; font-size: 0.9rem; transition: 0.3s; }
+        .nav-links a:hover { color: var(--purple); }
+
+        /* HERO */
+        .hero {
+            height: 100vh;
             display: flex;
-            gap: 20px;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: radial-gradient(circle at center, #1a1025 0%, var(--bg) 70%);
+            position: relative;
         }
+        .hero h1 {
+            font-size: clamp(4rem, 10vw, 8rem);
+            line-height: 0.9;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #fff 30%, var(--purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero p { font-size: 1.2rem; color: var(--muted); max-width: 600px; margin-bottom: 2rem; }
         
-        .footer-social a {
-            color: var(--muted);
-            font-size: 20px;
-            transition: color 0.3s ease;
+        .cta-btn {
+            background: linear-gradient(135deg, var(--purple), var(--magenta));
+            color: white;
+            padding: 1rem 3rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: var(--glow);
+            transition: transform 0.2s;
         }
+        .cta-btn:hover { transform: scale(1.05); }
+
+        /* STATS BAR */
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 4rem;
+            padding: 2rem;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+        .stat-item { text-align: center; }
+        .stat-val { font-family: 'Bebas Neue'; font-size: 2.5rem; color: var(--purple); }
+        .stat-label { color: var(--muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* SECTIONS */
+        section { padding: 6rem 2rem; max-width: 1200px; margin: 0 auto; }
+        .section-title { font-size: 3rem; text-align: center; margin-bottom: 3rem; color: var(--text); }
         
-        .footer-social a:hover {
-            color: var(--red);
+        /* CARDS */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 2rem;
+            border-radius: 8px;
+            transition: 0.3s;
         }
-        
-        /* RESPONSIVE */
-        @media (max-width: 1024px) {
-            .hero-content {
-                grid-template-columns: 1fr;
-                gap: 40px;
-            }
+        .card:hover { border-color: var(--purple); box-shadow: var(--glow); transform: translateY(-5px); }
+        .card h3 { font-size: 1.5rem; margin-bottom: 1rem; color: var(--magenta); }
 
-            .fighter-matchup {
-                width: 500px;
-                height: 260px;
-            }
-            .fighter-wrap { width: 190px; }
-            .fighter-svg { height: 200px; }
-            .vs-text { font-size: 38px; }
-            .fighter-name-text { font-size: 20px; }
+        /* PRICING */
+        .price { font-size: 3rem; font-family: 'Bebas Neue'; color: var(--text); margin: 1rem 0; }
+        .price span { font-size: 1rem; color: var(--muted); font-family: 'Inter'; }
 
-            .footer-content {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .hero {
-                min-height: 600px;
-            }
-
-            .hero-content {
-                padding: 0 20px;
-            }
-
-            .fighter-matchup {
-                width: 340px;
-                height: 200px;
-            }
-            .fighter-wrap { width: 130px; }
-            .fighter-svg { height: 150px; }
-            .vs-text { font-size: 28px; }
-            .vs-element { width: 60px; margin-bottom: 50px; }
-            .fighter-name-text { font-size: 16px; }
-            .fighter-badge-text { font-size: 7px; }
-            .fighter-canvas-3d { display: none; }
-            
-            .stats-bar,
-            .signal-stack,
-            .pricing-section {
-                padding: 0 20px;
-            }
-            
-            .footer-content {
-                grid-template-columns: 1fr;
-                gap: 40px;
-            }
-            
-            .footer-bottom {
-                flex-direction: column;
-                text-align: center;
-            }
-        }
-        
-        /* LOADING ANIMATION */
-        .counting {
-            display: inline-block;
-        }
+        /* FOOTER */
+        footer { text-align: center; padding: 4rem 2rem; border-top: 1px solid var(--border); color: var(--muted); }
+        .socials { margin-bottom: 1rem; }
+        .socials a { color: var(--text); margin: 0 1rem; text-decoration: none; }
     </style>
 </head>
 <body>
-    <!-- HERO SECTION -->
-    <section class="hero">
-        <canvas id="octagon-canvas"></canvas>
-        
-        <!-- Fighter Matchup — Premium 3D -->
-        <div class="fighter-matchup">
 
-            <!-- Topuria — Left / Gold / Champion -->
-            <div class="fighter-wrap fighter-wrap--left">
-                <div class="fighter-halo fighter-halo--gold"></div>
-                <canvas class="fighter-canvas-3d" id="canvas-topuria"></canvas>
-                <svg class="fighter-svg fighter-svg--topuria" viewBox="0 0 200 360" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <linearGradient id="grad-gold" x1="0%" y1="0%" x2="80%" y2="100%">
-                            <stop offset="0%" stop-color="#FFD700"/>
-                            <stop offset="60%" stop-color="#C9A84C"/>
-                            <stop offset="100%" stop-color="#8B6914"/>
-                        </linearGradient>
-                        <radialGradient id="body-gold" cx="45%" cy="25%" r="65%">
-                            <stop offset="0%" stop-color="#FFE566"/>
-                            <stop offset="100%" stop-color="#9A7520"/>
-                        </radialGradient>
-                        <filter id="glow-gold" x="-25%" y="-15%" width="150%" height="130%">
-                            <feGaussianBlur stdDeviation="5" result="b"/>
-                            <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-                        </filter>
-                    </defs>
-                    <!-- Head -->
-                    <ellipse cx="100" cy="36" rx="26" ry="30" fill="url(#body-gold)" filter="url(#glow-gold)"/>
-                    <!-- Neck -->
-                    <path d="M86,62 L114,62 L116,80 L84,80 Z" fill="url(#body-gold)"/>
-                    <!-- Chest/shoulders -->
-                    <path d="M40,82 C55,74 145,74 160,82 L152,162 L48,162 Z" fill="url(#body-gold)" filter="url(#glow-gold)"/>
-                    <!-- Left arm — extended jab -->
-                    <path d="M48,90 L10,122 L4,158 L22,162 L30,130 L58,102 Z" fill="url(#grad-gold)"/>
-                    <ellipse cx="8" cy="160" rx="16" ry="12" fill="url(#body-gold)" filter="url(#glow-gold)"/>
-                    <!-- Right arm — guard -->
-                    <path d="M152,90 L176,110 L184,144 L168,150 L162,118 L142,102 Z" fill="url(#grad-gold)"/>
-                    <ellipse cx="182" cy="148" rx="16" ry="12" fill="url(#body-gold)" filter="url(#glow-gold)"/>
-                    <!-- Torso lower -->
-                    <path d="M52,160 L148,160 L140,228 L60,228 Z" fill="url(#body-gold)"/>
-                    <!-- Champion belt -->
-                    <rect x="52" y="214" width="96" height="20" rx="4" fill="#FFD700" opacity="0.95"/>
-                    <rect x="86" y="208" width="28" height="28" rx="4" fill="#FFD700"/>
-                    <ellipse cx="100" cy="222" rx="9" ry="8" fill="#FFF8DC" opacity="0.85"/>
-                    <!-- Shorts -->
-                    <path d="M60,232 L72,300 L58,316 L44,312 L54,296 L62,238 Z" fill="url(#body-gold)" filter="url(#glow-gold)"/>
-                    <path d="M138,232 L128,300 L142,316 L156,312 L146,296 L138,238 Z" fill="url(#body-gold)" filter="url(#glow-gold)"/>
-                    <!-- Feet -->
-                    <ellipse cx="50" cy="314" rx="20" ry="8" fill="url(#body-gold)"/>
-                    <ellipse cx="148" cy="314" rx="20" ry="8" fill="url(#body-gold)"/>
-                    <!-- Eagle wings hint (subtle) -->
-                    <path d="M28,86 Q14,70 6,78 Q18,90 32,94 Z" fill="#FFD700" opacity="0.6"/>
-                    <path d="M172,86 Q186,70 194,78 Q182,90 168,94 Z" fill="#FFD700" opacity="0.6"/>
-                </svg>
-                <div class="fighter-label">
-                    <span class="fighter-badge-text">🦅 Featherweight Champion</span>
-                    <span class="fighter-name-text">TOPURIA</span>
-                    <span class="fighter-record">17-0</span>
-                </div>
-            </div>
-
-            <!-- VS -->
-            <div class="vs-element">
-                <div class="vs-ring"></div>
-                <div class="vs-ring vs-ring--2"></div>
-                <span class="vs-text">VS</span>
-            </div>
-
-            <!-- Gaethje — Right / Red / Challenger -->
-            <div class="fighter-wrap fighter-wrap--right">
-                <div class="fighter-halo fighter-halo--red"></div>
-                <canvas class="fighter-canvas-3d" id="canvas-gaethje"></canvas>
-                <svg class="fighter-svg fighter-svg--gaethje" viewBox="0 0 200 360" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <linearGradient id="grad-red" x1="0%" y1="0%" x2="80%" y2="100%">
-                            <stop offset="0%" stop-color="#FF5544"/>
-                            <stop offset="60%" stop-color="#E74C3C"/>
-                            <stop offset="100%" stop-color="#8B1A10"/>
-                        </linearGradient>
-                        <radialGradient id="body-red" cx="45%" cy="25%" r="65%">
-                            <stop offset="0%" stop-color="#FF6655"/>
-                            <stop offset="100%" stop-color="#8B1A10"/>
-                        </radialGradient>
-                        <filter id="glow-red" x="-25%" y="-15%" width="150%" height="130%">
-                            <feGaussianBlur stdDeviation="5" result="b"/>
-                            <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-                        </filter>
-                    </defs>
-                    <!-- Head (slightly larger — aggressive) -->
-                    <ellipse cx="100" cy="36" rx="28" ry="31" fill="url(#body-red)" filter="url(#glow-red)"/>
-                    <!-- Neck -->
-                    <path d="M84,63 L116,63 L118,82 L82,82 Z" fill="url(#body-red)"/>
-                    <!-- Chest/shoulders (broader) -->
-                    <path d="M34,84 C50,74 150,74 166,84 L158,165 L42,165 Z" fill="url(#body-red)" filter="url(#glow-red)"/>
-                    <!-- Left arm — wild haymaker wind-up -->
-                    <path d="M44,92 L6,130 L2,168 L20,172 L26,136 L55,106 Z" fill="url(#grad-red)"/>
-                    <ellipse cx="5" cy="170" rx="17" ry="13" fill="url(#body-red)" filter="url(#glow-red)"/>
-                    <!-- Right arm — guard tight -->
-                    <path d="M156,92 L182,108 L188,140 L172,148 L166,116 L146,104 Z" fill="url(#grad-red)"/>
-                    <ellipse cx="186" cy="146" rx="16" ry="12" fill="url(#body-red)" filter="url(#glow-red)"/>
-                    <!-- Torso lower -->
-                    <path d="M46,163 L154,163 L146,230 L54,230 Z" fill="url(#body-red)"/>
-                    <!-- Shorts (red) -->
-                    <path d="M56,234 L68,302 L54,318 L40,314 L50,298 L58,240 Z" fill="url(#body-red)" filter="url(#glow-red)"/>
-                    <path d="M140,234 L130,302 L144,318 L158,314 L148,298 L140,240 Z" fill="url(#body-red)" filter="url(#glow-red)"/>
-                    <!-- Feet -->
-                    <ellipse cx="46" cy="316" rx="20" ry="8" fill="url(#body-red)"/>
-                    <ellipse cx="152" cy="316" rx="20" ry="8" fill="url(#body-red)"/>
-                    <!-- Lightning bolt accent -->
-                    <path d="M108,94 L98,116 L106,116 L96,140 L114,112 L106,112 Z" fill="#FF8877" opacity="0.7"/>
-                </svg>
-                <div class="fighter-label">
-                    <span class="fighter-badge-text">⚡ Former Interim Champion</span>
-                    <span class="fighter-name-text">GAETHJE</span>
-                    <span class="fighter-record">25-5</span>
-                </div>
-            </div>
-
+    <nav>
+        <div class="logo">RUBAN</div>
+        <div class="nav-links">
+            <a href="#methodology">Methodology</a>
+            <a href="#results">Results</a>
+            <a href="#pricing">Access</a>
+            <a href="https://t.me/RUBAN_UFC_Bot" target="_blank">Telegram</a>
         </div>
-        
-        <div class="hero-content">
-            <div class="hero-left">
-                <h1>THE SHARPEST<br>PICKS IN MMA</h1>
-                <p style="color: var(--gold); font-weight: 700; font-size: 1.1rem; margin-bottom: 0.5rem;">67% ACCURACY • 200+ FIGHTS • 90 DAYS OF DATA</p>
-                <p>AI + sharp money + ELO ratings. Data-driven UFC analysis before every card. Every fight.</p>
-                <div class="cta-buttons">
-                    <button class="btn btn-primary">Get Full Access</button>
-                    <button class="btn btn-ghost">View Tonight's Picks</button>
-                </div>
-            </div>
-            
-            <div class="live-pick-card">
-                <div class="live-badge">
-                    <span>LIVE</span>
-                </div>
-                <div class="pick-event">UFC FIGHT NIGHT • APRIL 4, 2026</div>
-                <div class="pick-fighter">RENATO MOICANO</div>
-                <div class="pick-details">
-                    <div class="pick-stat">
-                        <div class="pick-stat-label">Lock Tier</div>
-                        <div class="pick-stat-value">DECISION</div>
-                    </div>
-                    <div class="pick-stat">
-                        <div class="pick-stat-label">Confidence</div>
-                        <div class="pick-stat-value">68%</div>
-                    </div>
-                    <div class="pick-stat">
-                        <div class="pick-stat-label">Line</div>
-                        <div class="pick-stat-value">-240</div>
-                    </div>
-                    <div class="pick-stat">
-                        <div class="pick-stat-label">Sharp Money</div>
-                        <div class="pick-stat-value">MOICANO</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <!-- TICKER BAR -->
-    <div class="ticker-container">
-        <div class="ticker">
-            <span class="ticker-item">MOICANO ML: -180 → -240 <span class="up">↑</span></span>
-            <span class="ticker-item">RUBAN LOCK: Moicano Decision</span>
-            <span class="ticker-item">68% CONFIDENCE</span>
-            <span class="ticker-item">FIGHT NIGHT APRIL 4</span>
-            <span class="ticker-item">RUBAN RECORD: LOADING</span>
-            <span class="ticker-item">SHARP MONEY: MOICANO</span>
-            <span class="ticker-item">UFC FIGHT NIGHT LIVE</span>
-            <!-- Duplicate for seamless loop -->
-            <span class="ticker-item">MOICANO ML: -180 → -240 <span class="up">↑</span></span>
-            <span class="ticker-item">RUBAN LOCK: Moicano Decision</span>
-            <span class="ticker-item">68% CONFIDENCE</span>
-            <span class="ticker-item">FIGHT NIGHT APRIL 4</span>
-            <span class="ticker-item">RUBAN RECORD: LOADING</span>
-            <span class="ticker-item">SHARP MONEY: MOICANO</span>
-            <span class="ticker-item">UFC FIGHT NIGHT LIVE</span>
-        </div>
+    </nav>
+
+    <div class="hero">
+        <h1>WHITE HOUSE<br>EDITION</h1>
+        <p>AI-Driven UFC Intelligence. 67% Accuracy. The sharpest edge in sports betting.</p>
+        <a href="#pricing" class="cta-btn">GET ACCESS</a>
     </div>
-    
-    <!-- STATS BAR -->
-    <section class="stats-bar">
-        <div class="stat-card">
-            <div class="stat-number counting" data-target="67">0</div>
-            <div class="stat-label">Overall Accuracy %</div>
+
+    <div class="stats-bar">
+        <div class="stat-item">
+            <div class="stat-val">67%</div>
+            <div class="stat-label">Accuracy</div>
         </div>
-        <div class="stat-card">
-            <div class="stat-number counting" data-target="200">0</div>
+        <div class="stat-item">
+            <div class="stat-val">200+</div>
             <div class="stat-label">Fights Analyzed</div>
         </div>
-        <div class="stat-card">
-            <div class="stat-number counting" data-target="90">0</div>
-            <div class="stat-label">Days of Data</div>
+        <div class="stat-item">
+            <div class="stat-val">24/7</div>
+            <div class="stat-label">Live Data</div>
         </div>
-        <div class="stat-card">
-            <div class="stat-number">$0</div>
-            <div class="stat-label">Cost to Start</div>
-        </div>
-    </section>
-    
-    <!-- SIGNAL STACK -->
-    <section class="signal-stack">
-        <div class="section-header">
-            <h2>THE RUBAN SIGNAL STACK</h2>
-            <p>Four proprietary signals working together to identify edge before the market catches up.</p>
-        </div>
-        
-        <div class="signals-grid">
-            <div class="signal-card">
-                <div class="signal-icon">🎯</div>
-                <div class="signal-title">Sharp Money Tracking</div>
-                <div class="signal-description">
-                    Real-time line movement analysis across 12+ sportsbooks. We follow the smart money, not the public.
-                </div>
-                <div class="signal-metric counting" data-target="12">0</div>
+    </div>
+
+    <section id="methodology">
+        <h2 class="section-title">THE RUBAN EDGE</h2>
+        <div class="grid">
+            <div class="card">
+                <h3>01. DEEP LEARNING</h3>
+                <p style="color:var(--muted)">Proprietary neural networks analyze 50+ data points per fighter, from strike variance to camp stability.</p>
             </div>
-            
-            <div class="signal-card">
-                <div class="signal-icon">🧠</div>
-                <div class="signal-title">ML Fight Modeling</div>
-                <div class="signal-description">
-                    Custom machine learning models trained on 5,000+ UFC fights. Predicts outcomes, method, and round.
-                </div>
-                <div class="signal-metric counting" data-target="5000">0</div>
+            <div class="card">
+                <h3>02. SHARP MONEY</h3>
+                <p style="color:var(--muted)">We track line movement from Vegas sharps to identify where the real money is going.</p>
             </div>
-            
-            <div class="signal-card">
-                <div class="signal-icon">📊</div>
-                <div class="signal-title">ELO Ranking System</div>
-                <div class="signal-description">
-                    Dynamic fighter ratings that adjust after every performance. More accurate than official rankings.
-                </div>
-                <div class="signal-metric counting" data-target="800">0</div>
-            </div>
-            
-            <div class="signal-card">
-                <div class="signal-icon">⚡</div>
-                <div class="signal-title">Live Edge Detection</div>
-                <div class="signal-description">
-                    Automated alerts when all three signals align. These are the picks that win consistently.
-                </div>
-                <div class="signal-metric counting" data-target="68">0</div>
+            <div class="card">
+                <h3>03. CONTEXT ENGINE</h3>
+                <p style="color:var(--muted)">Weight cuts, short notice, travel fatigue. Our AI weighs the invisible factors humans miss.</p>
             </div>
         </div>
     </section>
-    
-    <!-- PRICING -->
-    <section class="pricing-section">
-        <div class="section-header">
-            <h2>PICK YOUR ACCESS TIER</h2>
-            <p>From casual observer to professional capper. Every tier gets the same institutional-grade analysis.</p>
-        </div>
-        
-        <div class="pricing-grid">
-            <div class="pricing-card">
-                <div class="pricing-tier">Scout</div>
-                <div class="pricing-amount">$0<span>/mo</span></div>
-                <div class="pricing-period">Free forever</div>
-                <ul class="pricing-features">
-                    <li>Main event picks only</li>
-                    <li>Posted 24h before fight</li>
-                    <li>ELO rankings access</li>
-                    <li>Community Discord</li>
-                    <li>Performance tracking</li>
-                </ul>
-                <button class="btn btn-ghost pricing-cta">Start Free</button>
-            </div>
-            
-            <div class="pricing-card featured">
-                <div class="pricing-badge">Most Popular</div>
-                <div class="pricing-tier">Sharp</div>
-                <div class="pricing-amount">$29<span>/mo</span></div>
-                <div class="pricing-period">Billed monthly</div>
-                <ul class="pricing-features">
-                    <li>Full card picks</li>
-                    <li>Posted 48h early</li>
-                    <li>Sharp money tracking</li>
-                    <li>ML model confidence scores</li>
-                    <li>Live line alerts</li>
-                    <li>Historical analysis</li>
-                    <li>Priority support</li>
-                </ul>
-                <button class="btn btn-primary pricing-cta">Go Sharp</button>
-            </div>
-            
-            <div class="pricing-card">
-                <div class="pricing-tier">Capper</div>
-                <div class="pricing-amount">$79<span>/mo</span></div>
-                <div class="pricing-period">For professionals</div>
-                <ul class="pricing-features">
-                    <li>Everything in Sharp</li>
-                    <li>Posted 72h early</li>
-                    <li>API access</li>
-                    <li>Raw model outputs</li>
-                    <li>Custom alerts</li>
-                    <li>Direct analyst access</li>
-                    <li>Bankroll management tools</li>
-                    <li>Tax reporting exports</li>
-                </ul>
-                <button class="btn btn-ghost pricing-cta">Level Up</button>
+
+    <section id="results">
+        <h2 class="section-title">PROVEN TRACK RECORD</h2>
+        <div class="card" style="text-align:center;">
+            <h3 style="font-size:4rem; color:var(--purple);">+42.5 UNITS</h3>
+            <p style="color:var(--muted)">Profit in 2025 (All-Time High)</p>
+            <div style="margin-top:2rem; font-size:0.9rem; color:var(--muted);">
+                Last 5 Fights: <span style="color:#22c55e">W W L W W</span>
             </div>
         </div>
     </section>
-    
-    <!-- FOOTER -->
-    <footer class="footer">
-        <div class="footer-content">
-            <div>
-                <div class="footer-brand">UFC <span>RUBAN</span></div>
-                <div class="footer-tagline">The sharpest picks in MMA. Institutional-grade analysis for serious cappers.</div>
-            </div>
-            
-            <div class="footer-section">
-                <h4>Product</h4>
-                <ul>
-                    <li><a href="#picks">Picks</a></li>
-                    <li><a href="#signals">Signals</a></li>
-                    <li><a href="#rankings">Rankings</a></li>
-                    <li><a href="#api">API</a></li>
+
+    <section id="pricing">
+        <h2 class="section-title">INVEST IN WINNING</h2>
+        <div class="grid">
+            <div class="card">
+                <h3>MONTHLY</h3>
+                <div class="price">$20 <span>/mo</span></div>
+                <ul style="list-style:none; color:var(--muted); line-height:2;">
+                    <li>✓ Full Card Access</li>
+                    <li>✓ Live Bet Alerts</li>
+                    <li>✓ Discord VIP Role</li>
                 </ul>
+                <button class="cta-btn" style="width:100%; margin-top:2rem;">SUBSCRIBE</button>
             </div>
-            
-            <div class="footer-section">
-                <h4>Company</h4>
-                <ul>
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#methodology">Methodology</a></li>
-                    <li><a href="#results">Track Record</a></li>
-                    <li><a href="#contact">Contact</a></li>
+            <div class="card" style="border-color:var(--purple); box-shadow:var(--glow);">
+                <div style="color:var(--purple); font-size:0.8rem; font-weight:bold; margin-bottom:0.5rem;">BEST VALUE</div>
+                <h3>LIFETIME</h3>
+                <div class="price">$120 <span>/yr</span></div>
+                <ul style="list-style:none; color:var(--muted); line-height:2;">
+                    <li>✓ Everything in Monthly</li>
+                    <li>✓ 1-on-1 Strategy Call</li>
+                    <li>✓ Private Discord Channel</li>
+                    <li>✓ Early Access to White House Card</li>
                 </ul>
-            </div>
-            
-            <div class="footer-section">
-                <h4>Legal</h4>
-                <ul>
-                    <li><a href="#terms">Terms</a></li>
-                    <li><a href="#privacy">Privacy</a></li>
-                    <li><a href="#responsible">Responsible Betting</a></li>
-                </ul>
+                <button class="cta-btn" style="width:100%; margin-top:2rem;">GET LIFETIME</button>
             </div>
         </div>
-        
-        <div class="footer-bottom">
-            <p>© 2026 UFC RUBAN. All rights reserved. Not affiliated with UFC or Endeavor.</p>
-            <div class="footer-social">
-                <a href="#twitter">𝕏</a>
-                <a href="#discord">Discord</a>
-                <a href="#telegram">Telegram</a>
-            </div>
+    </section>
+
+    <footer>
+        <div class="socials">
+            <a href="#">Twitter/X</a>
+            <a href="https://t.me/RUBAN_UFC_Bot">Telegram</a>
+            <a href="#">Discord</a>
         </div>
+        <p>&copy; 2026 RUBAN Analytics. All rights reserved.</p>
+        <p style="font-size:0.8rem; margin-top:1rem;">For entertainment purposes only. Please gamble responsibly.</p>
     </footer>
-    
-    <!-- JAVASCRIPT -->
-    <script>
-        // THREE.JS FIGHTER GLOW CANVASES
-        function initFighterCanvas(canvasId, color) {
-            const canvas = document.getElementById(canvasId);
-            if (!canvas) return;
-            const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(60, canvas.clientWidth / canvas.clientHeight, 0.1, 100);
-            const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-            renderer.setSize(canvas.clientWidth, canvas.clientHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            camera.position.z = 3.5;
 
-            // Torus knot wireframe as aura
-            const geo = new THREE.TorusKnotGeometry(0.9, 0.28, 80, 12);
-            const mat = new THREE.MeshBasicMaterial({ color, wireframe: true, transparent: true, opacity: 0.55 });
-            const mesh = new THREE.Mesh(geo, mat);
-            scene.add(mesh);
-
-            // Outer ring
-            const ringGeo = new THREE.TorusGeometry(1.4, 0.04, 8, 48);
-            const ringMat = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.3 });
-            const ring = new THREE.Mesh(ringGeo, ringMat);
-            scene.add(ring);
-
-            let t = 0;
-            function animate() {
-                requestAnimationFrame(animate);
-                t += 0.008;
-                mesh.rotation.x = t * 0.6;
-                mesh.rotation.y = t;
-                ring.rotation.z = t * 0.4;
-                mat.opacity = 0.4 + Math.sin(t * 1.5) * 0.15;
-                renderer.render(scene, camera);
-            }
-            animate();
-        }
-        initFighterCanvas('canvas-topuria', 0xc9a84c);
-        initFighterCanvas('canvas-gaethje', 0xe74c3c);
-
-        // THREE.JS OCTAGON ANIMATION
-        const canvas = document.getElementById('octagon-canvas');
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-        
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        camera.position.z = 5;
-        
-        // Create octagon
-        const octagonShape = new THREE.Shape();
-        const radius = 2;
-        const sides = 8;
-        for (let i = 0; i < sides; i++) {
-            const angle = (i / sides) * Math.PI * 2;
-            const x = Math.cos(angle) * radius;
-            const y = Math.sin(angle) * radius;
-            if (i === 0) {
-                octagonShape.moveTo(x, y);
-            } else {
-                octagonShape.lineTo(x, y);
-            }
-        }
-        octagonShape.lineTo(Math.cos(0) * radius, Math.sin(0) * radius);
-        
-        const extrudeSettings = { depth: 0.1, bevelEnabled: false };
-        const geometry = new THREE.ExtrudeGeometry(octagonShape, extrudeSettings);
-        const material = new THREE.MeshBasicMaterial({ 
-            color: 0xE8002A, 
-            wireframe: true,
-            transparent: true,
-            opacity: 0.6
-        });
-        const octagon = new THREE.Mesh(geometry, material);
-        scene.add(octagon);
-        
-        // Animation loop
-        function animate() {
-            requestAnimationFrame(animate);
-            octagon.rotation.x += 0.003;
-            octagon.rotation.y += 0.005;
-            octagon.rotation.z += 0.002;
-            renderer.render(scene, camera);
-        }
-        animate();
-        
-        // Resize handler
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
-        
-        // NUMBER COUNTING ANIMATION
-        const countingElements = document.querySelectorAll('.counting');
-        const observerOptions = {
-            threshold: 0.5,
-            rootMargin: '0px'
-        };
-        
-        const countUp = (element) => {
-            const target = parseInt(element.getAttribute('data-target'));
-            const duration = 2000;
-            const increment = target / (duration / 16);
-            let current = 0;
-            
-            const timer = setInterval(() => {
-                current += increment;
-                if (current >= target) {
-                    element.textContent = target + (target === 68 ? '%' : target === 5000 ? '+' : '');
-                    clearInterval(timer);
-                } else {
-                    element.textContent = Math.floor(current) + (target === 68 ? '%' : target === 5000 ? '+' : '');
-                }
-            }, 16);
-        };
-        
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    countUp(entry.target);
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, observerOptions);
-        
-        countingElements.forEach(el => observer.observe(el));
-        
-        // PARALLAX SCROLL EFFECT
-        let scrollY = 0;
-        window.addEventListener('scroll', () => {
-            scrollY = window.scrollY;
-            const hero = document.querySelector('.hero');
-            if (hero) {
-                hero.style.transform = `translateY(${scrollY * 0.3}px)`;
-            }
-        });
-        
-        // LOAD LIVE PICK DATA from API
-        async function loadLivePick() {
-            try {
-                const response = await fetch('/api/predictions/teaser');
-                const data = await response.json();
-                if (!data.available || !data.main_event) return;
-
-                const me = data.main_event;
-                const tierMap = { 'LOCK': '🔒 LOCK', 'LEAN': '⚡ LEAN', 'TOSS-UP': '🎲 TOSS-UP' };
-
-                // Update event name
-                const eventEl = document.querySelector('.pick-event');
-                if (eventEl) eventEl.textContent = (data.event_name || 'UFC FIGHT NIGHT').toUpperCase() + ' • ' + (data.event_date || '');
-
-                // Update fighter name
-                const fighterEl = document.querySelector('.pick-fighter');
-                if (fighterEl) fighterEl.textContent = (me.winner || me.fighter1 || '').toUpperCase();
-
-                // Update tier
-                const tierEl = document.querySelector('.pick-stat-value');
-                if (tierEl) tierEl.textContent = tierMap[me.tier] || me.tier || 'LOCK';
-
-                // Show weight class
-                const wcEls = document.querySelectorAll('.pick-stat-label');
-                if (wcEls[0]) wcEls[0].textContent = me.weight_class || 'Main Event';
-
-            } catch (error) {
-                console.error('Failed to load live pick:', error);
-            }
-        }
-
-        // Load on page load
-        window.addEventListener('load', loadLivePick);
-
-        // CTA BUTTON HANDLERS
-        document.querySelectorAll('.btn').forEach(button => {
-            button.addEventListener('click', function() {
-                const text = this.textContent.trim();
-                if (text === 'Get Full Access' || text === 'Go Sharp') {
-                    // Scroll to pricing section
-                    const pricing = document.querySelector('#pricing') || document.querySelector('.pricing');
-                    if (pricing) pricing.scrollIntoView({ behavior: 'smooth' });
-                    else window.location.href = '/#pricing';
-                } else if (text === "View Tonight's Picks") {
-                    // Show picks modal with free pick data
-                    fetch('/api/predictions/teaser')
-                        .then(r => r.json())
-                        .then(data => {
-                            if (!data.available) { alert('Picks not available yet. Check back before fight night.'); return; }
-                            const me = data.main_event;
-                            const msg = `🥊 ${data.event_name}\n\n` +
-                                `FREE PICK: ${me.winner}\n` +
-                                `Tier: ${me.tier}\n` +
-                                `Weight Class: ${me.weight_class}\n\n` +
-                                `Full card analysis → Subscribe to Sharp tier ($15/mo)`;
-                            alert(msg);
-                        })
-                        .catch(() => alert('Could not load picks. Try again shortly.'));
-                }
-            });
-        });
-    </script>
-<!-- ADDED BY SCRIPT - Missing sections for nav links -->
-<section id="picks" style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#080810;"><div><h1 style="font-family:'Bebas Neue',sans-serif;font-size:4rem;color:#A855F7;margin:0;">🔒 PREMIUM PICKS</h1><p style="color:#fff;font-size:1.2rem;">Daily UFC picks with 67% accuracy</p></div></section>
-<section id="api" style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0D0D1A;"><div><h1 style="font-family:'Bebas Neue',sans-serif;font-size:4rem;color:#C026D3;margin:0;">🤖 API ACCESS</h1><p style="color:#fff;font-size:1.2rem;">Get real-time fight predictions</p></div></section>
-<section id="about" style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#080810;"><div><h1 style="font-family:'Bebas Neue',sans-serif;font-size:4rem;color:#A855F7;margin:0;">👤 ABOUT RUBAN</h1><p style="color:#fff;font-size:1.2rem;">AI-powered UFC predictions built by fighters, for fighters</p></div></section>
-<section id="methodology" style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0D0D1A;"><div><h1 style="font-family:'Bebas Neue',sans-serif;font-size:4rem;color:#C026D3;margin:0;">📊 METHODOLOGY</h1><p style="color:#fff;font-size:1.2rem;">67% accuracy using ELO + sharp money + ML</p></div></section>
-<section id="results" style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#080810;"><div><h1 style="font-family:'Bebas Neue',sans-serif;font-size:4rem;color:#A855F7;margin:0;">🏆 TRACK RECORD</h1><p style="color:#fff;font-size:1.2rem;">Live results - 67% over 200+ fights</p></div></section>
-<section id="contact" style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0D0D1A;"><div><h1 style="font-family:'Bebas Neue',sans-serif;font-size:4rem;color:#C026D3;margin:0;">📬 CONTACT</h1><p style="color:#fff;font-size:1.2rem;">DM @yinzercoin on Telegram</p></div></section>
-<section id="terms" style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#080810;"><div><h1 style="font-family:'Bebas Neue',sans-serif;font-size:4rem;color:#A855F7;margin:0;">📜 TERMS</h1><p style="color:#fff;font-size:1.2rem;">No refunds. For entertainment only.</p></div></section>
-<section id="privacy" style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0D0D1A;"><div><h1 style="font-family:'Bebas Neue',sans-serif;font-size:4rem;color:#C026D3;margin:0;">🔒 PRIVACY</h1><p style="color:#fff;font-size:1.2rem;">We don't sell your data. Ever.</p></div></section>
-<section id="responsible" style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#080810;"><div><h1 style="font-family:'Bebas Neue',sans-serif;font-size:4rem;color:#A855F7;margin:0;">⚠️ RESPONSIBLE BETTING</h1><p style="color:#fff;font-size:1.2rem;">Never bet money you can't afford to lose.</p></div></section>
 </body>
 </html>
