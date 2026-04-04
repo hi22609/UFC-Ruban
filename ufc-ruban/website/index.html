@@ -1127,31 +1127,64 @@
             }
         });
         
-        // LOAD LIVE PICK DATA (placeholder - replace with actual API call)
+        // LOAD LIVE PICK DATA from API
         async function loadLivePick() {
             try {
-                // const response = await fetch('/api/predictions/teaser');
-                // const data = await response.json();
-                // Update live pick card with real data
-                console.log('Live pick loaded');
+                const response = await fetch('/api/predictions/teaser');
+                const data = await response.json();
+                if (!data.available || !data.main_event) return;
+
+                const me = data.main_event;
+                const tierMap = { 'LOCK': '🔒 LOCK', 'LEAN': '⚡ LEAN', 'TOSS-UP': '🎲 TOSS-UP' };
+
+                // Update event name
+                const eventEl = document.querySelector('.pick-event');
+                if (eventEl) eventEl.textContent = (data.event_name || 'UFC FIGHT NIGHT').toUpperCase() + ' • ' + (data.event_date || '');
+
+                // Update fighter name
+                const fighterEl = document.querySelector('.pick-fighter');
+                if (fighterEl) fighterEl.textContent = (me.winner || me.fighter1 || '').toUpperCase();
+
+                // Update tier
+                const tierEl = document.querySelector('.pick-stat-value');
+                if (tierEl) tierEl.textContent = tierMap[me.tier] || me.tier || 'LOCK';
+
+                // Show weight class
+                const wcEls = document.querySelectorAll('.pick-stat-label');
+                if (wcEls[0]) wcEls[0].textContent = me.weight_class || 'Main Event';
+
             } catch (error) {
                 console.error('Failed to load live pick:', error);
             }
         }
-        
+
         // Load on page load
         window.addEventListener('load', loadLivePick);
-        
+
         // CTA BUTTON HANDLERS
         document.querySelectorAll('.btn').forEach(button => {
             button.addEventListener('click', function() {
                 const text = this.textContent.trim();
                 if (text === 'Get Full Access' || text === 'Go Sharp') {
-                    console.log('Signup initiated:', text);
-                    // Add signup modal or redirect
-                } else if (text === 'View Tonight\'s Picks') {
-                    console.log('Navigate to picks page');
-                    // Navigate to picks
+                    // Scroll to pricing section
+                    const pricing = document.querySelector('#pricing') || document.querySelector('.pricing');
+                    if (pricing) pricing.scrollIntoView({ behavior: 'smooth' });
+                    else window.location.href = '/#pricing';
+                } else if (text === "View Tonight's Picks") {
+                    // Show picks modal with free pick data
+                    fetch('/api/predictions/teaser')
+                        .then(r => r.json())
+                        .then(data => {
+                            if (!data.available) { alert('Picks not available yet. Check back before fight night.'); return; }
+                            const me = data.main_event;
+                            const msg = `🥊 ${data.event_name}\n\n` +
+                                `FREE PICK: ${me.winner}\n` +
+                                `Tier: ${me.tier}\n` +
+                                `Weight Class: ${me.weight_class}\n\n` +
+                                `Full card analysis → Subscribe to Sharp tier ($15/mo)`;
+                            alert(msg);
+                        })
+                        .catch(() => alert('Could not load picks. Try again shortly.'));
                 }
             });
         });
