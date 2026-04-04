@@ -248,6 +248,10 @@ app.get('/history', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'website', 'history.html'));
 });
 
+app.get('/affiliate', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'website', 'affiliate.html'));
+});
+
 // ─────────────────────────────────────────────
 // START
 // ─────────────────────────────────────────────
