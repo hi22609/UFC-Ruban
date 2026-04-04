@@ -1,4 +1,4 @@
-// UFC Ruban — Scheduler
+﻿// UFC Ruban — Scheduler
 // Permanent runtime. Polls every 6 hours for new UFC cards.
 // discord.js v13 ONLY
 // Run: node scheduler.js
@@ -263,3 +263,4 @@ process.on('uncaughtException', (err) => {
 process.on('unhandledRejection', (reason) => {
   console.error('[Scheduler] Unhandled rejection:', reason);
 });
+

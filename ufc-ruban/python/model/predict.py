@@ -1,4 +1,4 @@
-"""
+﻿"""
 UFC Ruban — Prediction Engine
 Four-layer signal stack: Ensemble ML (50%) + Market Odds (35%) + ELO (15%) + Claude QA
 Confidence hard cap: 76% absolute maximum. No exceptions.
@@ -635,3 +635,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
