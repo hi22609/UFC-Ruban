@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UFC WHITE HOUSE | $1.2M+ Profit Pool</title>
+    <meta name="description" content="450 members positioned to make $1.2M+ from White House card. 13 fights. Historic betting volume.">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --card: #141419;
+            --purple: #A855F7;
+            --magenta: #C026D3;
+            --gold: #FFD700;
+            --green: #10B981;
+            --text: #fff;
+            --muted: #9ca3af;
+            --border: rgba(168, 85, 247, 0.2);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            background: var(--bg); 
+            color: var(--text); 
+            font-family: 'Inter', sans-serif; 
+            overflow-x: hidden;
+        }
+        h1, h2, h3 { font-family: 'Bebas Neue', sans-serif; letter-spacing: 1px; text-transform: uppercase; }
+
+        /* 3D CANVAS */
+        #canvas3d {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* CONTENT OVERLAY */
+        .content {
+            position: relative;
+            z-index: 10;
+            pointer-events: none;
+        }
+        .content > * {
+            pointer-events: auto;
+        }
+
+        /* HERO SECTION */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+        }
+
+        /* PROFIT TICKER */
+        .profit-ticker {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 2px solid var(--green);
+            border-radius: 15px;
+            padding: 1rem 2rem;
+            backdrop-filter: blur(10px);
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+        .profit-ticker .label {
+            font-size: 0.7rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.3rem;
+        }
+        .profit-ticker .amount {
+            font-size: 2rem;
+            font-family: 'Bebas Neue';
+            color: var(--green);
+            text-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
+        }
+        .profit-ticker .sub {
+            font-size: 0.65rem;
+            color: var(--muted);
+            margin-top: 0.3rem;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(16, 185, 129, 0.6); }
+        }
+
+        /* TITLE */
+        .hero-title {
+            font-size: clamp(3rem, 10vw, 7rem);
+            line-height: 0.9;
+            margin: 0 0 1.5rem;
+            text-shadow: 0 0 40px rgba(168, 85, 247, 0.4);
+            background: linear-gradient(135deg, var(--purple), var(--magenta), var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* SUBTITLE */
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: var(--muted);
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            line-height: 1.6;
+            background: rgba(10, 10, 15, 0.8);
+            padding: 1.5rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        /* FIGHTER LABELS */
+        .fighter-labels {
+            display: flex;
+            justify-content: space-between;
+            max-width: 900px;
+            width: 100%;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        .fighter-label {
+            text-align: center;
+            background: rgba(10, 10, 15, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            border: 2px solid var(--border);
+        }
+        .fighter-label.left { border-color: #EF4444; }
+        .fighter-label.right { border-color: #3B82F6; }
+        .fighter-name {
+            font-size: 2rem;
+            font-family: 'Bebas Neue';
+            color: var(--text);
+            text-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+        }
+        .fighter-record {
+            font-size: 0.9rem;
+            color: var(--muted);
+            margin-top: 0.5rem;
+        }
+
+        /* COUNTDOWN */
+        .countdown {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        .countdown-item {
+            text-align: center;
+            background: rgba(10, 10, 15, 0.8);
+            backdrop-filter: blur(10px);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            min-width: 100px;
+        }
+        .countdown-val {
+            font-size: 3.5rem;
+            font-family: 'Bebas Neue';
+            color: var(--gold);
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            line-height: 1;
+        }
+        .countdown-label {
+            font-size: 0.75rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 0.5rem;
+        }
+
+        /* CTA */
+        .cta-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            justify-content: center;
+            margin-top: 3rem;
+        }
+        .cta-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--purple), var(--magenta));
+            color: white;
+            padding: 1.2rem 3.5rem;
+            font-size: 1.3rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.4);
+        }
+        .cta-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 50px rgba(168, 85, 247, 0.8);
+        }
+
+        /* SCROLL INDICATOR */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            animation: bounce 2s infinite;
+        }
+        .scroll-indicator p {
+            font-size: 0.9rem;
+            color: var(--muted);
+            margin-bottom: 0.5rem;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-10px); }
+        }
+
+        /* CONTENT SECTIONS */
+        section {
+            min-height: 100vh;
+            padding: 5rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .section-content {
+            max-width: 900px;
+            background: rgba(10, 10, 15, 0.9);
+            backdrop-filter: blur(20px);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            padding: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .profit-ticker {
+                position: relative;
+                top: 0;
+                right: 0;
+                margin-bottom: 2rem;
+            }
+            .fighter-labels {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .countdown {
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 3D CANVAS -->
+    <canvas id="canvas3d"></canvas>
+
+    <!-- CONTENT OVERLAY -->
+    <div class="content">
+        <div class="hero">
+            <!-- PROFIT TICKER -->
+            <div class="profit-ticker">
+                <div class="label">White House Profit Pool</div>
+                <div class="amount">$1.2M+</div>
+                <div class="sub">Projected member profits</div>
+            </div>
+
+            <!-- TITLE -->
+            <h1 class="hero-title">UFC WHITE HOUSE</h1>
+
+            <!-- FIGHTER LABELS -->
+            <div class="fighter-labels">
+                <div class="fighter-label left">
+                    <div class="fighter-name">ILIA TOPURIA</div>
+                    <div class="fighter-record">🇬🇪 Champion • 15-0</div>
+                </div>
+                <div class="fighter-label right">
+                    <div class="fighter-name">JUSTIN GAETHJE</div>
+                    <div class="fighter-record">🇺🇸 The Highlight • 25-5</div>
+                </div>
+            </div>
+
+            <!-- SUBTITLE -->
+            <p class="hero-subtitle">
+                April 19, 2026 • Washington, D.C.<br>
+                <strong>Historic event. 13 stacked fights. More betting volume = more opportunity.</strong><br>
+                <strong style="color: #FFD700;">Our members are positioned to make $1.2M+ from this single card.</strong>
+            </p>
+
+            <!-- COUNTDOWN -->
+            <div class="countdown">
+                <div class="countdown-item">
+                    <div class="countdown-val" id="days">--</div>
+                    <div class="countdown-label">Days</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-val" id="hours">--</div>
+                    <div class="countdown-label">Hours</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-val" id="mins">--</div>
+                    <div class="countdown-label">Minutes</div>
+                </div>
+            </div>
+
+            <!-- CTA -->
+            <div class="cta-group">
+                <a href="#value" class="cta-btn">Lock In White House Picks - $9/mo</a>
+            </div>
+
+            <!-- SCROLL INDICATOR -->
+            <div class="scroll-indicator">
+                <p>Scroll to see them clash ↓</p>
+            </div>
+        </div>
+
+        <!-- VALUE SECTION -->
+        <section id="value">
+            <div class="section-content">
+                <h2 style="font-size: 2.5rem; margin-bottom: 2rem; color: var(--gold);">Why This Event Is Different</h2>
+                <p style="line-height: 1.8; margin-bottom: 1.5rem;">
+                    <strong>UFC White House = Unprecedented betting volume:</strong><br>
+                    • First UFC event at the White House<br>
+                    • National media coverage (ESPN, FOX, international press)<br>
+                    • Casual bettors flooding the market = inflated odds<br>
+                    • 13 fights = 13 opportunities to exploit inefficiencies
+                </p>
+                <p style="line-height: 1.8; margin-bottom: 1.5rem;">
+                    <strong>What that means for RUBAN members:</strong><br>
+                    • 450 active members positioned across 13 fights<br>
+                    • Average stake: $100/unit (conservative)<br>
+                    • 67% historical win rate = ~9 expected wins<br>
+                    • Average odds on our picks: +180 (sharp value)
+                </p>
+                <p style="font-size: 1.2rem; color: var(--gold); font-weight: 700; margin-top: 2rem;">
+                    Combined White House profit pool: $1.2M+
+                </p>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // COUNTDOWN TIMER
+        const eventDate = new Date('2026-04-19T00:00:00').getTime();
+        setInterval(() => {
+            const now = new Date().getTime();
+            const gap = eventDate - now;
+            document.getElementById('days').textContent = Math.floor(gap / (1000*60*60*24));
+            document.getElementById('hours').textContent = Math.floor((gap % (1000*60*60*24)) / (1000*60*60));
+            document.getElementById('mins').textContent = Math.floor((gap % (1000*60*60)) / (1000*60));
+        }, 1000);
+
+        // THREE.JS SCENE
+        const canvas = document.getElementById('canvas3d');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+
+        // LIGHTING
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambientLight);
+        const spotLight1 = new THREE.SpotLight(0xEF4444, 2);
+        spotLight1.position.set(-5, 5, 5);
+        scene.add(spotLight1);
+        const spotLight2 = new THREE.SpotLight(0x3B82F6, 2);
+        spotLight2.position.set(5, 5, 5);
+        scene.add(spotLight2);
+
+        // FIGHTER 1 (Left - Red corner - Topuria)
+        const geometry1 = new THREE.BoxGeometry(1, 2, 0.5);
+        const material1 = new THREE.MeshPhongMaterial({ color: 0xEF4444 });
+        const fighter1 = new THREE.Mesh(geometry1, material1);
+        fighter1.position.set(-8, 0, 0);
+        scene.add(fighter1);
+
+        // FIGHTER 2 (Right - Blue corner - Gaethje)
+        const geometry2 = new THREE.BoxGeometry(1, 2, 0.5);
+        const material2 = new THREE.MeshPhongMaterial({ color: 0x3B82F6 });
+        const fighter2 = new THREE.Mesh(geometry2, material2);
+        fighter2.position.set(8, 0, 0);
+        scene.add(fighter2);
+
+        // OCTAGON FLOOR
+        const octagonGeometry = new THREE.CylinderGeometry(6, 6, 0.2, 8);
+        const octagonMaterial = new THREE.MeshPhongMaterial({ color: 0x1a1a1a });
+        const octagon = new THREE.Mesh(octagonGeometry, octagonMaterial);
+        octagon.position.y = -2;
+        scene.add(octagon);
+
+        // CAMERA POSITION
+        camera.position.z = 15;
+        camera.position.y = 2;
+
+        // SCROLL ANIMATION
+        let initialDistance = 16; // Starting distance between fighters
+        window.addEventListener('scroll', () => {
+            const scrollPercent = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+            
+            // Move fighters closer as you scroll
+            const distance = initialDistance * (1 - scrollPercent * 0.8);
+            fighter1.position.x = -distance / 2;
+            fighter2.position.x = distance / 2;
+            
+            // Rotate fighters slightly
+            fighter1.rotation.y = scrollPercent * Math.PI * 0.3;
+            fighter2.rotation.y = -scrollPercent * Math.PI * 0.3;
+            
+            // Move camera closer
+            camera.position.z = 15 - scrollPercent * 5;
+        });
+
+        // ANIMATION LOOP
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            // Subtle idle animation
+            fighter1.position.y = Math.sin(Date.now() * 0.001) * 0.1;
+            fighter2.position.y = Math.sin(Date.now() * 0.001 + Math.PI) * 0.1;
+            
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // WINDOW RESIZE
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+
+</body>
+</html>
