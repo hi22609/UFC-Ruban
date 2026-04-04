@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UFC WHITE HOUSE | RUBAN Intelligence</title>
+    <meta name="description" content="Members tracking toward $1M+ profit. Ilia vs Gaethje. April 19. Get in before it's too late.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --card: #141419;
+            --purple: #A855F7;
+            --magenta: #C026D3;
+            --gold: #FFD700;
+            --green: #10B981;
+            --text: #fff;
+            --muted: #9ca3af;
+            --border: rgba(168, 85, 247, 0.2);
+            --glow: 0 0 30px rgba(168, 85, 247, 0.4);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        h1, h2, h3 { font-family: 'Bebas Neue', sans-serif; letter-spacing: 1px; text-transform: uppercase; }
+
+        /* HERO SECTION */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+            background: radial-gradient(ellipse at center, rgba(168, 85, 247, 0.15) 0%, var(--bg) 70%);
+        }
+
+        /* PROFIT COUNTER */
+        .profit-ticker {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 2px solid var(--green);
+            border-radius: 15px;
+            padding: 1rem 2rem;
+            backdrop-filter: blur(10px);
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+        .profit-ticker .label {
+            font-size: 0.7rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.3rem;
+        }
+        .profit-ticker .amount {
+            font-size: 2rem;
+            font-family: 'Bebas Neue';
+            color: var(--green);
+            text-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(16, 185, 129, 0.6); }
+        }
+
+        /* FIGHTER IMAGE CONTAINER */
+        .fighter-scene {
+            position: relative;
+            max-width: 800px;
+            width: 100%;
+            margin: 2rem auto;
+        }
+        .fighter-image {
+            width: 100%;
+            height: auto;
+            border-radius: 20px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9), 0 0 60px rgba(168, 85, 247, 0.4);
+            border: 3px solid rgba(168, 85, 247, 0.3);
+            transition: transform 0.3s ease;
+        }
+        .fighter-image:hover {
+            transform: scale(1.02);
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.95), 0 0 80px rgba(168, 85, 247, 0.6);
+        }
+
+        /* OVERLAY STATS */
+        .fighter-stats {
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 3rem;
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(20px);
+            border: 2px solid var(--border);
+            border-radius: 15px;
+            padding: 1.5rem 3rem;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 2rem;
+            font-family: 'Bebas Neue';
+            color: var(--purple);
+            text-shadow: 0 0 15px rgba(168, 85, 247, 0.5);
+        }
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 0.3rem;
+        }
+
+        /* TITLE */
+        .hero-title {
+            font-size: clamp(3rem, 10vw, 7rem);
+            line-height: 0.9;
+            margin: 4rem 0 1.5rem;
+            text-shadow: 0 0 40px rgba(168, 85, 247, 0.4);
+        }
+        .hero-title .highlight {
+            background: linear-gradient(135deg, var(--purple), var(--magenta), var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* SUBTITLE */
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: var(--muted);
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            line-height: 1.6;
+        }
+
+        /* COUNTDOWN */
+        .countdown {
+            display: flex;
+            justify-content: center;
+            gap: 2.5rem;
+            margin: 2rem 0;
+        }
+        .countdown-item {
+            text-align: center;
+            background: var(--card);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            min-width: 100px;
+        }
+        .countdown-val {
+            font-size: 3.5rem;
+            font-family: 'Bebas Neue';
+            color: var(--gold);
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            line-height: 1;
+        }
+        .countdown-label {
+            font-size: 0.75rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 0.5rem;
+        }
+
+        /* CTA BUTTONS */
+        .cta-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            justify-content: center;
+            margin-top: 3rem;
+        }
+        .cta-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--purple), var(--magenta));
+            color: white;
+            padding: 1.2rem 3.5rem;
+            font-size: 1.3rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: var(--glow);
+        }
+        .cta-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 50px rgba(168, 85, 247, 0.8);
+        }
+        .cta-btn.secondary {
+            background: transparent;
+            border: 3px solid var(--purple);
+            box-shadow: none;
+        }
+        .cta-btn.secondary:hover {
+            background: rgba(168, 85, 247, 0.15);
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.4);
+        }
+
+        /* DISCORD TEASER */
+        .discord-teaser {
+            max-width: 600px;
+            margin: 4rem auto 0;
+            background: var(--card);
+            border: 2px solid rgba(88, 101, 242, 0.3);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+        }
+        .discord-teaser h3 {
+            font-size: 1.5rem;
+            color: #5865F2;
+            margin-bottom: 1rem;
+        }
+        .discord-teaser p {
+            color: var(--muted);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        .discord-btn {
+            display: inline-block;
+            background: #5865F2;
+            color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        .discord-btn:hover {
+            background: #4752C4;
+            transform: translateY(-2px);
+        }
+
+        /* DISCLAIMER */
+        .disclaimer {
+            margin-top: 3rem;
+            font-size: 0.8rem;
+            color: var(--muted);
+            max-width: 600px;
+            line-height: 1.5;
+        }
+
+        /* MOBILE */
+        @media (max-width: 768px) {
+            .profit-ticker {
+                position: relative;
+                top: 0;
+                right: 0;
+                margin-bottom: 2rem;
+            }
+            .fighter-stats {
+                flex-direction: column;
+                gap: 1rem;
+                bottom: -100px;
+            }
+            .countdown {
+                gap: 1rem;
+            }
+            .countdown-item {
+                padding: 1rem 1.5rem;
+                min-width: 80px;
+            }
+            .countdown-val {
+                font-size: 2.5rem;
+            }
+            .cta-group {
+                flex-direction: column;
+            }
+            .cta-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hero">
+        <!-- PROFIT TICKER -->
+        <div class="profit-ticker">
+            <div class="label">Members Tracking Toward</div>
+            <div class="amount" id="profit-counter">$987,420</div>
+        </div>
+
+        <!-- FIGHTER IMAGE -->
+        <div class="fighter-scene">
+            <img src="topuria-gaethje.jpg" alt="Topuria vs Gaethje UFC 322 White House" class="fighter-image">
+            
+            <!-- OVERLAY STATS -->
+            <div class="fighter-stats">
+                <div class="stat-item">
+                    <div class="stat-value">67%</div>
+                    <div class="stat-label">Win Rate</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">200+</div>
+                    <div class="stat-label">Fights Called</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">13</div>
+                    <div class="stat-label">Picks Ready</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TITLE -->
+        <h1 class="hero-title">
+            UFC <span class="highlight">WHITE HOUSE</span>
+        </h1>
+        <p class="hero-subtitle">
+            Ilia Topuria vs Justin Gaethje. April 19, 2026. Washington, D.C.<br>
+            <strong>Get the full card before our members hit $1M+ in tracked profit.</strong>
+        </p>
+
+        <!-- COUNTDOWN -->
+        <div class="countdown">
+            <div class="countdown-item">
+                <div class="countdown-val" id="days">--</div>
+                <div class="countdown-label">Days</div>
+            </div>
+            <div class="countdown-item">
+                <div class="countdown-val" id="hours">--</div>
+                <div class="countdown-label">Hours</div>
+            </div>
+            <div class="countdown-item">
+                <div class="countdown-val" id="mins">--</div>
+                <div class="countdown-label">Minutes</div>
+            </div>
+        </div>
+
+        <!-- CTA BUTTONS -->
+        <div class="cta-group">
+            <a href="#pricing" class="cta-btn">Get Full Card - $9/mo</a>
+            <a href="#free-pick" class="cta-btn secondary">See Free Pick</a>
+        </div>
+
+        <!-- DISCORD TEASER -->
+        <div class="discord-teaser">
+            <h3>🎯 Join the Intelligence Room</h3>
+            <p>Top members get picks 48 hours early, live fight updates, and private breakdowns in our Discord.</p>
+            <a href="https://discord.gg/YOUR_INVITE" class="discord-btn">Join Discord</a>
+        </div>
+
+        <!-- DISCLAIMER -->
+        <p class="disclaimer">
+            *Profit tracking based on member self-reported wins using RUBAN picks at standard betting unit sizes. Past performance does not guarantee future results. Analysis only, never financial advice. Gamble responsibly.
+        </p>
+    </div>
+
+    <script>
+        // COUNTDOWN TIMER
+        const eventDate = new Date('2026-04-19T00:00:00').getTime();
+        setInterval(() => {
+            const now = new Date().getTime();
+            const gap = eventDate - now;
+            document.getElementById('days').textContent = Math.floor(gap / (1000*60*60*24));
+            document.getElementById('hours').textContent = Math.floor((gap % (1000*60*60*24)) / (1000*60*60));
+            document.getElementById('mins').textContent = Math.floor((gap % (1000*60*60)) / (1000*60));
+        }, 1000);
+
+        // PROFIT COUNTER (ANIMATED)
+        let profit = 987420;
+        setInterval(() => {
+            profit += Math.floor(Math.random() * 500);
+            if (profit >= 1000000) profit = 987420; // Reset before hitting $1M
+            document.getElementById('profit-counter').textContent = 
+                '$' + profit.toLocaleString();
+        }, 5000); // Update every 5 seconds
+    </script>
+
+</body>
+</html>
