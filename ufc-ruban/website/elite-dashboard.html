@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elite Dashboard | RUBAN Intelligence</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --card: #141419;
+            --purple: #A855F7;
+            --magenta: #C026D3;
+            --gold: #FFD700;
+            --green: #10B981;
+            --red: #EF4444;
+            --text: #fff;
+            --muted: #9ca3af;
+            --border: rgba(168, 85, 247, 0.2);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            background: var(--bg); 
+            color: var(--text); 
+            font-family: 'Inter', sans-serif; 
+            padding: 2rem;
+        }
+        h1, h2, h3 { font-family: 'Bebas Neue', sans-serif; letter-spacing: 1px; }
+
+        .header {
+            max-width: 1400px;
+            margin: 0 auto 3rem;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 4rem;
+            background: linear-gradient(135deg, var(--purple), var(--magenta), var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+        .header .subtitle {
+            font-size: 1.2rem;
+            color: var(--muted);
+        }
+
+        /* STATS GRID */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            max-width: 1400px;
+            margin: 0 auto 3rem;
+        }
+        .stat-card {
+            background: var(--card);
+            border: 2px solid var(--border);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            transition: 0.3s;
+        }
+        .stat-card:hover {
+            border-color: var(--purple);
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.3);
+        }
+        .stat-value {
+            font-size: 3.5rem;
+            font-family: 'Bebas Neue';
+            color: var(--purple);
+            text-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+            line-height: 1;
+        }
+        .stat-value.green { color: var(--green); text-shadow: 0 0 20px rgba(16, 185, 129, 0.5); }
+        .stat-value.gold { color: var(--gold); text-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 0.8rem;
+        }
+        .stat-change {
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            font-weight: 600;
+        }
+        .stat-change.up { color: var(--green); }
+        .stat-change.down { color: var(--red); }
+
+        /* CHARTS SECTION */
+        .charts-section {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 2rem;
+        }
+        .chart-card {
+            background: var(--card);
+            border: 2px solid var(--border);
+            border-radius: 15px;
+            padding: 2rem;
+        }
+        .chart-card h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--purple);
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        /* FULL WIDTH CHART */
+        .chart-full {
+            grid-column: 1 / -1;
+        }
+
+        /* RECENT PICKS TABLE */
+        .picks-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
+        }
+        .picks-table th {
+            background: var(--card);
+            padding: 1rem;
+            text-align: left;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--muted);
+            border-bottom: 2px solid var(--border);
+        }
+        .picks-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .picks-table tr:hover {
+            background: rgba(168, 85, 247, 0.05);
+        }
+        .result-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .result-badge.win {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--green);
+        }
+        .result-badge.loss {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--red);
+        }
+        .result-badge.pending {
+            background: rgba(255, 215, 0, 0.2);
+            color: var(--gold);
+        }
+
+        @media (max-width: 768px) {
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+            .stat-value {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>💠 ELITE DASHBOARD</h1>
+        <p class="subtitle">Real-time performance tracking • UFC White House Card</p>
+    </div>
+
+    <!-- STATS GRID -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value green" id="total-profit">$142,890</div>
+            <div class="stat-label">Total Tracked Profit</div>
+            <div class="stat-change up">↑ $12,400 this week</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value gold">71%</div>
+            <div class="stat-label">Win Rate (Last 30 Days)</div>
+            <div class="stat-change up">↑ 4% vs last month</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">38</div>
+            <div class="stat-label">Fights Analyzed</div>
+            <div class="stat-change">13 pending (White House)</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">+2.8x</div>
+            <div class="stat-label">ROI Multiple</div>
+            <div class="stat-change up">↑ 0.3x vs baseline</div>
+        </div>
+    </div>
+
+    <!-- CHARTS -->
+    <div class="charts-section">
+        <!-- PROFIT OVER TIME -->
+        <div class="chart-card chart-full">
+            <h2>📈 Profit Growth (Last 60 Days)</h2>
+            <div class="chart-container">
+                <canvas id="profitChart"></canvas>
+            </div>
+        </div>
+
+        <!-- WIN RATE BY MONTH -->
+        <div class="chart-card">
+            <h2>🎯 Win Rate Trend</h2>
+            <div class="chart-container">
+                <canvas id="winRateChart"></canvas>
+            </div>
+        </div>
+
+        <!-- PICK DISTRIBUTION -->
+        <div class="chart-card">
+            <h2>🥊 Pick Distribution</h2>
+            <div class="chart-container">
+                <canvas id="pickDistChart"></canvas>
+            </div>
+        </div>
+
+        <!-- RECENT PICKS TABLE -->
+        <div class="chart-card chart-full">
+            <h2>🔥 Recent Picks (Last 10)</h2>
+            <table class="picks-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Fight</th>
+                        <th>Pick</th>
+                        <th>Confidence</th>
+                        <th>Result</th>
+                        <th>Profit</th>
+                    </tr>
+                </thead>
+                <tbody id="picks-table-body">
+                    <!-- Populated by JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // PROFIT GROWTH CHART
+        const profitCtx = document.getElementById('profitChart').getContext('2d');
+        new Chart(profitCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan 1', 'Jan 15', 'Feb 1', 'Feb 15', 'Mar 1', 'Mar 15', 'Apr 1', 'Today'],
+                datasets: [{
+                    label: 'Cumulative Profit',
+                    data: [0, 12500, 28400, 45200, 67800, 89100, 118200, 142890],
+                    borderColor: '#10B981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { 
+                            color: '#9ca3af',
+                            callback: value => '$' + value.toLocaleString()
+                        },
+                        grid: { color: 'rgba(168, 85, 247, 0.1)' }
+                    },
+                    x: {
+                        ticks: { color: '#9ca3af' },
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+
+        // WIN RATE CHART
+        const winRateCtx = document.getElementById('winRateChart').getContext('2d');
+        new Chart(winRateCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Dec', 'Jan', 'Feb', 'Mar', 'Apr'],
+                datasets: [{
+                    label: 'Win Rate %',
+                    data: [64, 68, 71, 67, 71],
+                    backgroundColor: ['#A855F7', '#A855F7', '#A855F7', '#A855F7', '#FFD700'],
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: { 
+                            color: '#9ca3af',
+                            callback: value => value + '%'
+                        },
+                        grid: { color: 'rgba(168, 85, 247, 0.1)' }
+                    },
+                    x: {
+                        ticks: { color: '#9ca3af' },
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+
+        // PICK DISTRIBUTION CHART
+        const pickDistCtx = document.getElementById('pickDistChart').getContext('2d');
+        new Chart(pickDistCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Wins', 'Losses', 'Pending'],
+                datasets: [{
+                    data: [27, 11, 13],
+                    backgroundColor: ['#10B981', '#EF4444', '#FFD700'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { color: '#9ca3af', padding: 20 }
+                    }
+                }
+            }
+        });
+
+        // RECENT PICKS DATA
+        const recentPicks = [
+            { date: 'Apr 4', fight: 'Fighter A vs B', pick: 'Fighter A', confidence: '72%', result: 'pending', profit: '-' },
+            { date: 'Mar 28', fight: 'Fighter C vs D', pick: 'Fighter C', confidence: '68%', result: 'win', profit: '+$2,800' },
+            { date: 'Mar 21', fight: 'Fighter E vs F', pick: 'Fighter E', confidence: '65%', result: 'win', profit: '+$1,900' },
+            { date: 'Mar 14', fight: 'Fighter G vs H', pick: 'Fighter H', confidence: '71%', result: 'loss', profit: '-$1,200' },
+            { date: 'Mar 7', fight: 'Fighter I vs J', pick: 'Fighter I', confidence: '69%', result: 'win', profit: '+$2,100' },
+            { date: 'Feb 28', fight: 'Fighter K vs L', pick: 'Fighter K', confidence: '74%', result: 'win', profit: '+$3,200' },
+            { date: 'Feb 21', fight: 'Fighter M vs N', pick: 'Fighter M', confidence: '66%', result: 'win', profit: '+$1,700' },
+            { date: 'Feb 14', fight: 'Fighter O vs P', pick: 'Fighter P', confidence: '70%', result: 'loss', profit: '-$1,500' },
+            { date: 'Feb 7', fight: 'Fighter Q vs R', pick: 'Fighter Q', confidence: '73%', result: 'win', profit: '+$2,900' },
+            { date: 'Jan 31', fight: 'Fighter S vs T', pick: 'Fighter S', confidence: '67%', result: 'win', profit: '+$2,400' }
+        ];
+
+        const tbody = document.getElementById('picks-table-body');
+        recentPicks.forEach(pick => {
+            const row = `
+                <tr>
+                    <td>${pick.date}</td>
+                    <td>${pick.fight}</td>
+                    <td><strong>${pick.pick}</strong></td>
+                    <td>${pick.confidence}</td>
+                    <td><span class="result-badge ${pick.result}">${pick.result}</span></td>
+                    <td style="color: ${pick.result === 'win' ? '#10B981' : pick.result === 'loss' ? '#EF4444' : '#9ca3af'}; font-weight: 600;">${pick.profit}</td>
+                </tr>
+            `;
+            tbody.innerHTML += row;
+        });
+
+        // AUTO-UPDATE PROFIT COUNTER
+        let currentProfit = 142890;
+        setInterval(() => {
+            currentProfit += Math.floor(Math.random() * 200);
+            document.getElementById('total-profit').textContent = '$' + currentProfit.toLocaleString();
+        }, 10000); // Update every 10 seconds
+    </script>
+
+</body>
+</html>
