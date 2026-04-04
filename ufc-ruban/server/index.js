@@ -1,4 +1,4 @@
-// UFC Ruban — Express Server
+﻿// UFC Ruban — Express Server
 // Auth, Stripe webhooks, predictions API, subscriber gating
 // node server/index.js
 
@@ -8,7 +8,7 @@ const path = require('path');
 const fs = require('fs');
 require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 
-const { handleStripeWebhook, createCheckoutSession } = require('./stripe');
+const { handleStripeWebhook, createCheckoutSession, createCustomerPortalSession } = require('./stripe');
 const { getSubscriber, isProSubscriber } = require('./auth');
 const db = require('./db');
 
@@ -151,6 +151,19 @@ app.get('/api/predictions/full', (req, res) => {
 });
 
 // ─────────────────────────────────────────────
+// Stripe Customer Portal — subscribers log in here
+app.post('/api/auth/portal', async (req, res) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ error: 'Email required' });
+  try {
+    const session = await createCustomerPortalSession(email);
+    res.json({ url: session.url });
+  } catch (err) {
+    console.error('Portal error:', err.message);
+    res.status(404).json({ error: err.message });
+  }
+});
+
 // HISTORY API (public — shows recorded results)
 // ─────────────────────────────────────────────
 app.get('/api/history', (req, res) => {
@@ -206,3 +219,4 @@ app.listen(PORT, () => {
 });
 
 module.exports = app;
+

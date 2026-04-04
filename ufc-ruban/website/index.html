@@ -708,9 +708,9 @@ footer {
 
 <!-- SIGNAL STACK -->
 <section class="signal-section" id="signal">
-  <div class="eyebrow">Methodology</div>
+  <div class="eyebrow">Institutional-Grade Methodology</div>
   <h2 class="section-h">THE SIGNAL STACK</h2>
-  <p class="section-p">Four independent layers. Blended with precision. Hard capped at 76% — because no one wins every fight.</p>
+  <p class="section-p">Four independent data layers — quantitative, market, ELO, and AI — blended with precision weighting. Hard capped at 76%. Because disciplined process beats gut feel every single time.</p>
 
   <div class="signal-grid">
     <div class="signal-cell">
@@ -890,7 +890,7 @@ footer {
   <div class="modal">
     <button class="modal-x" onclick="closeModal('login-modal')">×</button>
     <div class="modal-title">LOG IN</div>
-    <div class="modal-sub">Enter the email you subscribed with to access your dashboard.</div>
+    <div class="modal-sub">Enter your subscriber email — we'll open your Stripe portal instantly. No password needed.</div>
     <input type="email" class="inp" id="login-email" placeholder="your@email.com">
     <button class="btn-block" id="login-btn" onclick="handleLogin()">Access Dashboard →</button>
     <div class="msg" id="login-msg"></div>
@@ -948,18 +948,18 @@ async function handleSubscribe() {
 // ── LOGIN ───────────────────────────────────────────────
 async function handleLogin() {
   const email = document.getElementById('login-email').value.trim();
-  if (!email) return;
+  if (!email || !email.includes('@')) { showMsg('login-msg', 'err', 'Enter a valid email.'); return; }
   const btn = document.getElementById('login-btn');
-  btn.textContent = 'Signing in...'; btn.disabled = true;
+  btn.textContent = 'Opening portal...'; btn.disabled = true;
   try {
-    const r = await fetch('/api/auth/login', {
+    const r = await fetch('/api/auth/portal', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email })
     });
     const d = await r.json();
-    if (d.success) { window.location.href = '/dashboard'; }
-    else { showMsg('login-msg', 'err', d.error || 'Login failed. Check your email.'); btn.textContent = 'Access Dashboard →'; btn.disabled = false; }
+    if (d.url) { window.location.href = d.url; }
+    else { showMsg('login-msg', 'err', d.error || 'No subscription found. Subscribe first.'); btn.textContent = 'Access Dashboard →'; btn.disabled = false; }
   } catch { showMsg('login-msg', 'err', 'Network error. Try again.'); btn.textContent = 'Access Dashboard →'; btn.disabled = false; }
 }
 
@@ -1114,5 +1114,6 @@ setInterval(loadTeaser, 5 * 60 * 1000);
 </script>
 </body>
 </html>
+
 
 
