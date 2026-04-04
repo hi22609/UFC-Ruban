@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -445,6 +445,37 @@ nav {
   border: 1px solid var(--border-light); color: var(--muted);
 }
 .btn-block.outline:hover { border-color: var(--muted); color: var(--text); }
+.pricing-grid-3 {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px; max-width: 1100px; margin: 0 auto 40px;
+}
+.price-tagline {
+  font-size: 13px; color: var(--muted); margin-bottom: 28px;
+  padding-bottom: 28px; border-bottom: 1px solid var(--border);
+  line-height: 1.5; font-style: italic;
+}
+.price-card.elite {
+  border-color: var(--gold);
+  background: linear-gradient(145deg, rgba(201,168,76,0.04) 0%, var(--bg2) 50%);
+  box-shadow: 0 0 60px rgba(201,168,76,0.06);
+}
+.price-badge-gold {
+  position: absolute; top: -13px; left: 40px;
+  background: var(--gold); color: #000;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase;
+  padding: 4px 14px; border-radius: 3px;
+}
+.btn-gold {
+  background: var(--gold) !important; color: #000 !important;
+}
+.btn-gold:hover { background: #b8913e !important; }
+.pricing-note {
+  display: flex; gap: 16px; justify-content: center; align-items: center;
+  font-family: "DM Mono", monospace; font-size: 11px; color: var(--muted);
+  letter-spacing: 0.5px; flex-wrap: wrap;
+}
+@media (max-width: 1000px) { .pricing-grid-3 { grid-template-columns: 1fr; } }
 
 /* DISCORD CTA */
 .discord-section {
@@ -735,43 +766,78 @@ footer {
 <!-- PRICING -->
 <section class="pricing-section" id="pricing">
   <div class="eyebrow">Plans</div>
-  <h2 class="section-h">SIMPLE PRICING</h2>
-  <p class="section-p">Free tier proves we're for real. Pro tier gives you everything.</p>
+  <h2 class="section-h">WHAT IS YOUR EDGE WORTH?</h2>
+  <p class="section-p">One good parlay pays for months. One bad bet without data costs more than a year.</p>
 
-  <div class="pricing-grid">
+  <div class="pricing-grid-3">
+
+    <!-- FREE -->
     <div class="price-card">
-      <div class="price-tier">Free</div>
+      <div class="price-tier">Scout</div>
       <div class="price-num">$0</div>
-      <div class="price-period">Forever free · No card needed</div>
+      <div class="price-period">Free forever · No card</div>
+      <div class="price-tagline">See that we're legit before you commit.</div>
       <ul class="feature-list">
         <li><span class="ck">✓</span><span class="on">Main event pick + winner</span></li>
-        <li><span class="ck">✓</span><span class="on">Tier label (Lock / Lean / Toss-Up)</span></li>
-        <li><span class="xx">✗</span> Confidence percentage</li>
-        <li><span class="xx">✗</span> Method breakdown</li>
+        <li><span class="ck">✓</span><span class="on">Lock / Lean / Toss-Up label</span></li>
+        <li><span class="ck">✓</span><span class="on">Public accuracy record</span></li>
+        <li><span class="ck">✓</span><span class="on">Discord community access</span></li>
+        <li><span class="xx">✗</span> Confidence scores</li>
         <li><span class="xx">✗</span> Full card predictions</li>
-        <li><span class="xx">✗</span> Key Factors + analysis</li>
+        <li><span class="xx">✗</span> Analysis + Key Factors</li>
         <li><span class="xx">✗</span> Parlay builder</li>
-        <li><span class="xx">✗</span> Discord access</li>
       </ul>
-      <button class="btn-block outline" onclick="openLoginModal()">Log In Free</button>
+      <button class="btn-block outline" onclick="openLoginModal()">Start Free →</button>
     </div>
+
+    <!-- PRO -->
     <div class="price-card pro">
-      <div class="price-badge">Most Popular</div>
-      <div class="price-tier">Pro</div>
-      <div class="price-num">$20</div>
-      <div class="price-period">/month · or $79.99/year — save 33%</div>
+      <div class="price-badge">Best Value</div>
+      <div class="price-tier">Sharp</div>
+      <div class="price-num">$15</div>
+      <div class="price-period">/month · $129/year — save 28%</div>
+      <div class="price-tagline">Everything you need to make smarter picks.</div>
       <ul class="feature-list">
-        <li><span class="ck">✓</span><span class="on">Everything in Free</span></li>
-        <li><span class="ck">✓</span><span class="on">Full card predictions</span></li>
-        <li><span class="ck">✓</span><span class="on">Confidence percentages</span></li>
-        <li><span class="ck">✓</span><span class="on">Method breakdown (KO/Sub/Dec %)</span></li>
+        <li><span class="ck">✓</span><span class="on">Full card predictions every event</span></li>
+        <li><span class="ck">✓</span><span class="on">Confidence % on every pick</span></li>
+        <li><span class="ck">✓</span><span class="on">Method breakdown (KO / Sub / Dec)</span></li>
         <li><span class="ck">✓</span><span class="on">Stat-backed Key Factors</span></li>
-        <li><span class="ck">✓</span><span class="on">Sharp analysis write-up</span></li>
+        <li><span class="ck">✓</span><span class="on">Sharp ML + market analysis</span></li>
         <li><span class="ck">✓</span><span class="on">Parlay builder (≥60% picks)</span></li>
-        <li><span class="ck">✓</span><span class="on">Private Discord channel</span></li>
+        <li><span class="ck">✓</span><span class="on">Private Discord picks channel</span></li>
+        <li><span class="ck">✓</span><span class="on">Fight week early access</span></li>
       </ul>
-      <button class="btn-block" onclick="openSubscribeModal()">Get Full Access →</button>
+      <button class="btn-block" onclick="openSubscribeModal()">Get Sharp Access →</button>
     </div>
+
+    <!-- ELITE -->
+    <div class="price-card elite">
+      <div class="price-badge-gold">Elite</div>
+      <div class="price-tier" style="color:var(--gold)">Capper</div>
+      <div class="price-num">$29</div>
+      <div class="price-period">/month · $229/year — save 34%</div>
+      <div class="price-tagline">For serious cappers who treat this like a business.</div>
+      <ul class="feature-list">
+        <li><span class="ck">✓</span><span class="on">Everything in Sharp</span></li>
+        <li><span class="ck">✓</span><span class="on">Raw model output + probabilities</span></li>
+        <li><span class="ck">✓</span><span class="on">ELO + ML data exports</span></li>
+        <li><span class="ck">✓</span><span class="on">Injury / camp intel notes</span></li>
+        <li><span class="ck">✓</span><span class="on">Line movement alerts</span></li>
+        <li><span class="ck">✓</span><span class="on">Private Capper Discord voice</span></li>
+        <li><span class="ck">✓</span><span class="on">Direct DM access to RUBAN</span></li>
+        <li><span class="ck">✓</span><span class="on">Monthly 1-on-1 card review</span></li>
+      </ul>
+      <button class="btn-block btn-gold" onclick="openSubscribeModal()">Go Elite →</button>
+    </div>
+
+  </div>
+
+  <div class="pricing-note">
+    <span>🔒 Stripe-secured payments</span>
+    <span>·</span>
+    <span>Cancel anytime, no questions</span>
+    <span>·</span>
+    <span>Instant access after payment</span>
   </div>
 </section>
 
@@ -1048,3 +1114,5 @@ setInterval(loadTeaser, 5 * 60 * 1000);
 </script>
 </body>
 </html>
+
+
