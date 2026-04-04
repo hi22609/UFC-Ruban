@@ -10,13 +10,12 @@ WORKDIR /app
 
 COPY . .
 
-RUN npm install --prefix ufc-ruban
+RUN npm install
 
-RUN pip3 install -r ufc-ruban/requirements.txt --break-system-packages
+RUN pip3 install -r requirements.txt --break-system-packages
 
-# Create required directories
-RUN mkdir -p ufc-ruban/database ufc-ruban/website
+RUN mkdir -p database website
 
 EXPOSE 8080
 
-CMD ["node", "ufc-ruban/server/index.js"]
+CMD ["node", "server/index.js"]
