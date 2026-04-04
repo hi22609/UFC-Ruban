@@ -2,13 +2,10 @@
 nixPkgs = ["nodejs_20", "python311"]
 
 [phases.install]
-cmds = [
-  "npm install",
-  "npm install -g concurrently",
-  "curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py",
-  "python3.11 get-pip.py",
-  "python3.11 -m pip install -r requirements.txt"
-]
+cmds = ["npm install"]
+
+[phases.build]
+cmds = ["mkdir -p database website"]
 
 [start]
-cmd = "concurrently \"node server/index.js\" \"node scheduler.js\""
+cmd = "node server/index.js"
