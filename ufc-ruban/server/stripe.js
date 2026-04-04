@@ -1,6 +1,7 @@
-// UFC Ruban — Stripe Handler
+﻿// UFC Ruban — Stripe Handler
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const db = require('./db');
+const referral = require('./referral');
 
 const PRICES = {
   sharp_monthly:  process.env.STRIPE_SHARP_MONTHLY_PRICE_ID  || process.env.STRIPE_PRO_PRICE_ID,
@@ -15,7 +16,7 @@ const PRICES = {
 const SITE_URL = process.env.SITE_URL || 'http://localhost:3000';
 
 // ── CHECKOUT SESSION ─────────────────────────────────────
-async function createCheckoutSession(email, plan = 'monthly', tier = 'sharp') {
+async function createCheckoutSession(email, plan = 'monthly', tier = 'sharp', refCode = null) {
   const key = `${tier}_${plan}`;
   const priceId = PRICES[key] || PRICES[plan] || PRICES.monthly;
   if (!priceId) throw new Error('Stripe price ID not configured. Check Railway env vars.');
@@ -27,9 +28,9 @@ async function createCheckoutSession(email, plan = 'monthly', tier = 'sharp') {
     line_items: [{ price: priceId, quantity: 1 }],
     success_url: `${SITE_URL}/dashboard?subscribed=true`,
     cancel_url:  `${SITE_URL}/?cancelled=true`,
-    metadata: { email, tier, plan },
+    metadata: { email, tier, plan, ref_code: refCode || '' },
     subscription_data: {
-      metadata: { email, tier }
+      metadata: { email, tier, ref_code: refCode || '' }
     },
     allow_promotion_codes: true,
   });
@@ -117,3 +118,4 @@ async function handleStripeWebhook(req, res) {
 }
 
 module.exports = { createCheckoutSession, createCustomerPortalSession, handleStripeWebhook };
+

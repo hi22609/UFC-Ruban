@@ -937,7 +937,7 @@ async function handleSubscribe() {
     const r = await fetch('/api/subscribe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, plan })
+      body: JSON.stringify({ email, plan, tier: 'sharp', ref_code: refCode })
     });
     const d = await r.json();
     if (d.url) { window.location.href = d.url; }
@@ -970,6 +970,9 @@ function showMsg(id, type, text) {
 
 // ── URL PARAMS ──────────────────────────────────────────
 const up = new URLSearchParams(window.location.search);
+// Track referral click
+const refCode = up.get('ref') || localStorage.getItem('ruban_ref') || '';
+if (up.get('ref')) { localStorage.setItem('ruban_ref', up.get('ref')); fetch('/api/referral/click/' + up.get('ref')); }
 if (up.get('upgrade') === 'true') openSubscribeModal();
 if (up.get('subscribed') === 'true') window.location.href = '/dashboard';
 
@@ -1114,6 +1117,7 @@ setInterval(loadTeaser, 5 * 60 * 1000);
 </script>
 </body>
 </html>
+
 
 
 

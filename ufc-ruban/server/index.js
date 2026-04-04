@@ -9,6 +9,7 @@ const fs = require('fs');
 require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 
 const { handleStripeWebhook, createCheckoutSession, createCustomerPortalSession } = require('./stripe');
+const referral = require('./referral');
 const { getSubscriber, isProSubscriber } = require('./auth');
 const db = require('./db');
 
@@ -86,11 +87,11 @@ app.post('/api/auth/logout', (req, res) => {
 // ─────────────────────────────────────────────
 
 app.post('/api/subscribe', async (req, res) => {
-  const { email, plan } = req.body; // plan: 'monthly' or 'yearly'
+  const { email, plan, tier, ref_code } = req.body;
   if (!email) return res.status(400).json({ error: 'Email required' });
 
   try {
-    const session = await createCheckoutSession(email, plan);
+    const session = await createCheckoutSession(email, plan || 'monthly', tier || 'sharp', ref_code || null);
     res.json({ url: session.url });
   } catch (err) {
     console.error('Stripe error:', err.message);
@@ -188,6 +189,43 @@ app.get('/api/stats/accuracy', (req, res) => {
 });
 
 // ─────────────────────────────────────────────
+
+// ── REFERRAL ROUTES ─────────────────────────────────────
+
+// Track referral click — called when someone visits /?ref=CODE
+app.get('/api/referral/click/:code', (req, res) => {
+  const { code } = req.params;
+  if (code) referral.trackClick(code);
+  res.json({ ok: true });
+});
+
+// Get affiliate stats (affiliate portal)
+app.get('/api/referral/stats/:code', (req, res) => {
+  const stats = referral.getAffiliateStats(req.params.code);
+  if (!stats) return res.status(404).json({ error: 'Affiliate not found' });
+  res.json(stats);
+});
+
+// Create affiliate (admin only — protect this)
+app.post('/api/referral/create', (req, res) => {
+  const adminKey = req.headers['x-admin-key'];
+  if (adminKey !== process.env.ADMIN_SECRET) return res.status(401).json({ error: 'Unauthorized' });
+  const { name, email, paypal_email } = req.body;
+  if (!name || !email) return res.status(400).json({ error: 'name and email required' });
+  try {
+    const code = referral.createAffiliate(name, email, paypal_email);
+    res.json({ code, link: `${process.env.SITE_URL}/?ref=${code}` });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// List all affiliates (admin)
+app.get('/api/referral/list', (req, res) => {
+  const adminKey = req.headers['x-admin-key'];
+  if (adminKey !== process.env.ADMIN_SECRET) return res.status(401).json({ error: 'Unauthorized' });
+  res.json(referral.listAffiliates());
+});
 // SERVE PAGES
 // ─────────────────────────────────────────────
 app.get('/', (req, res) => {
@@ -219,4 +257,6 @@ app.listen(PORT, () => {
 });
 
 module.exports = app;
+
+
 
