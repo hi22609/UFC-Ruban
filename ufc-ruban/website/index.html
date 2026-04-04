@@ -55,8 +55,19 @@
             text-align: center;
             padding: 3rem 2rem;
             background: radial-gradient(ellipse at center, rgba(168, 85, 247, 0.1) 0%, var(--bg) 60%);
+            position: relative;
         }
-        .hero-content { max-width: 900px; }
+        .hero-content { max-width: 900px; position: relative; z-index: 10; }
+        .fighter-image {
+            max-width: 700px;
+            width: 100%;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(168, 85, 247, 0.3);
+            margin: 2rem auto;
+            display: block;
+            border: 2px solid rgba(168, 85, 247, 0.3);
+        }
         .badge {
             display: inline-block;
             background: rgba(16, 185, 129, 0.15);
@@ -284,6 +295,7 @@
                 UFC <span class="highlight">WHITE HOUSE</span><br>
                 FULL CARD ANALYSIS
             </h1>
+            <img src="topuria-gaethje.jpg" alt="Topuria vs Gaethje UFC 322" class="fighter-image">
             <p>We're calling all 13 fights. Ilia vs Gaethje. Every undercard. Every angle. The sharpest UFC intelligence on the internet.</p>
             
             <div class="countdown">
