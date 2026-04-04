@@ -11,10 +11,10 @@ const CONFIG = {
   GUILD_ID: process.env.DISCORD_GUILD_ID,
   PREMIUM_ROLE_NAME: 'Premium Member',
   CHANNELS: {
-    welcome: 'welcome',
-    freePicks: 'free-picks',
-    premiumIntel: 'premium-intel',
-    general: 'general'
+    welcome: '👋・welcome',
+    freePicks: '🆓・free-picks',
+    premiumIntel: '💎・premium-intel',
+    general: '💬・general'
   },
   PAYMENT_URL: process.env.PAYMENT_URL || 'https://ruban.com/pricing',
   BRAND_COLOR: 0x4F46E5, // Indigo
@@ -65,26 +65,48 @@ async function getPremiumRole(guild) {
 
 // Get or create channel
 async function getOrCreateChannel(guild, channelName, isPrivate = false) {
+  // Try to find channel by name (exact match)
   let channel = guild.channels.cache.find(c => c.name === channelName);
   
   if (!channel) {
     const premiumRole = await getPremiumRole(guild);
     
-    channel = await guild.channels.create({
-      name: channelName,
-      type: 0, // Text channel
-      permissionOverwrites: isPrivate ? [
-        {
-          id: guild.id,
-          deny: [PermissionFlagsBits.ViewChannel]
-        },
-        {
-          id: premiumRole.id,
-          allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages]
-        }
-      ] : []
-    });
-    console.log(`✅ Created channel: #${channelName}`);
+    try {
+      channel = await guild.channels.create({
+        name: channelName,
+        type: 0, // Text channel
+        permissionOverwrites: isPrivate ? [
+          {
+            id: guild.id,
+            deny: [PermissionFlagsBits.ViewChannel]
+          },
+          {
+            id: premiumRole.id,
+            allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages]
+          }
+        ] : []
+      });
+      console.log(`✅ Created channel: #${channelName}`);
+    } catch (error) {
+      console.error(`❌ Failed to create channel ${channelName}:`, error);
+      // If emoji name fails, try without emoji
+      const fallbackName = channelName.replace(/[^a-z0-9-]/g, '');
+      channel = await guild.channels.create({
+        name: fallbackName,
+        type: 0,
+        permissionOverwrites: isPrivate ? [
+          {
+            id: guild.id,
+            deny: [PermissionFlagsBits.ViewChannel]
+          },
+          {
+            id: premiumRole.id,
+            allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages]
+          }
+        ] : []
+      });
+      console.log(`✅ Created channel with fallback name: #${fallbackName}`);
+    }
   }
   
   return channel;
@@ -96,12 +118,16 @@ async function sendWelcomeMessage(member) {
   
   const embed = new EmbedBuilder()
     .setColor(CONFIG.BRAND_COLOR)
-    .setTitle('🥊 Welcome to UFC RUBAN')
-    .setDescription(`Welcome ${member}, the premium UFC intelligence network.`)
+    .setTitle('🚨 Welcome to RUBAN')
+    .setDescription('The premium UFC intelligence community.')
     .addFields(
-      { name: '🆓 Free Access', value: 'Check #free-picks for daily predictions' },
-      { name: '💎 Premium Access', value: `Unlock full card analysis, live updates, and insider intel\n[Get Premium →](${CONFIG.PAYMENT_URL})` },
-      { name: '📊 Track Record', value: '67% win rate • 8+ data lenses • 24/7 analysis' }
+      { name: '📊 What We Deliver', value: 'Data-driven fight analysis, card breakdowns, and structured picks before every event.' },
+      { name: '🎯 No hype. No guarantees. Just signal.', value: '\u200B' },
+      { name: '🆓 Free Members', value: 'Access to /card main event teaser, /record, and #fight-chat' },
+      { name: '💎 Pro — $9/mo', value: 'Full card breakdowns, all picks, props, and parlay of the night' },
+      { name: '💠 Elite — $9/mo', value: 'Everything in Pro + live fight updates + #elite-room access' },
+      { name: '📖 How to Subscribe', value: `Head to #subscribe to unlock Pro or Elite` },
+      { name: '⚖️ Disclaimer', value: 'RUBAN | UFC Intelligence • Analysis only, never a guarantee' }
     )
     .setFooter({ text: 'Black Label Intelligence' })
     .setTimestamp();
