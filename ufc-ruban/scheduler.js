@@ -1,144 +1,173 @@
-// UFC Ruban - Scheduler + Discord Bot
-// discord.js v13 — runs alongside server/index.js
-// Handles: fight card detection, AI predictions, Discord posting, auto-responses
+// UFC Ruban — Scheduler + Discord Bot
+// discord.js v13 | Runs alongside server/index.js
 
 const { Client, Intents, MessageEmbed } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
 
-const POLL_INTERVAL_MS = 6 * 60 * 60 * 1000; // 6 hours
-const PREDICTIONS_PATH = path.join(__dirname, 'website', 'predictions.json');
+const POLL_INTERVAL_MS  = 6 * 60 * 60 * 1000;
+const SCHEDULE_CHECK_MS = 60 * 1000;
+const PREDICTIONS_PATH  = path.join(__dirname, 'website', 'predictions.json');
 const POSTED_EVENTS_PATH = path.join(__dirname, 'database', 'posted_events.json');
 
-// Channel IDs
+const COLORS = { DARK: 0x1a1a2e, RED: 0xe74c3c, GOLD: 0xc9a84c };
+const FOOTER = { text: 'RUBAN | UFC Intelligence' };
+
 const FREE_CHANNEL  = process.env.CHANNEL_FREE_PICKS  || process.env.PREDICTION_CHANNEL_ID;
 const PRO_CHANNEL   = process.env.CHANNEL_PRO_PICKS;
 const ANN_CHANNEL   = process.env.CHANNEL_ANNOUNCEMENTS;
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN || process.env.DISCORD_BOT_TOKEN;
+const SITE_URL      = process.env.SITE_URL || 'https://ruban.gg';
 
 if (!DISCORD_TOKEN) {
-  console.error('[Bot] FATAL: No Discord token. Set DISCORD_TOKEN in Railway vars.');
+  console.error('[Bot] FATAL: No Discord token. Set DISCORD_TOKEN in env.');
   process.exit(1);
 }
 
-// ── DISCORD CLIENT ────────────────────────────────────────
+// ── CLIENT ────────────────────────────────────────────────
 const client = new Client({
-  intents: [
-    Intents.FLAGS.GUILDS,
-    Intents.FLAGS.GUILD_MESSAGES,
-  ]
+  intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
 });
 
-// ── AUTO-RESPONSES ────────────────────────────────────────
+// ── AUTO-RESPONSES (mention-only) ─────────────────────────
 const AUTO_RESPONSES = {
-  'subscribe': `💳 **Subscribe to UFC RUBAN Pro**
-
-Get full fight card predictions, confidence scores, parlay builders, and exclusive analysis.
-
-✅ **$9.99/month** or **$79.99/year** (save 17%)
-🔗 Subscribe at: ${process.env.SITE_URL || 'https://superb-unity-production-531a.up.railway.app'}
-
-Free picks posted here before every event!`,
-  
-  'how do i': `💳 **How to Subscribe**
-
-1. Visit ${process.env.SITE_URL || 'https://superb-unity-production-531a.up.railway.app'}
-2. Choose your plan ($9.99/mo or $79.99/yr)
-3. Complete payment via Stripe
-4. Get instant access to all Pro predictions!
-
-Free picks posted here — no subscription needed.`,
-  
-  'free pick': function() {
+  'subscribe': () => ({
+    title: 'Subscribe to RUBAN Pro',
+    description: `Full card predictions, confidence scores, and parlay builders.\n\n**$9.99/month** or **$79.99/year** (save 17%)\n\n[Subscribe →](${SITE_URL})`,
+    color: COLORS.RED,
+  }),
+  'free pick': () => {
     const data = loadPredictions();
-    if (!data || !data.predictions || data.predictions.length === 0) {
-      return `🆓 **Free Picks**\n\nWe post the **main event prediction** here before every UFC card — no subscription needed.\n\nWant the full card with confidence scores, method predictions, and parlay builders? Upgrade to Pro at ${process.env.SITE_URL || 'https://superb-unity-production-531a.up.railway.app'}`;
-    }
-    const mainEvent = data.predictions.find(p => p.is_main_event) || data.predictions[0];
-    const tierEmoji = { LOCK: '🔒', LEAN: '⚡', 'TOSS-UP': '🎲' }[mainEvent.tier] || '🥊';
-    return `🆓 **Today's Free Pick** (${data.event_name})\n\n${tierEmoji} **${mainEvent.fighter1} vs ${mainEvent.fighter2}**\nPick: **${mainEvent.winner}** (${mainEvent.tier})\nMethod: ${mainEvent.method || 'Decision'}\n\nWant full card predictions? Subscribe at ${process.env.SITE_URL || 'https://superb-unity-production-531a.up.railway.app'}`;
+    const main = data?.predictions?.find(p => p.is_main_event) || data?.predictions?.[0];
+    if (!main) return {
+      title: 'Free Pick',
+      description: `Main event prediction posted here before every card — no subscription needed.\n\n[Subscribe for full card →](${SITE_URL})`,
+      color: COLORS.DARK,
+    };
+    const e = { LOCK: '🔒', LEAN: '⚡', 'TOSS-UP': '🎲' };
+    return {
+      title: `Today's Free Pick — ${data.event_name}`,
+      description: `${e[main.tier] || '🥊'} **${main.fighter1} vs ${main.fighter2}**\n\n**Pick:** ${main.winner}\n**Tier:** ${main.tier}\n**Method:** ${main.method || 'Decision'}\n\n[Full card →](${SITE_URL})`,
+      color: COLORS.RED,
+    };
   },
-  
-  'what is ruban': `🥊 **What is RUBAN?**
-
-UFC RUBAN is the most accurate, data-driven UFC prediction platform available.
-
-🧠 **How it works:**
-• 50% Machine Learning (XGBoost ensemble, 32 features)
-• 35% Market Consensus (sharp money from BestFightOdds)
-• 15% FightMatrix ELO ratings
-• +AI Review (Claude qualitative analysis)
-
-🔒 **Honest confidence caps** — max 76%, no BS hype picks
-📈 **Track record posted after every event**
-
-Built by fight fans, for fight fans. Subscribe at ${process.env.SITE_URL || 'https://superb-unity-production-531a.up.railway.app'}`,
-  
-  'about ruban': `🥊 **About RUBAN**
-
-The first truly transparent UFC prediction platform. We combine machine learning, sharp betting lines, and ELO ratings to generate honest, data-backed predictions.
-
-✅ Track record published after every event
-✅ Confidence capped at 76% (no fake hype)
-✅ Method predictions + parlay builders
-
-Free main event picks posted here. Full card access at ${process.env.SITE_URL || 'https://superb-unity-production-531a.up.railway.app'}`,
-  
-  'invite': `👋 **Invite Friends to RUBAN**
-
-Share this Discord server or send them directly to ${process.env.SITE_URL || 'https://superb-unity-production-531a.up.railway.app'} to subscribe and get predictions delivered here + on the website dashboard.`,
-  
-  'accuracy': `🎯 **RUBAN Accuracy**
-
-We track and publish our results after every event — transparency is core to our credibility.
-
-View full history at: ${process.env.SITE_URL || 'https://superb-unity-production-531a.up.railway.app'}/history
-
-Our tier system:
-🔒 **LOCK** (≥65%): High confidence
-⚡ **LEAN** (54-64%): Solid edge
-🎲 **TOSS-UP** (<54%): Coin flip, no strong lean
-
-We cap max confidence at 76% — MMA is unpredictable and we respect that.`
+  'what is ruban': () => ({
+    title: 'What is RUBAN?',
+    description: `Data-driven UFC prediction platform.\n\n**Signal stack:**\n• 50% ML (XGBoost, 32 features)\n• 35% Sharp money consensus\n• 15% FightMatrix ELO\n• Claude AI review\n\nConfidence capped at 76%. Track record published every event.\n\n[Learn more →](${SITE_URL})`,
+    color: COLORS.DARK,
+  }),
+  'accuracy': () => ({
+    title: 'RUBAN Accuracy',
+    description: `🔒 **LOCK** (≥65%) — High confidence\n⚡ **LEAN** (54–64%) — Solid edge\n🎲 **TOSS-UP** (<54%) — No strong lean\n\nMax confidence: 76%. Track record published after every event.\n\n[Full history →](${SITE_URL}/history)`,
+    color: COLORS.GOLD,
+  }),
 };
 
-function matchesKeyword(content, keyword) {
-  const lower = content.toLowerCase();
-  const kw = keyword.toLowerCase();
-  // Match whole phrases or question patterns
-  return lower.includes(kw) || 
-         lower.includes(kw.replace(/ /g, '')) || 
-         (kw.split(' ').length > 1 && kw.split(' ').every(word => lower.includes(word)));
+function buildAutoEmbed({ title, description, color }) {
+  return new MessageEmbed()
+    .setColor(color)
+    .setTitle(title)
+    .setDescription(description)
+    .setFooter(FOOTER)
+    .setTimestamp();
 }
 
+// ── MESSAGE HANDLER — mentions only ──────────────────────
 client.on('messageCreate', async (message) => {
-  // Ignore bot messages and DMs
   if (message.author.bot || !message.guild) return;
-  
-  const content = message.content.toLowerCase().trim();
-  const isMentioned = message.mentions.has(client.user);
-  const isPicksChannel = message.channel.name?.toLowerCase().includes('pick');
-  
-  // Only auto-reply if bot is mentioned OR message is in a picks channel
-  if (!isMentioned && !isPicksChannel) return;
-  
-  // Check for auto-response triggers
-  for (const [trigger, response] of Object.entries(AUTO_RESPONSES)) {
-    if (matchesKeyword(content, trigger)) {
+  if (!message.mentions.has(client.user)) return;
+
+  const content = message.content.toLowerCase();
+
+  for (const [trigger, buildData] of Object.entries(AUTO_RESPONSES)) {
+    if (content.includes(trigger)) {
       try {
-        const reply = typeof response === 'function' ? response() : response;
-        await message.reply(reply);
-        console.log(`[Bot] Auto-replied to "${trigger}" in ${message.channel.name}`);
+        const data = typeof buildData === 'function' ? buildData() : buildData;
+        await message.reply({ embeds: [buildAutoEmbed(data)] });
       } catch (err) {
-        console.error('[Bot] Auto-reply error:', err.message);
+        console.error('[Bot] Reply error:', err.message);
       }
-      break; // Only reply once per message
+      return;
     }
+  }
+
+  // Default: show available commands
+  try {
+    await message.reply({
+      embeds: [new MessageEmbed()
+        .setColor(COLORS.DARK)
+        .setTitle('RUBAN UFC Intelligence')
+        .setDescription('Use `/picks` for today\'s free pick or `/subscribe` for plan info.\nOr ask me: `subscribe` · `free pick` · `accuracy` · `what is ruban`')
+        .setFooter(FOOTER)
+        .setTimestamp()
+      ],
+    });
+  } catch (err) {
+    console.error('[Bot] Default reply error:', err.message);
   }
 });
 
-// ── POSTED EVENTS TRACKING ────────────────────────────────
+// ── SLASH COMMANDS ────────────────────────────────────────
+client.on('interactionCreate', async (interaction) => {
+  if (!interaction.isCommand()) return;
+
+  try {
+    if (interaction.commandName === 'picks') {
+      const data = loadPredictions();
+      const main = data?.predictions?.find(p => p.is_main_event) || data?.predictions?.[0];
+
+      if (!main) {
+        return interaction.reply({
+          embeds: [new MessageEmbed()
+            .setColor(COLORS.DARK)
+            .setTitle('No Pick Available')
+            .setDescription('No upcoming event predictions yet. Check back closer to fight night.')
+            .setFooter(FOOTER)
+            .setTimestamp()
+          ],
+          ephemeral: true,
+        });
+      }
+
+      const tierEmoji = { LOCK: '🔒', LEAN: '⚡', 'TOSS-UP': '🎲' }[main.tier] || '🥊';
+      return interaction.reply({
+        embeds: [new MessageEmbed()
+          .setColor(COLORS.RED)
+          .setTitle(`Free Pick — ${data.event_name}`)
+          .setDescription(`${tierEmoji} **${main.fighter1} vs ${main.fighter2}**`)
+          .addField('Pick', `**${main.winner}**`, true)
+          .addField('Tier', main.tier, true)
+          .addField('Method', main.method || 'Decision', true)
+          .addField('Full Card', `[Subscribe for all picks →](${SITE_URL})`, false)
+          .setFooter(FOOTER)
+          .setTimestamp()
+        ],
+      });
+    }
+
+    if (interaction.commandName === 'subscribe') {
+      return interaction.reply({
+        embeds: [new MessageEmbed()
+          .setColor(COLORS.RED)
+          .setTitle('RUBAN Subscription Plans')
+          .setDescription('Institutional-grade UFC analysis. Pick your tier.')
+          .addField('Scout — Free', 'Main event picks · ELO rankings · Community Discord', false)
+          .addField('Sharp — $9.99/mo', 'Full card · Confidence scores · Parlay builder · Line alerts', false)
+          .addField('Capper — $79.99/yr', 'Everything in Sharp · API access · Raw model outputs', false)
+          .addField('Subscribe', `[ruban.gg →](${SITE_URL})`, false)
+          .setFooter(FOOTER)
+          .setTimestamp()
+        ],
+        ephemeral: true,
+      });
+    }
+  } catch (err) {
+    console.error('[Bot] Interaction error:', err.message);
+  }
+});
+
+// ── POSTED EVENTS ─────────────────────────────────────────
 function loadPostedEvents() {
   try {
     if (!fs.existsSync(POSTED_EVENTS_PATH)) return {};
@@ -146,19 +175,17 @@ function loadPostedEvents() {
   } catch { return {}; }
 }
 
-function markEventPosted(eventName) {
+function markPosted(key) {
   const posted = loadPostedEvents();
-  posted[eventName] = new Date().toISOString();
+  posted[key] = new Date().toISOString();
   const dir = path.dirname(POSTED_EVENTS_PATH);
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(POSTED_EVENTS_PATH, JSON.stringify(posted, null, 2));
 }
 
-function isEventPosted(eventName) {
-  return !!loadPostedEvents()[eventName];
-}
+function isPosted(key) { return !!loadPostedEvents()[key]; }
 
-// ── LOAD PREDICTIONS ──────────────────────────────────────
+// ── PREDICTIONS ───────────────────────────────────────────
 function loadPredictions() {
   try {
     if (!fs.existsSync(PREDICTIONS_PATH)) return null;
@@ -166,42 +193,39 @@ function loadPredictions() {
   } catch { return null; }
 }
 
-// ── BUILD EMBEDS ──────────────────────────────────────────
+// ── EMBED BUILDERS ────────────────────────────────────────
 function buildMainEventEmbed(data) {
-  const mainEvent = (data.predictions || []).find(p => p.is_main_event) || data.predictions?.[0];
-  if (!mainEvent) return null;
+  const main = (data.predictions || []).find(p => p.is_main_event) || data.predictions?.[0];
+  if (!main) return null;
 
-  const tierColor = { LOCK: 0x00C851, LEAN: 0x2196F3, 'TOSS-UP': 0xFF9800 };
-  const tierEmoji = { LOCK: '🔒', LEAN: '⚡', 'TOSS-UP': '🎲' };
+  const tierEmoji = { LOCK: '🔒', LEAN: '⚡', 'TOSS-UP': '🎲' }[main.tier] || '🥊';
 
   return new MessageEmbed()
-    .setColor(tierColor[mainEvent.tier] || 0xE8002A)
+    .setColor(COLORS.RED)
     .setTitle(`🥊 ${data.event_name}`)
-    .setDescription(`**Main Event Preview** — ${data.event_date} | ${data.location || 'UFC Apex'}`)
-    .addField('Matchup', `**${mainEvent.fighter1}** vs **${mainEvent.fighter2}**`, false)
-    .addField('RUBAN Pick', `${tierEmoji[mainEvent.tier] || ''} **${mainEvent.winner}**`, true)
-    .addField('Tier', `**${mainEvent.tier}**`, true)
-    .addField('Method', mainEvent.method || 'Decision', true)
-    .addField('Analysis', mainEvent.analysis?.substring(0, 300) || 'Loading...', false)
-    .setFooter({ text: 'Free tier preview • Subscribe at ruban.gg for full card + confidence scores' })
+    .setDescription(`**${main.fighter1} vs ${main.fighter2}**\n${data.event_date} | ${data.location || 'UFC Apex'}`)
+    .addField('RUBAN Pick', `${tierEmoji} **${main.winner}** — ${main.tier}`, true)
+    .addField('Method', main.method || 'Decision', true)
+    .addField('Analysis', (main.analysis || '').substring(0, 280) || 'Analysis loading...', false)
+    .addField('Full Card', `[Subscribe →](${SITE_URL})`, false)
+    .setFooter(FOOTER)
     .setTimestamp();
 }
 
 function buildFullCardEmbed(data) {
   const embed = new MessageEmbed()
-    .setColor(0xE8002A)
+    .setColor(COLORS.DARK)
     .setTitle(`📊 Full Card — ${data.event_name}`)
-    .setDescription('Complete RUBAN predictions with confidence scores')
-    .setTimestamp()
-    .setFooter({ text: 'RUBAN UFC Intelligence • Powered by ML + Sharp Money + ELO' });
+    .setDescription(`${data.event_date} | ${data.location || 'UFC Apex'}`)
+    .setFooter(FOOTER)
+    .setTimestamp();
 
-  const preds = data.predictions || [];
-  for (const p of preds.slice(0, 10)) {
-    const tierEmoji = { LOCK: '🔒', LEAN: '⚡', 'TOSS-UP': '🎲' }[p.tier] || '📊';
+  for (const p of (data.predictions || []).slice(0, 10)) {
+    const t = { LOCK: '🔒', LEAN: '⚡', 'TOSS-UP': '🎲' }[p.tier] || '📊';
     const conf = p.confidence ? `${p.confidence}%` : '—';
     embed.addField(
       `${p.fighter1} vs ${p.fighter2}`,
-      `${tierEmoji} **${p.winner}** | ${conf} | ${p.method || 'Dec'} | ${p.tier}`,
+      `${t} **${p.winner}** | ${conf} | ${p.method || 'Dec'} | ${p.tier}`,
       false
     );
   }
@@ -212,54 +236,70 @@ function buildFullCardEmbed(data) {
 function buildParlayEmbed(data) {
   if (!data.parlay) return null;
   const embed = new MessageEmbed()
-    .setColor(0xC9A84C)
+    .setColor(COLORS.GOLD)
     .setTitle('💰 RUBAN Parlay Builder')
-    .setDescription('High-confidence picks for parlay consideration');
+    .setDescription('High-confidence picks for parlay consideration')
+    .setFooter({ text: '⚠️ For entertainment only. Gamble responsibly. | RUBAN | UFC Intelligence' })
+    .setTimestamp();
 
-  if (data.parlay.two_leg) {
-    embed.addField(
-      `2-Leg Parlay (${data.parlay.two_leg.combined_confidence}% avg confidence)`,
-      data.parlay.two_leg.picks.join(' + ') + `\n_${data.parlay.two_leg.note || ''}_`,
-      false
-    );
-  }
-  if (data.parlay.three_leg) {
-    embed.addField(
-      `3-Leg Parlay (${data.parlay.three_leg.combined_confidence}% avg confidence)`,
-      data.parlay.three_leg.picks.join(' + ') + `\n_${data.parlay.three_leg.note || ''}_`,
-      false
-    );
-  }
+  if (data.parlay.two_leg) embed.addField(
+    `2-Leg Parlay — ${data.parlay.two_leg.combined_confidence}% avg`,
+    data.parlay.two_leg.picks.join(' + '), false
+  );
+  if (data.parlay.three_leg) embed.addField(
+    `3-Leg Parlay — ${data.parlay.three_leg.combined_confidence}% avg`,
+    data.parlay.three_leg.picks.join(' + '), false
+  );
 
-  embed.setFooter({ text: '⚠️ For entertainment only. Always gamble responsibly.' });
   return embed;
 }
 
-// ── POST TO DISCORD ───────────────────────────────────────
+function buildReminderEmbed(data) {
+  return new MessageEmbed()
+    .setColor(COLORS.RED)
+    .setTitle(`⚡ Fight Night Tonight — ${data.event_name}`)
+    .setDescription(`Doors open soon. RUBAN picks are live.\n\n${data.event_date} | ${data.location || 'UFC Apex'}`)
+    .addField('Full card analysis', `[Get picks →](${SITE_URL})`, false)
+    .setFooter(FOOTER)
+    .setTimestamp();
+}
+
+function buildResultsTemplateEmbed(data) {
+  return new MessageEmbed()
+    .setColor(COLORS.DARK)
+    .setTitle(`📋 Post-Fight Results — ${data.event_name}`)
+    .setDescription('Fight night wrapped. RUBAN results will be posted shortly.\n\nTrack record updated after every event.')
+    .addField('View history', `[Full record →](${SITE_URL}/history)`, false)
+    .setFooter(FOOTER)
+    .setTimestamp();
+}
+
+// ── CHANNEL POST ──────────────────────────────────────────
+async function postToChannel(channelId, embed) {
+  if (!channelId) return;
+  try {
+    const ch = await client.channels.fetch(channelId).catch(() => null);
+    if (ch) await ch.send({ embeds: [embed] });
+  } catch (err) {
+    console.error('[Bot] Channel post error:', err.message);
+  }
+}
+
 async function postPredictions(data) {
   try {
-    // Post main event teaser to FREE channel
     if (FREE_CHANNEL) {
-      const channel = await client.channels.fetch(FREE_CHANNEL).catch(() => null);
-      if (channel) {
-        const mainEmbed = buildMainEventEmbed(data);
-        if (mainEmbed) {
-          await channel.send({ embeds: [mainEmbed] });
-          console.log(`[Bot] Posted main event to free channel`);
-        }
-      }
+      const embed = buildMainEventEmbed(data);
+      if (embed) await postToChannel(FREE_CHANNEL, embed);
     }
 
     await sleep(1000);
 
-    // Post full card to PRO channel
     if (PRO_CHANNEL) {
-      const proChannel = await client.channels.fetch(PRO_CHANNEL).catch(() => null);
-      if (proChannel) {
-        await proChannel.send({ embeds: [buildFullCardEmbed(data)] });
-        const parlayEmbed = buildParlayEmbed(data);
-        if (parlayEmbed) await proChannel.send({ embeds: [parlayEmbed] });
-        console.log(`[Bot] Posted full card to pro channel`);
+      const ch = await client.channels.fetch(PRO_CHANNEL).catch(() => null);
+      if (ch) {
+        await ch.send({ embeds: [buildFullCardEmbed(data)] });
+        const parlay = buildParlayEmbed(data);
+        if (parlay) await ch.send({ embeds: [parlay] });
       }
     }
 
@@ -270,11 +310,9 @@ async function postPredictions(data) {
   }
 }
 
-function sleep(ms) {
-  return new Promise(r => setTimeout(r, ms));
-}
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-// ── FETCH ESPN CARD ───────────────────────────────────────
+// ── ESPN CARD FETCH ───────────────────────────────────────
 async function fetchUpcomingCard() {
   const https = require('https');
   for (let i = 0; i <= 10; i++) {
@@ -294,70 +332,133 @@ async function fetchUpcomingCard() {
       ).on('error', () => resolve(null));
     });
 
-    const events = data?.events || [];
-    const ufc = events.find(e => e.name?.includes('UFC'));
+    const ufc = (data?.events || []).find(e => e.name?.includes('UFC'));
     if (ufc) return { name: ufc.name, date, espn: ufc };
   }
   return null;
 }
 
-// ── MAIN CYCLE ────────────────────────────────────────────
-async function runCycle() {
-  console.log(`[Bot] Cycle at ${new Date().toISOString()}`);
+// ── SCHEDULER (ET timezone) ───────────────────────────────
+function getETDate() {
+  return new Date(new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }));
+}
 
-  // Check predictions.json first (might already be written by local engine)
+const scheduledToday = new Set();
+
+async function checkSchedule() {
+  const et  = getETDate();
+  const day = et.getDay();   // 0=Sun, 6=Sat, 1=Mon
+  const h   = et.getHours();
+  const m   = et.getMinutes();
+  const dk  = `${et.getFullYear()}-${et.getMonth()}-${et.getDate()}`;
+
+  // ── SATURDAY FIGHT NIGHTS ──────────────────────────────
+  if (day === 6) {
+    const data = loadPredictions();
+    if (data) {
+      // 2 PM ET — reminder
+      if (h === 14 && m < 5) {
+        const key = `${dk}:reminder`;
+        if (!scheduledToday.has(key)) {
+          scheduledToday.add(key);
+          const embed = buildReminderEmbed(data);
+          await postToChannel(FREE_CHANNEL, embed);
+          await postToChannel(ANN_CHANNEL, embed);
+        }
+      }
+
+      // 6 PM ET — post free pick + trigger emails
+      if (h === 18 && m < 5) {
+        const key = `${dk}:free-pick-6pm`;
+        if (!scheduledToday.has(key)) {
+          scheduledToday.add(key);
+          const embed = buildMainEventEmbed(data);
+          if (embed) await postToChannel(FREE_CHANNEL, embed);
+
+          try {
+            const { sendFightNightEmails } = require('./engine/auto-email');
+            await sendFightNightEmails(data);
+          } catch (err) {
+            console.error('[Bot] Email trigger error:', err.message);
+          }
+        }
+      }
+    }
+  }
+
+  // ── POST-FIGHT RESULTS — midnight ET ──────────────────
+  if (h === 0 && m < 5 && (day === 0 || day === 6)) {
+    const key = `${dk}:results`;
+    const data = loadPredictions();
+    if (data && !scheduledToday.has(key)) {
+      scheduledToday.add(key);
+      await postToChannel(FREE_CHANNEL, buildResultsTemplateEmbed(data));
+    }
+  }
+
+  // ── MONDAY 9 AM — check for card this week ─────────────
+  if (day === 1 && h === 9 && m < 5) {
+    const key = `${dk}:auto-card`;
+    if (!scheduledToday.has(key)) {
+      scheduledToday.add(key);
+      try {
+        const card = await fetchUpcomingCard();
+        if (card) {
+          const { generateCardPredictions } = require('./engine/auto-card');
+          await generateCardPredictions();
+        }
+      } catch (err) {
+        console.error('[Bot] Auto-card error:', err.message);
+      }
+    }
+  }
+}
+
+// ── MAIN PREDICTION CYCLE ─────────────────────────────────
+async function runCycle() {
   let data = loadPredictions();
 
   if (!data) {
-    // Try to fetch from ESPN and generate
     try {
       const card = await fetchUpcomingCard();
-      if (!card) { console.log('[Bot] No upcoming UFC card found'); return; }
-      console.log(`[Bot] Found: ${card.name}`);
-
-      // Use existing predictions.json if we have it for this event
+      if (!card) return;
       data = loadPredictions();
-      if (!data || data.event_name !== card.name) {
-        console.log('[Bot] No predictions yet for this card — will post when ready');
-        return;
-      }
+      if (!data || data.event_name !== card.name) return;
     } catch (err) {
       console.error('[Bot] Fetch error:', err.message);
       return;
     }
   }
 
-  if (!data || !data.event_name) { console.log('[Bot] No prediction data available'); return; }
+  if (!data?.event_name) return;
 
-  if (isEventPosted(data.event_name)) {
-    console.log(`[Bot] ${data.event_name} already posted`);
-    return;
-  }
+  const postKey = `${data.event_name}:main`;
+  if (isPosted(postKey)) return;
 
-  console.log(`[Bot] Posting: ${data.event_name}`);
   const ok = await postPredictions(data);
-  if (ok) markEventPosted(data.event_name);
+  if (ok) markPosted(postKey);
 }
 
 // ── STARTUP ───────────────────────────────────────────────
 client.once('ready', async () => {
   console.log(`[Bot] Online as ${client.user.tag}`);
-  console.log(`[Bot] Free channel: ${FREE_CHANNEL}`);
-  console.log(`[Bot] Pro channel: ${PRO_CHANNEL}`);
-  console.log(`[Bot] Auto-responses enabled for: ${Object.keys(AUTO_RESPONSES).join(', ')}`);
 
-  // Run immediately on startup
+  try {
+    await client.application.commands.set([
+      { name: 'picks',     description: "Get today's free pick" },
+      { name: 'subscribe', description: 'View RUBAN subscription plans' },
+    ]);
+  } catch (err) {
+    console.error('[Bot] Command registration error:', err.message);
+  }
+
   await runCycle();
-
-  // Then every 6 hours
   setInterval(runCycle, POLL_INTERVAL_MS);
+  setInterval(checkSchedule, SCHEDULE_CHECK_MS);
 });
 
 client.on('error', (err) => console.error('[Bot] Client error:', err.message));
-
 process.on('uncaughtException', (err) => console.error('[Bot] Uncaught:', err.message));
 process.on('unhandledRejection', (r) => console.error('[Bot] Rejection:', r));
 
-client.login(DISCORD_TOKEN)
-  .then(() => console.log('[Bot] Login sent'))
-  .catch(err => console.error('[Bot] Login FAILED:', err.message));
+client.login(DISCORD_TOKEN).catch(err => console.error('[Bot] Login FAILED:', err.message));

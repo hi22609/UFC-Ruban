@@ -68,52 +68,150 @@
             opacity: 0.4;
         }
         
-        .fighters-container {
-            position: absolute;
-            bottom: 10%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 600px;
-            height: 300px;
-            z-index: 2;
-            pointer-events: none;
-        }
-        
-        .fighter {
+        /* FIGHTER MATCHUP — Premium 3D-style */
+        .fighter-matchup {
             position: absolute;
             bottom: 0;
-            width: 120px;
-            height: 250px;
-            filter: drop-shadow(0 0 20px var(--red));
+            left: 50%;
+            transform: translateX(-50%);
+            width: 760px;
+            height: 380px;
+            z-index: 2;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            pointer-events: none;
         }
-        
-        .fighter-left {
-            left: 80px;
-            animation: fighter-pulse-left 3s ease-in-out infinite;
+
+        .fighter-wrap {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 280px;
+            flex-shrink: 0;
         }
-        
-        .fighter-right {
-            right: 80px;
-            animation: fighter-pulse-right 3s ease-in-out infinite;
+
+        .fighter-halo {
+            position: absolute;
+            bottom: 50px;
+            width: 220px;
+            height: 260px;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .fighter-halo--gold {
+            background: radial-gradient(ellipse at center, rgba(201,168,76,0.22) 0%, transparent 70%);
+            animation: halo-pulse-gold 3s ease-in-out infinite;
+        }
+        .fighter-halo--red {
+            background: radial-gradient(ellipse at center, rgba(231,76,60,0.22) 0%, transparent 70%);
+            animation: halo-pulse-red 3s ease-in-out infinite 0.4s;
+        }
+        @keyframes halo-pulse-gold {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.12); }
+        }
+        @keyframes halo-pulse-red {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.12); }
+        }
+
+        .fighter-svg {
+            height: 300px;
+            width: auto;
+            position: relative;
+            z-index: 2;
+        }
+        .fighter-svg--topuria {
+            filter: drop-shadow(0 0 10px rgba(201,168,76,0.9)) drop-shadow(0 0 24px rgba(201,168,76,0.4));
+            animation: float-left 3.2s ease-in-out infinite;
+        }
+        .fighter-svg--gaethje {
+            filter: drop-shadow(0 0 10px rgba(231,76,60,0.9)) drop-shadow(0 0 24px rgba(231,76,60,0.4));
             transform: scaleX(-1);
+            animation: float-right 3.2s ease-in-out infinite 0.6s;
         }
-        
-        @keyframes fighter-pulse-left {
-            0%, 100% { transform: translateX(0) scale(1); filter: drop-shadow(0 0 20px var(--red)); }
-            50% { transform: translateX(-10px) scale(1.02); filter: drop-shadow(0 0 30px var(--red)); }
+        @keyframes float-left {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-8px) scale(1.015); }
         }
-        
-        @keyframes fighter-pulse-right {
-            0%, 100% { transform: scaleX(-1) translateX(0) scale(1); filter: drop-shadow(0 0 20px var(--red)); }
-            50% { transform: scaleX(-1) translateX(-10px) scale(1.02); filter: drop-shadow(0 0 30px var(--red)); }
+        @keyframes float-right {
+            0%, 100% { transform: scaleX(-1) translateY(0) scale(1); }
+            50% { transform: scaleX(-1) translateY(-8px) scale(1.015); }
         }
-        
-        .fighter-body {
-            fill: none;
-            stroke: var(--red);
-            stroke-width: 3;
-            stroke-linecap: round;
-            stroke-linejoin: round;
+
+        .fighter-canvas-3d {
+            position: absolute;
+            bottom: 40px;
+            width: 200px;
+            height: 260px;
+            opacity: 0.3;
+            z-index: 1;
+        }
+
+        .fighter-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            margin-top: 6px;
+            position: relative;
+            z-index: 3;
+        }
+        .fighter-badge-text {
+            font-family: 'DM Mono', monospace;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+        }
+        .fighter-wrap--left .fighter-badge-text { color: var(--gold); }
+        .fighter-wrap--right .fighter-badge-text { color: var(--red); }
+        .fighter-name-text {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 26px;
+            letter-spacing: 0.06em;
+            line-height: 1;
+        }
+        .fighter-record {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            color: var(--muted);
+        }
+
+        .vs-element {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100px;
+            margin-bottom: 76px;
+            flex-shrink: 0;
+        }
+        .vs-text {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 52px;
+            color: var(--text);
+            position: relative;
+            z-index: 2;
+            animation: vs-pulse 2.2s ease-in-out infinite;
+        }
+        @keyframes vs-pulse {
+            0%, 100% { text-shadow: 0 0 16px rgba(232,0,42,0.6), 0 0 40px rgba(232,0,42,0.25); }
+            50% { text-shadow: 0 0 32px rgba(232,0,42,1), 0 0 70px rgba(232,0,42,0.5); }
+        }
+        .vs-ring {
+            position: absolute;
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            border: 1px solid rgba(232,0,42,0.5);
+            animation: vs-expand 2.2s ease-out infinite;
+        }
+        .vs-ring--2 { animation-delay: 1.1s; }
+        @keyframes vs-expand {
+            0%   { transform: scale(0.4); opacity: 0.9; }
+            100% { transform: scale(2.8); opacity: 0; }
         }
         
         .hero-content {
@@ -694,40 +792,41 @@
                 grid-template-columns: 1fr;
                 gap: 40px;
             }
-            
-            .fighters-container {
-                width: 400px;
-                height: 200px;
+
+            .fighter-matchup {
+                width: 500px;
+                height: 260px;
             }
-            
-            .fighter {
-                width: 80px;
-                height: 180px;
-            }
-            
+            .fighter-wrap { width: 190px; }
+            .fighter-svg { height: 200px; }
+            .vs-text { font-size: 38px; }
+            .fighter-name-text { font-size: 20px; }
+
             .footer-content {
                 grid-template-columns: 1fr 1fr;
             }
         }
-        
+
         @media (max-width: 768px) {
             .hero {
                 min-height: 600px;
             }
-            
+
             .hero-content {
                 padding: 0 20px;
             }
-            
-            .fighters-container {
-                width: 300px;
-                height: 150px;
+
+            .fighter-matchup {
+                width: 340px;
+                height: 200px;
             }
-            
-            .fighter {
-                width: 60px;
-                height: 140px;
-            }
+            .fighter-wrap { width: 130px; }
+            .fighter-svg { height: 150px; }
+            .vs-text { font-size: 28px; }
+            .vs-element { width: 60px; margin-bottom: 50px; }
+            .fighter-name-text { font-size: 16px; }
+            .fighter-badge-text { font-size: 7px; }
+            .fighter-canvas-3d { display: none; }
             
             .stats-bar,
             .signal-stack,
@@ -757,51 +856,121 @@
     <section class="hero">
         <canvas id="octagon-canvas"></canvas>
         
-        <!-- Fighter Silhouettes -->
-        <div class="fighters-container">
-            <svg class="fighter fighter-left" viewBox="0 0 120 250" xmlns="http://www.w3.org/2000/svg">
-                <!-- Fighter stance - left -->
-                <g class="fighter-body">
+        <!-- Fighter Matchup — Premium 3D -->
+        <div class="fighter-matchup">
+
+            <!-- Topuria — Left / Gold / Champion -->
+            <div class="fighter-wrap fighter-wrap--left">
+                <div class="fighter-halo fighter-halo--gold"></div>
+                <canvas class="fighter-canvas-3d" id="canvas-topuria"></canvas>
+                <svg class="fighter-svg fighter-svg--topuria" viewBox="0 0 200 360" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="grad-gold" x1="0%" y1="0%" x2="80%" y2="100%">
+                            <stop offset="0%" stop-color="#FFD700"/>
+                            <stop offset="60%" stop-color="#C9A84C"/>
+                            <stop offset="100%" stop-color="#8B6914"/>
+                        </linearGradient>
+                        <radialGradient id="body-gold" cx="45%" cy="25%" r="65%">
+                            <stop offset="0%" stop-color="#FFE566"/>
+                            <stop offset="100%" stop-color="#9A7520"/>
+                        </radialGradient>
+                        <filter id="glow-gold" x="-25%" y="-15%" width="150%" height="130%">
+                            <feGaussianBlur stdDeviation="5" result="b"/>
+                            <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+                        </filter>
+                    </defs>
                     <!-- Head -->
-                    <circle cx="60" cy="30" r="15"/>
-                    <!-- Torso -->
-                    <line x1="60" y1="45" x2="60" y2="110"/>
-                    <!-- Left arm (forward punch) -->
-                    <line x1="60" y1="60" x2="30" y2="70"/>
-                    <line x1="30" y1="70" x2="15" y2="75"/>
-                    <!-- Right arm -->
-                    <line x1="60" y1="60" x2="75" y2="80"/>
-                    <line x1="75" y1="80" x2="80" y2="95"/>
-                    <!-- Left leg -->
-                    <line x1="60" y1="110" x2="45" y2="170"/>
-                    <line x1="45" y1="170" x2="40" y2="240"/>
-                    <!-- Right leg (forward) -->
-                    <line x1="60" y1="110" x2="70" y2="160"/>
-                    <line x1="70" y1="160" x2="75" y2="230"/>
-                </g>
-            </svg>
-            
-            <svg class="fighter fighter-right" viewBox="0 0 120 250" xmlns="http://www.w3.org/2000/svg">
-                <!-- Fighter stance - right (will be mirrored) -->
-                <g class="fighter-body">
-                    <!-- Head -->
-                    <circle cx="60" cy="30" r="15"/>
-                    <!-- Torso -->
-                    <line x1="60" y1="45" x2="60" y2="110"/>
-                    <!-- Left arm (forward punch) -->
-                    <line x1="60" y1="60" x2="30" y2="70"/>
-                    <line x1="30" y1="70" x2="15" y2="75"/>
-                    <!-- Right arm -->
-                    <line x1="60" y1="60" x2="75" y2="80"/>
-                    <line x1="75" y1="80" x2="80" y2="95"/>
-                    <!-- Left leg -->
-                    <line x1="60" y1="110" x2="45" y2="170"/>
-                    <line x1="45" y1="170" x2="40" y2="240"/>
-                    <!-- Right leg (forward) -->
-                    <line x1="60" y1="110" x2="70" y2="160"/>
-                    <line x1="70" y1="160" x2="75" y2="230"/>
-                </g>
-            </svg>
+                    <ellipse cx="100" cy="36" rx="26" ry="30" fill="url(#body-gold)" filter="url(#glow-gold)"/>
+                    <!-- Neck -->
+                    <path d="M86,62 L114,62 L116,80 L84,80 Z" fill="url(#body-gold)"/>
+                    <!-- Chest/shoulders -->
+                    <path d="M40,82 C55,74 145,74 160,82 L152,162 L48,162 Z" fill="url(#body-gold)" filter="url(#glow-gold)"/>
+                    <!-- Left arm — extended jab -->
+                    <path d="M48,90 L10,122 L4,158 L22,162 L30,130 L58,102 Z" fill="url(#grad-gold)"/>
+                    <ellipse cx="8" cy="160" rx="16" ry="12" fill="url(#body-gold)" filter="url(#glow-gold)"/>
+                    <!-- Right arm — guard -->
+                    <path d="M152,90 L176,110 L184,144 L168,150 L162,118 L142,102 Z" fill="url(#grad-gold)"/>
+                    <ellipse cx="182" cy="148" rx="16" ry="12" fill="url(#body-gold)" filter="url(#glow-gold)"/>
+                    <!-- Torso lower -->
+                    <path d="M52,160 L148,160 L140,228 L60,228 Z" fill="url(#body-gold)"/>
+                    <!-- Champion belt -->
+                    <rect x="52" y="214" width="96" height="20" rx="4" fill="#FFD700" opacity="0.95"/>
+                    <rect x="86" y="208" width="28" height="28" rx="4" fill="#FFD700"/>
+                    <ellipse cx="100" cy="222" rx="9" ry="8" fill="#FFF8DC" opacity="0.85"/>
+                    <!-- Shorts -->
+                    <path d="M60,232 L72,300 L58,316 L44,312 L54,296 L62,238 Z" fill="url(#body-gold)" filter="url(#glow-gold)"/>
+                    <path d="M138,232 L128,300 L142,316 L156,312 L146,296 L138,238 Z" fill="url(#body-gold)" filter="url(#glow-gold)"/>
+                    <!-- Feet -->
+                    <ellipse cx="50" cy="314" rx="20" ry="8" fill="url(#body-gold)"/>
+                    <ellipse cx="148" cy="314" rx="20" ry="8" fill="url(#body-gold)"/>
+                    <!-- Eagle wings hint (subtle) -->
+                    <path d="M28,86 Q14,70 6,78 Q18,90 32,94 Z" fill="#FFD700" opacity="0.6"/>
+                    <path d="M172,86 Q186,70 194,78 Q182,90 168,94 Z" fill="#FFD700" opacity="0.6"/>
+                </svg>
+                <div class="fighter-label">
+                    <span class="fighter-badge-text">🦅 Featherweight Champion</span>
+                    <span class="fighter-name-text">TOPURIA</span>
+                    <span class="fighter-record">17-0</span>
+                </div>
+            </div>
+
+            <!-- VS -->
+            <div class="vs-element">
+                <div class="vs-ring"></div>
+                <div class="vs-ring vs-ring--2"></div>
+                <span class="vs-text">VS</span>
+            </div>
+
+            <!-- Gaethje — Right / Red / Challenger -->
+            <div class="fighter-wrap fighter-wrap--right">
+                <div class="fighter-halo fighter-halo--red"></div>
+                <canvas class="fighter-canvas-3d" id="canvas-gaethje"></canvas>
+                <svg class="fighter-svg fighter-svg--gaethje" viewBox="0 0 200 360" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="grad-red" x1="0%" y1="0%" x2="80%" y2="100%">
+                            <stop offset="0%" stop-color="#FF5544"/>
+                            <stop offset="60%" stop-color="#E74C3C"/>
+                            <stop offset="100%" stop-color="#8B1A10"/>
+                        </linearGradient>
+                        <radialGradient id="body-red" cx="45%" cy="25%" r="65%">
+                            <stop offset="0%" stop-color="#FF6655"/>
+                            <stop offset="100%" stop-color="#8B1A10"/>
+                        </radialGradient>
+                        <filter id="glow-red" x="-25%" y="-15%" width="150%" height="130%">
+                            <feGaussianBlur stdDeviation="5" result="b"/>
+                            <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+                        </filter>
+                    </defs>
+                    <!-- Head (slightly larger — aggressive) -->
+                    <ellipse cx="100" cy="36" rx="28" ry="31" fill="url(#body-red)" filter="url(#glow-red)"/>
+                    <!-- Neck -->
+                    <path d="M84,63 L116,63 L118,82 L82,82 Z" fill="url(#body-red)"/>
+                    <!-- Chest/shoulders (broader) -->
+                    <path d="M34,84 C50,74 150,74 166,84 L158,165 L42,165 Z" fill="url(#body-red)" filter="url(#glow-red)"/>
+                    <!-- Left arm — wild haymaker wind-up -->
+                    <path d="M44,92 L6,130 L2,168 L20,172 L26,136 L55,106 Z" fill="url(#grad-red)"/>
+                    <ellipse cx="5" cy="170" rx="17" ry="13" fill="url(#body-red)" filter="url(#glow-red)"/>
+                    <!-- Right arm — guard tight -->
+                    <path d="M156,92 L182,108 L188,140 L172,148 L166,116 L146,104 Z" fill="url(#grad-red)"/>
+                    <ellipse cx="186" cy="146" rx="16" ry="12" fill="url(#body-red)" filter="url(#glow-red)"/>
+                    <!-- Torso lower -->
+                    <path d="M46,163 L154,163 L146,230 L54,230 Z" fill="url(#body-red)"/>
+                    <!-- Shorts (red) -->
+                    <path d="M56,234 L68,302 L54,318 L40,314 L50,298 L58,240 Z" fill="url(#body-red)" filter="url(#glow-red)"/>
+                    <path d="M140,234 L130,302 L144,318 L158,314 L148,298 L140,240 Z" fill="url(#body-red)" filter="url(#glow-red)"/>
+                    <!-- Feet -->
+                    <ellipse cx="46" cy="316" rx="20" ry="8" fill="url(#body-red)"/>
+                    <ellipse cx="152" cy="316" rx="20" ry="8" fill="url(#body-red)"/>
+                    <!-- Lightning bolt accent -->
+                    <path d="M108,94 L98,116 L106,116 L96,140 L114,112 L106,112 Z" fill="#FF8877" opacity="0.7"/>
+                </svg>
+                <div class="fighter-label">
+                    <span class="fighter-badge-text">⚡ Former Interim Champion</span>
+                    <span class="fighter-name-text">GAETHJE</span>
+                    <span class="fighter-record">25-5</span>
+                </div>
+            </div>
+
         </div>
         
         <div class="hero-content">
@@ -1038,6 +1207,44 @@
     
     <!-- JAVASCRIPT -->
     <script>
+        // THREE.JS FIGHTER GLOW CANVASES
+        function initFighterCanvas(canvasId, color) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(60, canvas.clientWidth / canvas.clientHeight, 0.1, 100);
+            const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+            renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            camera.position.z = 3.5;
+
+            // Torus knot wireframe as aura
+            const geo = new THREE.TorusKnotGeometry(0.9, 0.28, 80, 12);
+            const mat = new THREE.MeshBasicMaterial({ color, wireframe: true, transparent: true, opacity: 0.55 });
+            const mesh = new THREE.Mesh(geo, mat);
+            scene.add(mesh);
+
+            // Outer ring
+            const ringGeo = new THREE.TorusGeometry(1.4, 0.04, 8, 48);
+            const ringMat = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.3 });
+            const ring = new THREE.Mesh(ringGeo, ringMat);
+            scene.add(ring);
+
+            let t = 0;
+            function animate() {
+                requestAnimationFrame(animate);
+                t += 0.008;
+                mesh.rotation.x = t * 0.6;
+                mesh.rotation.y = t;
+                ring.rotation.z = t * 0.4;
+                mat.opacity = 0.4 + Math.sin(t * 1.5) * 0.15;
+                renderer.render(scene, camera);
+            }
+            animate();
+        }
+        initFighterCanvas('canvas-topuria', 0xc9a84c);
+        initFighterCanvas('canvas-gaethje', 0xe74c3c);
+
         // THREE.JS OCTAGON ANIMATION
         const canvas = document.getElementById('octagon-canvas');
         const scene = new THREE.Scene();
