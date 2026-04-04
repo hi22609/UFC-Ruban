@@ -1,268 +1,254 @@
-﻿// UFC Ruban — Scheduler
-// Permanent runtime. Polls every 6 hours for new UFC cards.
-// discord.js v13 ONLY
-// Run: node scheduler.js
+// UFC Ruban - Scheduler + Discord Bot
+// discord.js v13 — runs alongside server/index.js
+// Handles: fight card detection, AI predictions, Discord posting
 
-const { Client, Intents } = require('discord.js');
-const { execSync, spawn } = require('child_process');
+const { Client, Intents, MessageEmbed } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
-const { generateCardPredictions } = require('./engine/auto-card');
-const sqlite3 = require('better-sqlite3');
 require('dotenv').config();
 
-const {
-  buildHeaderEmbed,
-  buildMainCardEmbeds,
-  buildParlayEmbed,
-  buildErrorEmbed,
-  buildFooterEmbed,
-} = require('./bot/utils/embeds');
-
-// ─────────────────────────────────────────────
-// CONFIG
-// ─────────────────────────────────────────────
 const POLL_INTERVAL_MS = 6 * 60 * 60 * 1000; // 6 hours
 const PREDICTIONS_PATH = path.join(__dirname, 'website', 'predictions.json');
 const POSTED_EVENTS_PATH = path.join(__dirname, 'database', 'posted_events.json');
-const DB_PATH = path.join(__dirname, 'database', 'ufc.db');
 
-const CHANNEL_ID = process.env.PREDICTION_CHANNEL_ID;
-const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
+// Channel IDs
+const FREE_CHANNEL  = process.env.CHANNEL_FREE_PICKS  || process.env.PREDICTION_CHANNEL_ID;
+const PRO_CHANNEL   = process.env.CHANNEL_PRO_PICKS;
+const ANN_CHANNEL   = process.env.CHANNEL_ANNOUNCEMENTS;
+const DISCORD_TOKEN = process.env.DISCORD_TOKEN || process.env.DISCORD_BOT_TOKEN;
 
-if (!DISCORD_TOKEN || !CHANNEL_ID) {
-  console.error('FATAL: DISCORD_TOKEN and PREDICTION_CHANNEL_ID must be set in .env');
+if (!DISCORD_TOKEN) {
+  console.error('[Bot] FATAL: No Discord token. Set DISCORD_TOKEN in Railway vars.');
   process.exit(1);
 }
 
-// ─────────────────────────────────────────────
-// DISCORD CLIENT — v13 syntax ONLY
-// ─────────────────────────────────────────────
-const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
+// ── DISCORD CLIENT ────────────────────────────────────────
+const client = new Client({
+  intents: [
+    Intents.FLAGS.GUILDS,
+    Intents.FLAGS.GUILD_MESSAGES,
+  ]
+});
 
-// ─────────────────────────────────────────────
-// POSTED EVENTS TRACKING
-// ─────────────────────────────────────────────
+// ── POSTED EVENTS TRACKING ────────────────────────────────
 function loadPostedEvents() {
-  if (!fs.existsSync(POSTED_EVENTS_PATH)) return {};
   try {
+    if (!fs.existsSync(POSTED_EVENTS_PATH)) return {};
     return JSON.parse(fs.readFileSync(POSTED_EVENTS_PATH, 'utf8'));
-  } catch {
-    return {};
-  }
+  } catch { return {}; }
 }
 
 function markEventPosted(eventName) {
   const posted = loadPostedEvents();
   posted[eventName] = new Date().toISOString();
+  const dir = path.dirname(POSTED_EVENTS_PATH);
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(POSTED_EVENTS_PATH, JSON.stringify(posted, null, 2));
 }
 
 function isEventPosted(eventName) {
-  const posted = loadPostedEvents();
-  return !!posted[eventName];
+  return !!loadPostedEvents()[eventName];
 }
 
-// ─────────────────────────────────────────────
-// AUTO-RUN SCRAPERS
-// ─────────────────────────────────────────────
-function runScrapers() {
-  const scrapers = [
-    'python/scrapers/upcoming_card_scraper.py',
-    'python/scrapers/odds_scraper.py',
-    'python/scrapers/fightmatrix_scraper.py',
-  ];
-
-  for (const scraper of scrapers) {
-    console.log(`[Scheduler] Running ${scraper}...`);
-    try {
-      execSync(`python3 ${scraper}`, { cwd: __dirname, timeout: 120000, stdio: 'inherit' });
-      console.log(`[Scheduler] ${scraper} done`);
-    } catch (err) {
-      console.error(`[Scheduler] ${scraper} failed: ${err.message}`);
-      // Continue to next scraper — partial data is better than none
-    }
-  }
-}
-
-// ─────────────────────────────────────────────
-// RUN PREDICTION PIPELINE
-// ─────────────────────────────────────────────
-function runPredictions() {
-  console.log('[Scheduler] Running prediction pipeline...');
+// ── LOAD PREDICTIONS ──────────────────────────────────────
+function loadPredictions() {
   try {
-    const output = execSync(
-      `generateCardPredictions() // local AI engine`,
-      { cwd: __dirname, timeout: 300000, encoding: 'utf8' }
+    if (!fs.existsSync(PREDICTIONS_PATH)) return null;
+    return JSON.parse(fs.readFileSync(PREDICTIONS_PATH, 'utf8'));
+  } catch { return null; }
+}
+
+// ── BUILD EMBEDS ──────────────────────────────────────────
+function buildMainEventEmbed(data) {
+  const mainEvent = (data.predictions || []).find(p => p.is_main_event) || data.predictions?.[0];
+  if (!mainEvent) return null;
+
+  const tierColor = { LOCK: 0x00C851, LEAN: 0x2196F3, 'TOSS-UP': 0xFF9800 };
+  const tierEmoji = { LOCK: '🔒', LEAN: '⚡', 'TOSS-UP': '🎲' };
+
+  return new MessageEmbed()
+    .setColor(tierColor[mainEvent.tier] || 0xE8002A)
+    .setTitle(`🥊 ${data.event_name}`)
+    .setDescription(`**Main Event Preview** — ${data.event_date} | ${data.location || 'UFC Apex'}`)
+    .addField('Matchup', `**${mainEvent.fighter1}** vs **${mainEvent.fighter2}**`, false)
+    .addField('RUBAN Pick', `${tierEmoji[mainEvent.tier] || ''} **${mainEvent.winner}**`, true)
+    .addField('Tier', `**${mainEvent.tier}**`, true)
+    .addField('Method', mainEvent.method || 'Decision', true)
+    .addField('Analysis', mainEvent.analysis?.substring(0, 300) || 'Loading...', false)
+    .setFooter({ text: 'Free tier preview • Subscribe at ruban.gg for full card + confidence scores' })
+    .setTimestamp();
+}
+
+function buildFullCardEmbed(data) {
+  const embed = new MessageEmbed()
+    .setColor(0xE8002A)
+    .setTitle(`📊 Full Card — ${data.event_name}`)
+    .setDescription('Complete RUBAN predictions with confidence scores')
+    .setTimestamp()
+    .setFooter({ text: 'RUBAN UFC Intelligence • Powered by ML + Sharp Money + ELO' });
+
+  const preds = data.predictions || [];
+  for (const p of preds.slice(0, 10)) {
+    const tierEmoji = { LOCK: '🔒', LEAN: '⚡', 'TOSS-UP': '🎲' }[p.tier] || '📊';
+    const conf = p.confidence ? `${p.confidence}%` : '—';
+    embed.addField(
+      `${p.fighter1} vs ${p.fighter2}`,
+      `${tierEmoji} **${p.winner}** | ${conf} | ${p.method || 'Dec'} | ${p.tier}`,
+      false
     );
-    return JSON.parse(output);
-  } catch (err) {
-    console.error('[Scheduler] Prediction pipeline error:', err.message);
-    return null;
   }
+
+  return embed;
 }
 
-function savePredictionsJson(results) {
-  const websiteDir = path.join(__dirname, 'website');
-  if (!fs.existsSync(websiteDir)) fs.mkdirSync(websiteDir, { recursive: true });
-  fs.writeFileSync(PREDICTIONS_PATH, JSON.stringify(results, null, 2));
-  console.log('[Scheduler] predictions.json updated');
+function buildParlayEmbed(data) {
+  if (!data.parlay) return null;
+  const embed = new MessageEmbed()
+    .setColor(0xC9A84C)
+    .setTitle('💰 RUBAN Parlay Builder')
+    .setDescription('High-confidence picks for parlay consideration');
+
+  if (data.parlay.two_leg) {
+    embed.addField(
+      `2-Leg Parlay (${data.parlay.two_leg.combined_confidence}% avg confidence)`,
+      data.parlay.two_leg.picks.join(' + ') + `\n_${data.parlay.two_leg.note || ''}_`,
+      false
+    );
+  }
+  if (data.parlay.three_leg) {
+    embed.addField(
+      `3-Leg Parlay (${data.parlay.three_leg.combined_confidence}% avg confidence)`,
+      data.parlay.three_leg.picks.join(' + ') + `\n_${data.parlay.three_leg.note || ''}_`,
+      false
+    );
+  }
+
+  embed.setFooter({ text: '⚠️ For entertainment only. Always gamble responsibly.' });
+  return embed;
 }
 
-function savePredictionsToDB(results) {
-  if (!fs.existsSync(DB_PATH)) return;
+// ── POST TO DISCORD ───────────────────────────────────────
+async function postPredictions(data) {
   try {
-    const db = sqlite3(DB_PATH);
-    const insert = db.prepare(`
-      INSERT OR IGNORE INTO prediction_results
-      (event_name, fighter1, fighter2, predicted_winner, confidence, tier, predicted_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
-    `);
-
-    const insertMany = db.transaction((preds) => {
-      for (const p of preds) {
-        insert.run(
-          results.event_name,
-          p.fighter1,
-          p.fighter2,
-          p.winner,
-          p.confidence,
-          p.tier,
-          p.predicted_at
-        );
+    // Post main event teaser to FREE channel
+    if (FREE_CHANNEL) {
+      const channel = await client.channels.fetch(FREE_CHANNEL).catch(() => null);
+      if (channel) {
+        const mainEmbed = buildMainEventEmbed(data);
+        if (mainEmbed) {
+          await channel.send({ embeds: [mainEmbed] });
+          console.log(`[Bot] Posted main event to free channel`);
+        }
       }
-    });
+    }
 
-    insertMany(results.predictions || []);
-    db.close();
-    console.log(`[Scheduler] Saved ${(results.predictions || []).length} predictions to DB`);
+    await sleep(1000);
+
+    // Post full card to PRO channel
+    if (PRO_CHANNEL) {
+      const proChannel = await client.channels.fetch(PRO_CHANNEL).catch(() => null);
+      if (proChannel) {
+        await proChannel.send({ embeds: [buildFullCardEmbed(data)] });
+        const parlayEmbed = buildParlayEmbed(data);
+        if (parlayEmbed) await proChannel.send({ embeds: [parlayEmbed] });
+        console.log(`[Bot] Posted full card to pro channel`);
+      }
+    }
+
+    return true;
   } catch (err) {
-    console.error('[Scheduler] DB save error:', err.message);
+    console.error('[Bot] Post error:', err.message);
+    return false;
   }
-}
-
-// ─────────────────────────────────────────────
-// POST TO DISCORD
-// ─────────────────────────────────────────────
-async function postCard(results) {
-  const channel = await client.channels.fetch(CHANNEL_ID);
-  if (!channel) {
-    console.error('[Scheduler] Cannot find Discord channel:', CHANNEL_ID);
-    return;
-  }
-
-  // 1. Header embed
-  await channel.send({ embeds: [buildHeaderEmbed(results)] });
-
-  // 2. Main event + full card embeds
-  const predictions = (results.predictions || []).sort((a, b) => a.fight_order - b.fight_order);
-  const cardEmbeds = buildMainCardEmbeds(predictions);
-  for (const embed of cardEmbeds) {
-    await channel.send({ embeds: [embed] });
-    await sleep(500); // rate limit safety
-  }
-
-  // 3. Parlay builder
-  if (results.parlays) {
-    const parlayEmbed = buildParlayEmbed(results.parlays);
-    if (parlayEmbed) await channel.send({ embeds: [parlayEmbed] });
-  }
-
-  // 4. Error report (missing fighters)
-  if (results.errors && results.errors.length > 0) {
-    const errorEmbed = buildErrorEmbed(results.errors);
-    if (errorEmbed) await channel.send({ embeds: [errorEmbed] });
-  }
-
-  // 5. Footer
-  await channel.send({ embeds: [buildFooterEmbed()] });
-
-  console.log(`[Scheduler] Posted card for ${results.event_name}`);
 }
 
 function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise(r => setTimeout(r, ms));
 }
 
-// ─────────────────────────────────────────────
-// CHECK FOR NEW EVENT
-// ─────────────────────────────────────────────
-function getNextEventFromDB() {
-  if (!fs.existsSync(DB_PATH)) return null;
-  try {
-    const db = sqlite3(DB_PATH);
-    const row = db.prepare("SELECT DISTINCT event_name FROM upcoming_cards LIMIT 1").get();
-    db.close();
-    return row ? row.event_name : null;
-  } catch {
-    return null;
+// ── FETCH ESPN CARD ───────────────────────────────────────
+async function fetchUpcomingCard() {
+  const https = require('https');
+  for (let i = 0; i <= 10; i++) {
+    const d = new Date();
+    d.setDate(d.getDate() + i);
+    const date = d.toISOString().split('T')[0].replace(/-/g, '');
+
+    const data = await new Promise((resolve) => {
+      https.get(
+        `https://site.api.espn.com/apis/site/v2/sports/mma/ufc/scoreboard?dates=${date}`,
+        { timeout: 8000 },
+        (res) => {
+          let body = '';
+          res.on('data', c => body += c);
+          res.on('end', () => { try { resolve(JSON.parse(body)); } catch { resolve(null); } });
+        }
+      ).on('error', () => resolve(null));
+    });
+
+    const events = data?.events || [];
+    const ufc = events.find(e => e.name?.includes('UFC'));
+    if (ufc) return { name: ufc.name, date, espn: ufc };
   }
+  return null;
 }
 
-// ─────────────────────────────────────────────
-// MAIN LOOP
-// ─────────────────────────────────────────────
+// ── MAIN CYCLE ────────────────────────────────────────────
 async function runCycle() {
-  console.log(`\n[Scheduler] ${new Date().toISOString()} — Running cycle`);
+  console.log(`[Bot] Cycle at ${new Date().toISOString()}`);
 
-  // Auto-run scrapers to pull latest card + odds + rankings
-  runScrapers();
+  // Check predictions.json first (might already be written by local engine)
+  let data = loadPredictions();
 
-  const eventName = getNextEventFromDB();
-  if (!eventName) {
-    console.log('[Scheduler] No upcoming card in DB. Run upcoming_card_scraper.py.');
+  if (!data) {
+    // Try to fetch from ESPN and generate
+    try {
+      const card = await fetchUpcomingCard();
+      if (!card) { console.log('[Bot] No upcoming UFC card found'); return; }
+      console.log(`[Bot] Found: ${card.name}`);
+
+      // Use existing predictions.json if we have it for this event
+      data = loadPredictions();
+      if (!data || data.event_name !== card.name) {
+        console.log('[Bot] No predictions yet for this card — will post when ready');
+        return;
+      }
+    } catch (err) {
+      console.error('[Bot] Fetch error:', err.message);
+      return;
+    }
+  }
+
+  if (!data || !data.event_name) { console.log('[Bot] No prediction data available'); return; }
+
+  if (isEventPosted(data.event_name)) {
+    console.log(`[Bot] ${data.event_name} already posted`);
     return;
   }
 
-  if (isEventPosted(eventName)) {
-    console.log(`[Scheduler] ${eventName} already posted. Skipping.`);
-    return;
-  }
-
-  console.log(`[Scheduler] New event detected: ${eventName}`);
-
-  const results = runPredictions();
-  if (!results || results.error) {
-    console.error('[Scheduler] Prediction failed:', results?.message || 'Unknown error');
-    return;
-  }
-
-  // Save to website JSON (auto-updates web platform)
-  savePredictionsJson(results);
-
-  // Save to DB for accuracy tracking
-  savePredictionsToDB(results);
-
-  // Post to Discord
-  try {
-    await postCard(results);
-    markEventPosted(eventName);
-  } catch (err) {
-    console.error('[Scheduler] Discord post error:', err.message);
-  }
+  console.log(`[Bot] Posting: ${data.event_name}`);
+  const ok = await postPredictions(data);
+  if (ok) markEventPosted(data.event_name);
 }
 
-// ─────────────────────────────────────────────
-// STARTUP
-// ─────────────────────────────────────────────
+// ── STARTUP ───────────────────────────────────────────────
 client.once('ready', async () => {
-  console.log(`[Scheduler] Discord bot ready as ${client.user.tag}`);
-  console.log(`[Scheduler] Posting to channel: ${CHANNEL_ID}`);
+  console.log(`[Bot] Online as ${client.user.tag}`);
+  console.log(`[Bot] Free channel: ${FREE_CHANNEL}`);
+  console.log(`[Bot] Pro channel: ${PRO_CHANNEL}`);
 
-  // Run immediately, then every 6 hours
+  // Run immediately on startup
   await runCycle();
+
+  // Then every 6 hours
   setInterval(runCycle, POLL_INTERVAL_MS);
 });
 
-client.login(DISCORD_TOKEN);
+client.on('error', (err) => console.error('[Bot] Client error:', err.message));
 
-process.on('uncaughtException', (err) => {
-  console.error('[Scheduler] Uncaught exception:', err);
-  // Don't exit — keep running
-});
+process.on('uncaughtException', (err) => console.error('[Bot] Uncaught:', err.message));
+process.on('unhandledRejection', (r) => console.error('[Bot] Rejection:', r));
 
-process.on('unhandledRejection', (reason) => {
-  console.error('[Scheduler] Unhandled rejection:', reason);
-});
-
-
+client.login(DISCORD_TOKEN)
+  .then(() => console.log('[Bot] Login sent'))
+  .catch(err => console.error('[Bot] Login FAILED:', err.message));
