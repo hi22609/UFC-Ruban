@@ -7,6 +7,7 @@ const { Client, Intents } = require('discord.js');
 const { execSync, spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
+const { generateCardPredictions } = require('./engine/auto-card');
 const sqlite3 = require('better-sqlite3');
 require('dotenv').config();
 
@@ -91,7 +92,7 @@ function runPredictions() {
   console.log('[Scheduler] Running prediction pipeline...');
   try {
     const output = execSync(
-      `python3 python/model/predict.py --card`,
+      `generateCardPredictions() // local AI engine`,
       { cwd: __dirname, timeout: 300000, encoding: 'utf8' }
     );
     return JSON.parse(output);
@@ -263,4 +264,5 @@ process.on('uncaughtException', (err) => {
 process.on('unhandledRejection', (reason) => {
   console.error('[Scheduler] Unhandled rejection:', reason);
 });
+
 
