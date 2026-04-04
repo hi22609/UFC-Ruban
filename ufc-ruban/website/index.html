@@ -1,1123 +1,1160 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RUBAN — UFC Prediction Intelligence</title>
-<meta name="description" content="The most accurate UFC prediction platform. Sharp money + ensemble ML + ELO. Built on data, backed by odds.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<style>
-:root {
-  --red: #E8002A;
-  --red-dark: #B00020;
-  --red-glow: rgba(232,0,42,0.15);
-  --gold: #C9A84C;
-  --bg: #08080A;
-  --bg2: #0F0F12;
-  --bg3: #16161A;
-  --border: #222228;
-  --border-light: #2A2A33;
-  --text: #F2F2F4;
-  --muted: #7A7A88;
-  --green: #00C851;
-  --blue: #2196F3;
-  --orange: #FF9800;
-}
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-html { scroll-behavior: smooth; }
-
-body {
-  font-family: 'Inter', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  overflow-x: hidden;
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-}
-
-/* NOISE */
-body::after {
-  content: '';
-  position: fixed; inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-  pointer-events: none; z-index: 9999; opacity: 0.4;
-}
-
-/* NAV */
-nav {
-  position: fixed; top: 0; width: 100%; z-index: 500;
-  padding: 0 48px;
-  height: 68px;
-  display: flex; align-items: center; justify-content: space-between;
-  background: rgba(8,8,10,0.9);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-}
-
-.nav-logo {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 26px;
-  letter-spacing: 4px;
-  color: var(--text);
-  text-decoration: none;
-}
-.nav-logo em { color: var(--red); font-style: normal; }
-
-.nav-links { display: flex; gap: 32px; align-items: center; }
-.nav-links a {
-  font-size: 13px; color: var(--muted); text-decoration: none;
-  letter-spacing: 0.5px; transition: color 0.2s;
-}
-.nav-links a:hover { color: var(--text); }
-
-.nav-actions { display: flex; gap: 12px; align-items: center; }
-.btn-ghost {
-  padding: 8px 18px; background: none;
-  border: 1px solid var(--border-light); border-radius: 4px;
-  color: var(--muted); font-size: 13px; cursor: pointer;
-  font-family: 'Inter', sans-serif; transition: all 0.2s;
-}
-.btn-ghost:hover { border-color: var(--muted); color: var(--text); }
-
-.btn-red {
-  padding: 8px 20px; background: var(--red);
-  border: none; border-radius: 4px;
-  color: white; font-size: 13px; font-weight: 600;
-  cursor: pointer; font-family: 'Inter', sans-serif;
-  letter-spacing: 0.5px; transition: background 0.2s;
-  text-decoration: none; display: inline-block;
-}
-.btn-red:hover { background: var(--red-dark); }
-
-/* HERO */
-.hero {
-  min-height: 100vh;
-  display: grid; grid-template-columns: 1fr 1fr;
-  align-items: center;
-  padding: 100px 48px 80px;
-  gap: 64px;
-  position: relative;
-  overflow: hidden;
-}
-
-#hero-canvas {
-  position: absolute;
-  top: 0; right: 0;
-  width: 60%; height: 100%;
-  z-index: 0;
-  pointer-events: none;
-  opacity: 0.7;
-}
-
-.hero-left { position: relative; z-index: 2; }
-.hero-right { position: relative; z-index: 2; }
-
-.hero-eyebrow {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px; letter-spacing: 3px;
-  color: var(--red); text-transform: uppercase;
-  margin-bottom: 24px;
-  display: flex; align-items: center; gap: 10px;
-}
-.hero-eyebrow::before {
-  content: '';
-  width: 24px; height: 1px; background: var(--red);
-}
-
-.hero-title {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(60px, 7vw, 100px);
-  line-height: 0.9;
-  letter-spacing: 2px;
-  margin-bottom: 28px;
-}
-.hero-title .r { color: var(--red); }
-
-.hero-sub {
-  font-size: 17px; color: var(--muted);
-  font-weight: 300; max-width: 460px;
-  margin-bottom: 40px; line-height: 1.75;
-}
-
-.hero-stats {
-  display: flex; gap: 36px; margin-bottom: 44px;
-  padding-bottom: 44px;
-  border-bottom: 1px solid var(--border);
-}
-.stat-item {}
-.stat-num {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 44px; line-height: 1; color: var(--text);
-}
-.stat-num.g { color: var(--green); }
-.stat-label {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px; color: var(--muted);
-  text-transform: uppercase; letter-spacing: 2px; margin-top: 4px;
-}
-
-.hero-cta { display: flex; gap: 16px; align-items: center; }
-.btn-primary-lg {
-  padding: 15px 36px; background: var(--red);
-  border: none; border-radius: 4px;
-  color: white; font-size: 15px; font-weight: 600;
-  cursor: pointer; font-family: 'Inter', sans-serif;
-  letter-spacing: 0.5px; text-decoration: none; display: inline-block;
-  transition: all 0.2s;
-  box-shadow: 0 0 32px rgba(232,0,42,0.25);
-}
-.btn-primary-lg:hover {
-  background: var(--red-dark);
-  box-shadow: 0 0 48px rgba(232,0,42,0.4);
-  transform: translateY(-1px);
-}
-.cta-sub {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px; color: var(--muted); letter-spacing: 1px;
-}
-
-/* TEASER CARD */
-.pick-card {
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: 12px; overflow: hidden;
-  box-shadow: 0 0 80px rgba(0,0,0,0.6);
-}
-
-.pick-card-header {
-  padding: 16px 24px;
-  background: var(--bg3);
-  border-bottom: 1px solid var(--border);
-  display: flex; justify-content: space-between; align-items: center;
-}
-
-.event-label {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px; color: var(--muted);
-  letter-spacing: 2px; text-transform: uppercase;
-}
-
-.live-pill {
-  display: flex; align-items: center; gap: 6px;
-  background: rgba(232,0,42,0.12);
-  border: 1px solid rgba(232,0,42,0.3);
-  padding: 4px 10px; border-radius: 100px;
-  font-size: 10px; font-weight: 700;
-  letter-spacing: 1.5px; color: var(--red);
-  text-transform: uppercase;
-}
-.live-dot {
-  width: 5px; height: 5px; background: var(--red);
-  border-radius: 50%; animation: blink 1.5s infinite;
-}
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-
-.pick-body { padding: 28px 24px; }
-
-.matchup {
-  display: flex; align-items: center;
-  justify-content: space-between; gap: 12px;
-  margin-bottom: 24px;
-}
-.fighter {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 26px; letter-spacing: 2px; flex: 1; text-align: center;
-}
-.vs {
-  font-family: 'DM Mono', monospace;
-  font-size: 12px; color: var(--muted);
-}
-
-.prediction-box {
-  background: rgba(232,0,42,0.06);
-  border: 1px solid rgba(232,0,42,0.18);
-  border-radius: 8px; padding: 16px 20px;
-  display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 16px;
-}
-.pred-key {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px; color: var(--muted);
-  text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 4px;
-}
-.pred-val {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 22px; letter-spacing: 2px; color: var(--red);
-}
-.tier-pill {
-  padding: 4px 12px; border-radius: 3px;
-  font-size: 11px; font-weight: 700; letter-spacing: 1px;
-  background: rgba(0,200,81,0.12); color: var(--green);
-  border: 1px solid rgba(0,200,81,0.25);
-}
-
-.locked-block {
-  position: relative; margin-bottom: 12px;
-}
-.locked-inner {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
-  filter: blur(6px); pointer-events: none; user-select: none;
-}
-.locked-cell {
-  background: var(--bg3); border: 1px solid var(--border);
-  border-radius: 6px; padding: 14px 16px;
-}
-.locked-num { font-size: 20px; font-weight: 700; }
-.locked-lbl { font-size: 11px; color: var(--muted); margin-top: 2px; }
-.locked-overlay {
-  position: absolute; inset: 0;
-  display: flex; align-items: center; justify-content: center;
-  background: rgba(8,8,10,0.5); border-radius: 8px;
-}
-.unlock-btn {
-  padding: 10px 22px; background: var(--red);
-  border: none; border-radius: 4px;
-  color: white; font-size: 12px; font-weight: 700;
-  cursor: pointer; font-family: 'Inter', sans-serif;
-  letter-spacing: 0.5px;
-}
-
-.analysis-locked {
-  position: relative;
-}
-.analysis-inner {
-  background: var(--bg3); border: 1px solid var(--border);
-  border-radius: 6px; padding: 14px 16px;
-  filter: blur(6px); pointer-events: none; user-select: none;
-}
-.analysis-text { font-size: 13px; color: var(--muted); }
-.analysis-overlay {
-  position: absolute; inset: 0;
-  display: flex; align-items: center; justify-content: center;
-  background: rgba(8,8,10,0.5); border-radius: 6px;
-}
-
-/* DIVIDER */
-.section-divider {
-  height: 1px; background: var(--border); margin: 0;
-}
-
-/* SIGNAL SECTION */
-.signal-section { padding: 100px 48px; }
-
-.eyebrow {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px; letter-spacing: 3px;
-  color: var(--red); text-transform: uppercase;
-  margin-bottom: 16px; text-align: center;
-}
-
-.section-h {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(40px, 5vw, 64px);
-  letter-spacing: 2px; text-align: center; margin-bottom: 12px;
-}
-
-.section-p {
-  text-align: center; color: var(--muted);
-  max-width: 520px; margin: 0 auto 56px;
-  font-size: 15px; line-height: 1.75;
-}
-
-.signal-grid {
-  display: grid; grid-template-columns: repeat(4,1fr);
-  border: 1px solid var(--border); border-radius: 12px;
-  overflow: hidden; max-width: 1000px; margin: 0 auto;
-}
-.signal-cell {
-  padding: 36px 28px; background: var(--bg2);
-  border-right: 1px solid var(--border);
-  transition: background 0.2s;
-}
-.signal-cell:last-child { border-right: none; }
-.signal-cell:hover { background: var(--bg3); }
-.signal-pct {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 52px; color: var(--red); line-height: 1; margin-bottom: 10px;
-}
-.signal-name { font-weight: 600; font-size: 14px; margin-bottom: 8px; }
-.signal-desc { font-size: 12px; color: var(--muted); line-height: 1.65; }
-
-/* ACCURACY */
-.acc-section {
-  padding: 100px 48px;
-  background: var(--bg2);
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-}
-
-.acc-grid {
-  display: grid; grid-template-columns: repeat(3,1fr);
-  max-width: 750px; margin: 0 auto;
-  border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
-}
-.acc-cell {
-  padding: 44px 32px; text-align: center; background: var(--bg3);
-  border-right: 1px solid var(--border);
-}
-.acc-cell:last-child { border-right: none; }
-.acc-tier-label {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px; color: var(--muted);
-  text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px;
-}
-.acc-num {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 64px; line-height: 1; margin-bottom: 8px;
-}
-.acc-num.g { color: var(--green); }
-.acc-num.b { color: var(--blue); }
-.acc-num.d { color: var(--text); }
-.acc-sub {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase;
-}
-
-/* PRICING */
-.pricing-section { padding: 100px 48px; }
-
-.pricing-grid {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 20px; max-width: 860px; margin: 0 auto;
-}
-
-.price-card {
-  background: var(--bg2); border: 1px solid var(--border);
-  border-radius: 12px; padding: 44px 40px; position: relative;
-  transition: border-color 0.3s;
-}
-.price-card:hover { border-color: var(--border-light); }
-.price-card.pro {
-  border-color: var(--red);
-  background: linear-gradient(145deg, rgba(232,0,42,0.04) 0%, var(--bg2) 50%);
-  box-shadow: 0 0 60px rgba(232,0,42,0.08);
-}
-
-.price-badge {
-  position: absolute; top: -13px; left: 40px;
-  background: var(--red); color: white;
-  font-size: 10px; font-weight: 700;
-  letter-spacing: 2px; text-transform: uppercase;
-  padding: 4px 14px; border-radius: 3px;
-}
-
-.price-tier {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px; color: var(--muted);
-  letter-spacing: 2px; text-transform: uppercase; margin-bottom: 20px;
-}
-.price-num {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 64px; letter-spacing: 1px; line-height: 1; margin-bottom: 4px;
-}
-.price-period {
-  font-family: 'DM Mono', monospace;
-  font-size: 12px; color: var(--muted); margin-bottom: 36px;
-}
-
-.feature-list { list-style: none; margin-bottom: 36px; }
-.feature-list li {
-  padding: 11px 0; font-size: 14px;
-  border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; gap: 10px;
-  color: var(--muted);
-}
-.feature-list li:last-child { border-bottom: none; }
-.feature-list .on { color: var(--text); }
-.feature-list .ck { color: var(--green); font-size: 16px; }
-.feature-list .xx { color: var(--border-light); font-size: 16px; }
-
-.btn-block {
-  width: 100%; padding: 16px;
-  background: var(--red); border: none; border-radius: 4px;
-  color: white; font-size: 14px; font-weight: 600;
-  cursor: pointer; font-family: 'Inter', sans-serif;
-  letter-spacing: 0.5px; transition: background 0.2s;
-}
-.btn-block:hover { background: var(--red-dark); }
-.btn-block.outline {
-  background: transparent;
-  border: 1px solid var(--border-light); color: var(--muted);
-}
-.btn-block.outline:hover { border-color: var(--muted); color: var(--text); }
-.pricing-grid-3 {
-  display: grid; grid-template-columns: 1fr 1fr 1fr;
-  gap: 20px; max-width: 1100px; margin: 0 auto 40px;
-}
-.price-tagline {
-  font-size: 13px; color: var(--muted); margin-bottom: 28px;
-  padding-bottom: 28px; border-bottom: 1px solid var(--border);
-  line-height: 1.5; font-style: italic;
-}
-.price-card.elite {
-  border-color: var(--gold);
-  background: linear-gradient(145deg, rgba(201,168,76,0.04) 0%, var(--bg2) 50%);
-  box-shadow: 0 0 60px rgba(201,168,76,0.06);
-}
-.price-badge-gold {
-  position: absolute; top: -13px; left: 40px;
-  background: var(--gold); color: #000;
-  font-size: 10px; font-weight: 700;
-  letter-spacing: 2px; text-transform: uppercase;
-  padding: 4px 14px; border-radius: 3px;
-}
-.btn-gold {
-  background: var(--gold) !important; color: #000 !important;
-}
-.btn-gold:hover { background: #b8913e !important; }
-.pricing-note {
-  display: flex; gap: 16px; justify-content: center; align-items: center;
-  font-family: "DM Mono", monospace; font-size: 11px; color: var(--muted);
-  letter-spacing: 0.5px; flex-wrap: wrap;
-}
-@media (max-width: 1000px) { .pricing-grid-3 { grid-template-columns: 1fr; } }
-
-/* DISCORD CTA */
-.discord-section {
-  padding: 80px 48px;
-  background: var(--bg2);
-  border-top: 1px solid var(--border);
-  text-align: center;
-}
-.discord-inner {
-  max-width: 580px; margin: 0 auto;
-}
-.discord-section h2 {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 48px; letter-spacing: 2px; margin-bottom: 12px;
-}
-.discord-section p { color: var(--muted); font-size: 16px; margin-bottom: 32px; }
-.discord-tags { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 32px; }
-.discord-tag {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px; color: var(--muted); letter-spacing: 1px;
-  padding: 6px 14px; border: 1px solid var(--border); border-radius: 100px;
-}
-
-/* FOOTER */
-footer {
-  padding: 40px 48px;
-  border-top: 1px solid var(--border);
-  display: flex; justify-content: space-between; align-items: center;
-  color: var(--muted); font-size: 13px;
-}
-.footer-logo {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 22px; letter-spacing: 3px;
-}
-.footer-logo em { color: var(--red); font-style: normal; }
-.footer-links { display: flex; gap: 24px; }
-.footer-links a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
-.footer-links a:hover { color: var(--text); }
-
-/* MODALS */
-.overlay {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,0.85);
-  z-index: 1000; display: none;
-  align-items: center; justify-content: center;
-  backdrop-filter: blur(4px);
-}
-.overlay.open { display: flex; }
-
-.modal {
-  background: var(--bg2); border: 1px solid var(--border-light);
-  border-radius: 12px; padding: 48px 44px;
-  width: 100%; max-width: 460px; position: relative;
-}
-.modal-x {
-  position: absolute; top: 20px; right: 20px;
-  background: none; border: none; color: var(--muted);
-  font-size: 22px; cursor: pointer; line-height: 1;
-}
-.modal-x:hover { color: var(--text); }
-.modal-title {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 40px; letter-spacing: 2px; margin-bottom: 8px;
-}
-.modal-sub { color: var(--muted); font-size: 14px; margin-bottom: 32px; line-height: 1.6; }
-
-.plan-toggle {
-  display: flex; background: var(--bg3);
-  border: 1px solid var(--border); border-radius: 6px;
-  overflow: hidden; margin-bottom: 12px;
-}
-.plan-btn {
-  flex: 1; padding: 10px; background: none; border: none;
-  color: var(--muted); font-size: 13px; cursor: pointer;
-  font-family: 'DM Mono', monospace; transition: all 0.2s;
-}
-.plan-btn.active { background: var(--red); color: white; }
-
-.price-display {
-  font-family: 'DM Mono', monospace;
-  font-size: 12px; color: var(--muted);
-  text-align: center; margin-bottom: 24px;
-}
-.price-display strong { color: var(--text); }
-
-.inp {
-  width: 100%; padding: 14px 16px;
-  background: var(--bg3); border: 1px solid var(--border);
-  border-radius: 6px; color: var(--text);
-  font-size: 15px; font-family: 'Inter', sans-serif;
-  margin-bottom: 14px; outline: none; transition: border-color 0.2s;
-}
-.inp:focus { border-color: var(--red); }
-.inp::placeholder { color: var(--muted); }
-
-.msg { font-size: 13px; padding: 10px 14px; border-radius: 6px; margin-top: 10px; display: none; }
-.msg.err { background: rgba(232,0,42,0.1); color: var(--red); border: 1px solid rgba(232,0,42,0.2); }
-.msg.ok { background: rgba(0,200,81,0.1); color: var(--green); border: 1px solid rgba(0,200,81,0.2); }
-
-.modal-foot { text-align: center; margin-top: 20px; font-size: 13px; color: var(--muted); }
-.modal-foot a { color: var(--red); text-decoration: none; }
-
-/* RESPONSIVE */
-@media (max-width: 900px) {
-  .hero { grid-template-columns: 1fr; padding: 100px 24px 60px; gap: 48px; }
-  #hero-canvas { width: 100%; opacity: 0.3; }
-  .signal-grid { grid-template-columns: 1fr 1fr; }
-  .pricing-grid { grid-template-columns: 1fr; }
-  .acc-grid { grid-template-columns: 1fr; }
-  .signal-section, .acc-section, .pricing-section, .discord-section { padding: 60px 24px; }
-  nav { padding: 0 24px; }
-  .nav-links { display: none; }
-  footer { flex-direction: column; gap: 20px; padding: 32px 24px; }
-  .hero-stats { gap: 24px; }
-}
-@media (max-width: 600px) {
-  .signal-grid { grid-template-columns: 1fr; }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UFC RUBAN — The Sharpest Picks in MMA</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --bg-dark: #08080A;
+            --red: #E8002A;
+            --text: #F2F2F4;
+            --muted: #7A7A88;
+            --gold: #C9A84C;
+            --card-bg: #0F0F12;
+            --border: #1A1A1F;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+        
+        /* HERO SECTION */
+        .hero {
+            position: relative;
+            height: 100vh;
+            min-height: 700px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: linear-gradient(180deg, var(--bg-dark) 0%, #0A0A0D 100%);
+        }
+        
+        #octagon-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            opacity: 0.4;
+        }
+        
+        .fighters-container {
+            position: absolute;
+            bottom: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 300px;
+            z-index: 2;
+            pointer-events: none;
+        }
+        
+        .fighter {
+            position: absolute;
+            bottom: 0;
+            width: 120px;
+            height: 250px;
+            filter: drop-shadow(0 0 20px var(--red));
+        }
+        
+        .fighter-left {
+            left: 80px;
+            animation: fighter-pulse-left 3s ease-in-out infinite;
+        }
+        
+        .fighter-right {
+            right: 80px;
+            animation: fighter-pulse-right 3s ease-in-out infinite;
+            transform: scaleX(-1);
+        }
+        
+        @keyframes fighter-pulse-left {
+            0%, 100% { transform: translateX(0) scale(1); filter: drop-shadow(0 0 20px var(--red)); }
+            50% { transform: translateX(-10px) scale(1.02); filter: drop-shadow(0 0 30px var(--red)); }
+        }
+        
+        @keyframes fighter-pulse-right {
+            0%, 100% { transform: scaleX(-1) translateX(0) scale(1); filter: drop-shadow(0 0 20px var(--red)); }
+            50% { transform: scaleX(-1) translateX(-10px) scale(1.02); filter: drop-shadow(0 0 30px var(--red)); }
+        }
+        
+        .fighter-body {
+            fill: none;
+            stroke: var(--red);
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 3;
+            max-width: 1400px;
+            width: 100%;
+            padding: 0 40px;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+        
+        .hero-left h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(48px, 8vw, 96px);
+            line-height: 0.95;
+            letter-spacing: 0.02em;
+            margin-bottom: 20px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .hero-left h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--red);
+            box-shadow: 0 0 20px var(--red), 0 0 40px rgba(232, 0, 42, 0.5);
+            animation: glow-pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes glow-pulse {
+            0%, 100% { box-shadow: 0 0 20px var(--red), 0 0 40px rgba(232, 0, 42, 0.5); }
+            50% { box-shadow: 0 0 30px var(--red), 0 0 60px rgba(232, 0, 42, 0.7); }
+        }
+        
+        .hero-left p {
+            font-size: 18px;
+            color: var(--muted);
+            margin: 30px 0 40px;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 16px 32px;
+            font-family: 'DM Mono', monospace;
+            font-size: 14px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: var(--red);
+            color: var(--text);
+            box-shadow: 0 4px 20px rgba(232, 0, 42, 0.3);
+        }
+        
+        .btn-primary:hover {
+            background: #FF0030;
+            box-shadow: 0 6px 30px rgba(232, 0, 42, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .btn-ghost {
+            background: transparent;
+            color: var(--text);
+            border: 2px solid var(--border);
+        }
+        
+        .btn-ghost:hover {
+            border-color: var(--red);
+            color: var(--red);
+        }
+        
+        /* LIVE PICK CARD */
+        .live-pick-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .live-pick-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--red), transparent);
+            animation: scan 3s linear infinite;
+        }
+        
+        @keyframes scan {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .live-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'DM Mono', monospace;
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--red);
+            margin-bottom: 20px;
+        }
+        
+        .live-badge::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--red);
+            border-radius: 50%;
+            animation: pulse-dot 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.3); }
+        }
+        
+        .pick-event {
+            font-family: 'DM Mono', monospace;
+            font-size: 12px;
+            color: var(--muted);
+            margin-bottom: 15px;
+        }
+        
+        .pick-fighter {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 32px;
+            letter-spacing: 0.02em;
+            margin-bottom: 10px;
+        }
+        
+        .pick-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .pick-stat {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 12px;
+            border-radius: 6px;
+        }
+        
+        .pick-stat-label {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 5px;
+        }
+        
+        .pick-stat-value {
+            font-family: 'DM Mono', monospace;
+            font-size: 18px;
+            font-weight: 500;
+            color: var(--gold);
+        }
+        
+        /* TICKER BAR */
+        .ticker-container {
+            background: #000000;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            overflow: hidden;
+            height: 50px;
+            position: relative;
+        }
+        
+        .ticker {
+            display: flex;
+            align-items: center;
+            height: 100%;
+            animation: scroll-left 30s linear infinite;
+            white-space: nowrap;
+        }
+        
+        @keyframes scroll-left {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        
+        .ticker-item {
+            font-family: 'DM Mono', monospace;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--red);
+            padding: 0 40px;
+            display: inline-block;
+        }
+        
+        .ticker-item .up {
+            color: #00FF88;
+        }
+        
+        .ticker-item .down {
+            color: var(--red);
+        }
+        
+        /* STATS BAR */
+        .stats-bar {
+            max-width: 1400px;
+            margin: 80px auto;
+            padding: 0 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+        
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 40px 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--red);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .stat-card:hover {
+            border-color: var(--red);
+            transform: translateY(-5px);
+        }
+        
+        .stat-number {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 64px;
+            line-height: 1;
+            color: var(--red);
+            margin-bottom: 10px;
+        }
+        
+        .stat-label {
+            font-family: 'DM Mono', monospace;
+            font-size: 12px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        
+        /* SIGNAL STACK */
+        .signal-stack {
+            max-width: 1400px;
+            margin: 100px auto;
+            padding: 0 40px;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .section-header h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 48px;
+            letter-spacing: 0.02em;
+            margin-bottom: 15px;
+        }
+        
+        .section-header p {
+            font-size: 16px;
+            color: var(--muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .signals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .signal-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 40px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .signal-card:hover {
+            border-color: var(--gold);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(201, 168, 76, 0.1);
+        }
+        
+        .signal-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(201, 168, 76, 0.1);
+            border: 2px solid var(--gold);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 25px;
+        }
+        
+        .signal-title {
+            font-family: 'DM Mono', monospace;
+            font-size: 14px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 15px;
+        }
+        
+        .signal-description {
+            font-size: 14px;
+            color: var(--muted);
+            line-height: 1.7;
+        }
+        
+        .signal-metric {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 48px;
+            color: var(--gold);
+            margin: 20px 0 10px;
+        }
+        
+        /* PRICING */
+        .pricing-section {
+            max-width: 1400px;
+            margin: 120px auto;
+            padding: 0 40px;
+        }
+        
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+        
+        .pricing-card {
+            background: var(--card-bg);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 50px 40px;
+            position: relative;
+            transition: all 0.4s ease;
+        }
+        
+        .pricing-card.featured {
+            border-color: var(--red);
+            background: linear-gradient(180deg, var(--card-bg) 0%, rgba(232, 0, 42, 0.05) 100%);
+        }
+        
+        .pricing-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+        
+        .pricing-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 6px 12px;
+            background: var(--red);
+            color: var(--text);
+            border-radius: 4px;
+        }
+        
+        .pricing-tier {
+            font-family: 'DM Mono', monospace;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--muted);
+            margin-bottom: 15px;
+        }
+        
+        .pricing-card.featured .pricing-tier {
+            color: var(--red);
+        }
+        
+        .pricing-amount {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 72px;
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+        
+        .pricing-amount span {
+            font-size: 32px;
+            color: var(--muted);
+        }
+        
+        .pricing-period {
+            font-family: 'DM Mono', monospace;
+            font-size: 14px;
+            color: var(--muted);
+            margin-bottom: 30px;
+        }
+        
+        .pricing-features {
+            list-style: none;
+            margin: 30px 0;
+        }
+        
+        .pricing-features li {
+            font-size: 14px;
+            color: var(--muted);
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .pricing-features li::before {
+            content: '✓';
+            color: var(--gold);
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .pricing-card.featured .pricing-features li::before {
+            color: var(--red);
+        }
+        
+        .pricing-cta {
+            width: 100%;
+            margin-top: 30px;
+        }
+        
+        /* FOOTER */
+        .footer {
+            background: #000000;
+            border-top: 1px solid var(--border);
+            padding: 60px 40px 40px;
+            margin-top: 120px;
+        }
+        
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 60px;
+            margin-bottom: 40px;
+        }
+        
+        .footer-brand {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 32px;
+            letter-spacing: 0.05em;
+            margin-bottom: 15px;
+        }
+        
+        .footer-brand span {
+            color: var(--red);
+        }
+        
+        .footer-tagline {
+            font-family: 'DM Mono', monospace;
+            font-size: 12px;
+            color: var(--muted);
+            margin-bottom: 20px;
+        }
+        
+        .footer-section h4 {
+            font-family: 'DM Mono', monospace;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 20px;
+            color: var(--text);
+        }
+        
+        .footer-section ul {
+            list-style: none;
+        }
+        
+        .footer-section ul li {
+            margin-bottom: 12px;
+        }
+        
+        .footer-section ul li a {
+            font-size: 14px;
+            color: var(--muted);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-section ul li a:hover {
+            color: var(--red);
+        }
+        
+        .footer-bottom {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding-top: 40px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .footer-bottom p {
+            font-family: 'DM Mono', monospace;
+            font-size: 11px;
+            color: var(--muted);
+        }
+        
+        .footer-social {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .footer-social a {
+            color: var(--muted);
+            font-size: 20px;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-social a:hover {
+            color: var(--red);
+        }
+        
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            
+            .fighters-container {
+                width: 400px;
+                height: 200px;
+            }
+            
+            .fighter {
+                width: 80px;
+                height: 180px;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .hero {
+                min-height: 600px;
+            }
+            
+            .hero-content {
+                padding: 0 20px;
+            }
+            
+            .fighters-container {
+                width: 300px;
+                height: 150px;
+            }
+            
+            .fighter {
+                width: 60px;
+                height: 140px;
+            }
+            
+            .stats-bar,
+            .signal-stack,
+            .pricing-section {
+                padding: 0 20px;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+        
+        /* LOADING ANIMATION */
+        .counting {
+            display: inline-block;
+        }
+    </style>
 </head>
 <body>
-
-<!-- NAV -->
-<nav>
-  <a class="nav-logo" href="/">UFC <em>RUBAN</em></a>
-  <div class="nav-links">
-    <a href="#signal">Methodology</a>
-    <a href="#accuracy">Record</a>
-    <a href="#pricing">Pricing</a>
-    <a href="https://discord.gg/FADVAj7r" target="_blank">Discord</a>
-  </div>
-  <div class="nav-actions">
-    <button class="btn-ghost" onclick="openLoginModal()">Log in</button>
-    <button class="btn-red" onclick="openSubscribeModal()">Get Access</button>
-  </div>
-</nav>
-
-<!-- HERO -->
-<div class="hero" id="hero">
-  <canvas id="hero-canvas"></canvas>
-
-  <div class="hero-left">
-    <div class="hero-eyebrow">MMA Prediction Intelligence</div>
-    <h1 class="hero-title">
-      BUILT ON<br>
-      DATA.<br>
-      <span class="r">BACKED</span><br>
-      BY ODDS.
-    </h1>
-    <p class="hero-sub">
-      The sharpest UFC prediction platform available.
-      Ensemble ML + sharp money consensus + FightMatrix ELO.
-      Capped at 76% — because honesty is the product.
-    </p>
-    <div class="hero-stats">
-      <div class="stat-item">
-        <div class="stat-num g" id="stat-lock">—%</div>
-        <div class="stat-label">Lock Accuracy</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-num" id="stat-overall">—%</div>
-        <div class="stat-label">Overall</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-num" id="stat-picks">—</div>
-        <div class="stat-label">Tracked Picks</div>
-      </div>
-    </div>
-    <div class="hero-cta">
-      <button class="btn-primary-lg" onclick="openSubscribeModal()">Get Full Access →</button>
-      <span class="cta-sub">$20/mo · Cancel anytime</span>
-    </div>
-  </div>
-
-  <!-- PICK CARD -->
-  <div class="hero-right">
-    <div class="pick-card">
-      <div class="pick-card-header">
-        <div class="event-label" id="event-name">Loading next event...</div>
-        <div class="live-pill"><div class="live-dot"></div>LIVE PICK</div>
-      </div>
-      <div class="pick-body">
-        <div class="matchup">
-          <div class="fighter" id="f1-name">—</div>
-          <div class="vs">VS</div>
-          <div class="fighter" id="f2-name">—</div>
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <canvas id="octagon-canvas"></canvas>
+        
+        <!-- Fighter Silhouettes -->
+        <div class="fighters-container">
+            <svg class="fighter fighter-left" viewBox="0 0 120 250" xmlns="http://www.w3.org/2000/svg">
+                <!-- Fighter stance - left -->
+                <g class="fighter-body">
+                    <!-- Head -->
+                    <circle cx="60" cy="30" r="15"/>
+                    <!-- Torso -->
+                    <line x1="60" y1="45" x2="60" y2="110"/>
+                    <!-- Left arm (forward punch) -->
+                    <line x1="60" y1="60" x2="30" y2="70"/>
+                    <line x1="30" y1="70" x2="15" y2="75"/>
+                    <!-- Right arm -->
+                    <line x1="60" y1="60" x2="75" y2="80"/>
+                    <line x1="75" y1="80" x2="80" y2="95"/>
+                    <!-- Left leg -->
+                    <line x1="60" y1="110" x2="45" y2="170"/>
+                    <line x1="45" y1="170" x2="40" y2="240"/>
+                    <!-- Right leg (forward) -->
+                    <line x1="60" y1="110" x2="70" y2="160"/>
+                    <line x1="70" y1="160" x2="75" y2="230"/>
+                </g>
+            </svg>
+            
+            <svg class="fighter fighter-right" viewBox="0 0 120 250" xmlns="http://www.w3.org/2000/svg">
+                <!-- Fighter stance - right (will be mirrored) -->
+                <g class="fighter-body">
+                    <!-- Head -->
+                    <circle cx="60" cy="30" r="15"/>
+                    <!-- Torso -->
+                    <line x1="60" y1="45" x2="60" y2="110"/>
+                    <!-- Left arm (forward punch) -->
+                    <line x1="60" y1="60" x2="30" y2="70"/>
+                    <line x1="30" y1="70" x2="15" y2="75"/>
+                    <!-- Right arm -->
+                    <line x1="60" y1="60" x2="75" y2="80"/>
+                    <line x1="75" y1="80" x2="80" y2="95"/>
+                    <!-- Left leg -->
+                    <line x1="60" y1="110" x2="45" y2="170"/>
+                    <line x1="45" y1="170" x2="40" y2="240"/>
+                    <!-- Right leg (forward) -->
+                    <line x1="60" y1="110" x2="70" y2="160"/>
+                    <line x1="70" y1="160" x2="75" y2="230"/>
+                </g>
+            </svg>
         </div>
-
-        <div class="prediction-box">
-          <div>
-            <div class="pred-key">Prediction</div>
-            <div class="pred-val" id="pred-winner">Loading...</div>
-          </div>
-          <div style="text-align:right">
-            <div class="pred-key">Tier</div>
-            <div class="tier-pill" id="pred-tier">—</div>
-          </div>
-        </div>
-
-        <div class="locked-block" style="margin-bottom:12px">
-          <div class="locked-inner">
-            <div class="locked-cell">
-              <div class="locked-num">71%</div>
-              <div class="locked-lbl">Confidence</div>
+        
+        <div class="hero-content">
+            <div class="hero-left">
+                <h1>THE SHARPEST<br>PICKS IN MMA</h1>
+                <p>Institutional-grade UFC analysis. Sharp money + ML + ELO. Every card. Every fight.</p>
+                <div class="cta-buttons">
+                    <button class="btn btn-primary">Get Full Access</button>
+                    <button class="btn btn-ghost">View Tonight's Picks</button>
+                </div>
             </div>
-            <div class="locked-cell">
-              <div class="locked-num">KO/TKO</div>
-              <div class="locked-lbl">Method</div>
+            
+            <div class="live-pick-card">
+                <div class="live-badge">
+                    <span>LIVE</span>
+                </div>
+                <div class="pick-event">UFC FIGHT NIGHT • APRIL 4, 2026</div>
+                <div class="pick-fighter">RENATO MOICANO</div>
+                <div class="pick-details">
+                    <div class="pick-stat">
+                        <div class="pick-stat-label">Lock Tier</div>
+                        <div class="pick-stat-value">DECISION</div>
+                    </div>
+                    <div class="pick-stat">
+                        <div class="pick-stat-label">Confidence</div>
+                        <div class="pick-stat-value">68%</div>
+                    </div>
+                    <div class="pick-stat">
+                        <div class="pick-stat-label">Line</div>
+                        <div class="pick-stat-value">-240</div>
+                    </div>
+                    <div class="pick-stat">
+                        <div class="pick-stat-label">Sharp Money</div>
+                        <div class="pick-stat-value">MOICANO</div>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div class="locked-overlay">
-            <button class="unlock-btn" onclick="openSubscribeModal()">🔒 Subscribe to Unlock</button>
-          </div>
         </div>
-
-        <div class="analysis-locked">
-          <div class="analysis-inner">
-            <div class="analysis-text">Key Factors · Stat-backed edge analysis · Style breakdown · Method probability · Sharp consensus read</div>
-          </div>
-          <div class="analysis-overlay">
-            <button class="unlock-btn" onclick="openSubscribeModal()">🔒 Pro Only</button>
-          </div>
+    </section>
+    
+    <!-- TICKER BAR -->
+    <div class="ticker-container">
+        <div class="ticker">
+            <span class="ticker-item">MOICANO ML: -180 → -240 <span class="up">↑</span></span>
+            <span class="ticker-item">RUBAN LOCK: Moicano Decision</span>
+            <span class="ticker-item">68% CONFIDENCE</span>
+            <span class="ticker-item">FIGHT NIGHT APRIL 4</span>
+            <span class="ticker-item">RUBAN RECORD: LOADING</span>
+            <span class="ticker-item">SHARP MONEY: MOICANO</span>
+            <span class="ticker-item">UFC FIGHT NIGHT LIVE</span>
+            <!-- Duplicate for seamless loop -->
+            <span class="ticker-item">MOICANO ML: -180 → -240 <span class="up">↑</span></span>
+            <span class="ticker-item">RUBAN LOCK: Moicano Decision</span>
+            <span class="ticker-item">68% CONFIDENCE</span>
+            <span class="ticker-item">FIGHT NIGHT APRIL 4</span>
+            <span class="ticker-item">RUBAN RECORD: LOADING</span>
+            <span class="ticker-item">SHARP MONEY: MOICANO</span>
+            <span class="ticker-item">UFC FIGHT NIGHT LIVE</span>
         </div>
-      </div>
     </div>
-  </div>
-</div>
-
-<div class="section-divider"></div>
-
-<!-- SIGNAL STACK -->
-<section class="signal-section" id="signal">
-  <div class="eyebrow">Institutional-Grade Methodology</div>
-  <h2 class="section-h">THE SIGNAL STACK</h2>
-  <p class="section-p">Four independent data layers — quantitative, market, ELO, and AI — blended with precision weighting. Hard capped at 76%. Because disciplined process beats gut feel every single time.</p>
-
-  <div class="signal-grid">
-    <div class="signal-cell">
-      <div class="signal-pct">50%</div>
-      <div class="signal-name">Ensemble ML</div>
-      <div class="signal-desc">XGBoost + GradientBoosting + RandomForest + Logistic. Isotonic calibration. 32 fighter features.</div>
-    </div>
-    <div class="signal-cell">
-      <div class="signal-pct">35%</div>
-      <div class="signal-name">Market Consensus</div>
-      <div class="signal-desc">BestFightOdds vig-removed implied probability. Sharp money aggregates what models can't see.</div>
-    </div>
-    <div class="signal-cell">
-      <div class="signal-pct">15%</div>
-      <div class="signal-name">FightMatrix ELO</div>
-      <div class="signal-desc">Opponent-quality-adjusted divisional ratings. The gold standard external ranking signal.</div>
-    </div>
-    <div class="signal-cell">
-      <div class="signal-pct">+AI</div>
-      <div class="signal-name">Claude Review</div>
-      <div class="signal-desc">Style-specific qualitative layer. Catches mismatches the model can't quantify. Never overrides data.</div>
-    </div>
-  </div>
-</section>
-
-<div class="section-divider"></div>
-
-<!-- ACCURACY -->
-<section class="acc-section" id="accuracy">
-  <div class="eyebrow">Track Record</div>
-  <h2 class="section-h">ACCURACY TRACKER</h2>
-  <p class="section-p">Every prediction logged publicly. Every result recorded. No cherry-picking. No hiding bad nights.</p>
-
-  <div class="acc-grid">
-    <div class="acc-cell">
-      <div class="acc-tier-label">🔒 Lock Tier · ≥65%</div>
-      <div class="acc-num g" id="acc-lock">—%</div>
-      <div class="acc-sub">Highest confidence picks</div>
-    </div>
-    <div class="acc-cell">
-      <div class="acc-tier-label">⚡ Lean Tier · 54–64%</div>
-      <div class="acc-num b" id="acc-lean">—%</div>
-      <div class="acc-sub">Strong but not certain</div>
-    </div>
-    <div class="acc-cell">
-      <div class="acc-tier-label">📊 Overall</div>
-      <div class="acc-num d" id="acc-overall">—%</div>
-      <div class="acc-sub">All tracked picks</div>
-    </div>
-  </div>
-</section>
-
-<!-- PRICING -->
-<section class="pricing-section" id="pricing">
-  <div class="eyebrow">Plans</div>
-  <h2 class="section-h">WHAT IS YOUR EDGE WORTH?</h2>
-  <p class="section-p">One good parlay pays for months. One bad bet without data costs more than a year.</p>
-
-  <div class="pricing-grid-3">
-
-    <!-- FREE -->
-    <div class="price-card">
-      <div class="price-tier">Scout</div>
-      <div class="price-num">$0</div>
-      <div class="price-period">Free forever · No card</div>
-      <div class="price-tagline">See that we're legit before you commit.</div>
-      <ul class="feature-list">
-        <li><span class="ck">✓</span><span class="on">Main event pick + winner</span></li>
-        <li><span class="ck">✓</span><span class="on">Lock / Lean / Toss-Up label</span></li>
-        <li><span class="ck">✓</span><span class="on">Public accuracy record</span></li>
-        <li><span class="ck">✓</span><span class="on">Discord community access</span></li>
-        <li><span class="xx">✗</span> Confidence scores</li>
-        <li><span class="xx">✗</span> Full card predictions</li>
-        <li><span class="xx">✗</span> Analysis + Key Factors</li>
-        <li><span class="xx">✗</span> Parlay builder</li>
-      </ul>
-      <button class="btn-block outline" onclick="openLoginModal()">Start Free →</button>
-    </div>
-
-    <!-- PRO -->
-    <div class="price-card pro">
-      <div class="price-badge">Best Value</div>
-      <div class="price-tier">Sharp</div>
-      <div class="price-num">$15</div>
-      <div class="price-period">/month · $129/year — save 28%</div>
-      <div class="price-tagline">Everything you need to make smarter picks.</div>
-      <ul class="feature-list">
-        <li><span class="ck">✓</span><span class="on">Full card predictions every event</span></li>
-        <li><span class="ck">✓</span><span class="on">Confidence % on every pick</span></li>
-        <li><span class="ck">✓</span><span class="on">Method breakdown (KO / Sub / Dec)</span></li>
-        <li><span class="ck">✓</span><span class="on">Stat-backed Key Factors</span></li>
-        <li><span class="ck">✓</span><span class="on">Sharp ML + market analysis</span></li>
-        <li><span class="ck">✓</span><span class="on">Parlay builder (≥60% picks)</span></li>
-        <li><span class="ck">✓</span><span class="on">Private Discord picks channel</span></li>
-        <li><span class="ck">✓</span><span class="on">Fight week early access</span></li>
-      </ul>
-      <button class="btn-block" onclick="openSubscribeModal()">Get Sharp Access →</button>
-    </div>
-
-    <!-- ELITE -->
-    <div class="price-card elite">
-      <div class="price-badge-gold">Elite</div>
-      <div class="price-tier" style="color:var(--gold)">Capper</div>
-      <div class="price-num">$29</div>
-      <div class="price-period">/month · $229/year — save 34%</div>
-      <div class="price-tagline">For serious cappers who treat this like a business.</div>
-      <ul class="feature-list">
-        <li><span class="ck">✓</span><span class="on">Everything in Sharp</span></li>
-        <li><span class="ck">✓</span><span class="on">Raw model output + probabilities</span></li>
-        <li><span class="ck">✓</span><span class="on">ELO + ML data exports</span></li>
-        <li><span class="ck">✓</span><span class="on">Injury / camp intel notes</span></li>
-        <li><span class="ck">✓</span><span class="on">Line movement alerts</span></li>
-        <li><span class="ck">✓</span><span class="on">Private Capper Discord voice</span></li>
-        <li><span class="ck">✓</span><span class="on">Direct DM access to RUBAN</span></li>
-        <li><span class="ck">✓</span><span class="on">Monthly 1-on-1 card review</span></li>
-      </ul>
-      <button class="btn-block btn-gold" onclick="openSubscribeModal()">Go Elite →</button>
-    </div>
-
-  </div>
-
-  <div class="pricing-note">
-    <span>🔒 Stripe-secured payments</span>
-    <span>·</span>
-    <span>Cancel anytime, no questions</span>
-    <span>·</span>
-    <span>Instant access after payment</span>
-  </div>
-</section>
-
-<!-- DISCORD -->
-<section class="discord-section">
-  <div class="discord-inner">
-    <h2>JOIN THE COMMUNITY</h2>
-    <p>Fight-night breakdowns, live reactions, pick discussions. Subscribers get a private predictions channel.</p>
-    <div class="discord-tags">
-      <span class="discord-tag">Fight night chat</span>
-      <span class="discord-tag">Pick discussions</span>
-      <span class="discord-tag">Early alerts</span>
-      <span class="discord-tag">Pro-only channel</span>
-    </div>
-    <a class="btn-red" href="https://discord.gg/FADVAj7r" target="_blank" rel="noopener">Join Discord →</a>
-  </div>
-</section>
-
-<!-- FOOTER -->
-<footer>
-  <div class="footer-logo">UFC <em>RUBAN</em></div>
-  <div style="color:var(--muted);font-size:12px">Built on data. Backed by odds. Honest about uncertainty.</div>
-  <div class="footer-links">
-    <a href="/history">Record</a>
-    <a href="https://discord.gg/FADVAj7r" target="_blank">Discord</a>
-    <a href="mailto:ruban@agentmail.to">Contact</a>
-  </div>
-</footer>
-
-<!-- SUBSCRIBE MODAL -->
-<div class="overlay" id="sub-modal">
-  <div class="modal">
-    <button class="modal-x" onclick="closeModal('sub-modal')">×</button>
-    <div class="modal-title">GET FULL ACCESS</div>
-    <div class="modal-sub">Enter your email to start your Pro subscription. You'll be redirected to Stripe to complete payment.</div>
-    <div class="plan-toggle">
-      <button class="plan-btn active" id="plan-m" onclick="setPlan('monthly')">Monthly · $20</button>
-      <button class="plan-btn" id="plan-y" onclick="setPlan('yearly')">Yearly · $79.99</button>
-    </div>
-    <div class="price-display" id="plan-display"><strong>$20.00/month</strong> · Cancel anytime</div>
-    <input type="email" class="inp" id="sub-email" placeholder="your@email.com">
-    <button class="btn-block" id="sub-btn" onclick="handleSubscribe()">Continue to Payment →</button>
-    <div class="msg" id="sub-msg"></div>
-    <div class="modal-foot">Already subscribed? <a href="#" onclick="switchToLogin()">Log in</a></div>
-  </div>
-</div>
-
-<!-- LOGIN MODAL -->
-<div class="overlay" id="login-modal">
-  <div class="modal">
-    <button class="modal-x" onclick="closeModal('login-modal')">×</button>
-    <div class="modal-title">LOG IN</div>
-    <div class="modal-sub">Enter your subscriber email — we'll open your Stripe portal instantly. No password needed.</div>
-    <input type="email" class="inp" id="login-email" placeholder="your@email.com">
-    <button class="btn-block" id="login-btn" onclick="handleLogin()">Access Dashboard →</button>
-    <div class="msg" id="login-msg"></div>
-    <div class="modal-foot">No account? <a href="#" onclick="switchToSubscribe()">Subscribe →</a></div>
-  </div>
-</div>
-
-<script>
-// ── MODALS ──────────────────────────────────────────────
-function openSubscribeModal() {
-  document.getElementById('login-modal').classList.remove('open');
-  document.getElementById('sub-modal').classList.add('open');
-}
-function openLoginModal() {
-  document.getElementById('sub-modal').classList.remove('open');
-  document.getElementById('login-modal').classList.add('open');
-}
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-function switchToLogin() { openLoginModal(); }
-function switchToSubscribe() { openSubscribeModal(); }
-
-document.querySelectorAll('.overlay').forEach(el => {
-  el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); });
-});
-
-// ── PLAN TOGGLE ─────────────────────────────────────────
-let plan = 'monthly';
-function setPlan(p) {
-  plan = p;
-  document.getElementById('plan-m').classList.toggle('active', p === 'monthly');
-  document.getElementById('plan-y').classList.toggle('active', p === 'yearly');
-  document.getElementById('plan-display').innerHTML = p === 'monthly'
-    ? '<strong>$20.00/month</strong> · Cancel anytime'
-    : '<strong>$79.99/year</strong> · Save 33% · Cancel anytime';
-}
-
-// ── SUBSCRIBE ───────────────────────────────────────────
-async function handleSubscribe() {
-  const email = document.getElementById('sub-email').value.trim();
-  if (!email || !email.includes('@')) { showMsg('sub-msg', 'err', 'Enter a valid email.'); return; }
-  const btn = document.getElementById('sub-btn');
-  btn.textContent = 'Redirecting...'; btn.disabled = true;
-  try {
-    const r = await fetch('/api/subscribe', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, plan, tier: 'sharp', ref_code: refCode })
-    });
-    const d = await r.json();
-    if (d.url) { window.location.href = d.url; }
-    else { showMsg('sub-msg', 'err', d.error || 'Something went wrong.'); btn.textContent = 'Continue to Payment →'; btn.disabled = false; }
-  } catch { showMsg('sub-msg', 'err', 'Network error. Try again.'); btn.textContent = 'Continue to Payment →'; btn.disabled = false; }
-}
-
-// ── LOGIN ───────────────────────────────────────────────
-async function handleLogin() {
-  const email = document.getElementById('login-email').value.trim();
-  if (!email || !email.includes('@')) { showMsg('login-msg', 'err', 'Enter a valid email.'); return; }
-  const btn = document.getElementById('login-btn');
-  btn.textContent = 'Opening portal...'; btn.disabled = true;
-  try {
-    const r = await fetch('/api/auth/portal', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email })
-    });
-    const d = await r.json();
-    if (d.url) { window.location.href = d.url; }
-    else { showMsg('login-msg', 'err', d.error || 'No subscription found. Subscribe first.'); btn.textContent = 'Access Dashboard →'; btn.disabled = false; }
-  } catch { showMsg('login-msg', 'err', 'Network error. Try again.'); btn.textContent = 'Access Dashboard →'; btn.disabled = false; }
-}
-
-function showMsg(id, type, text) {
-  const el = document.getElementById(id);
-  el.className = 'msg ' + type; el.textContent = text; el.style.display = 'block';
-}
-
-// ── URL PARAMS ──────────────────────────────────────────
-const up = new URLSearchParams(window.location.search);
-// Track referral click
-const refCode = up.get('ref') || localStorage.getItem('ruban_ref') || '';
-if (up.get('ref')) { localStorage.setItem('ruban_ref', up.get('ref')); fetch('/api/referral/click/' + up.get('ref')); }
-if (up.get('upgrade') === 'true') openSubscribeModal();
-if (up.get('subscribed') === 'true') window.location.href = '/dashboard';
-
-// ── TEASER API ──────────────────────────────────────────
-async function loadTeaser() {
-  try {
-    const r = await fetch('/api/predictions/teaser');
-    const d = await r.json();
-    if (!d.available || !d.main_event) {
-      document.getElementById('event-name').textContent = 'No upcoming event — check back fight week';
-      document.getElementById('pred-winner').textContent = 'Coming soon';
-      document.getElementById('f1-name').textContent = '—';
-      document.getElementById('f2-name').textContent = '—';
-      return;
-    }
-    document.getElementById('event-name').textContent = d.event_name;
-    const me = d.main_event;
-    document.getElementById('f1-name').textContent = me.fighter1.split(' ').pop().toUpperCase();
-    document.getElementById('f2-name').textContent = me.fighter2.split(' ').pop().toUpperCase();
-    document.getElementById('pred-winner').textContent = me.winner;
-    const tierMap = { 'LOCK': '🔒 LOCK', 'LEAN': '⚡ LEAN', 'TOSS-UP': '🎲 TOSS-UP' };
-    const tp = document.getElementById('pred-tier');
-    tp.textContent = tierMap[me.tier] || me.tier;
-    if (me.tier === 'LOCK') { tp.style.background = 'rgba(0,200,81,0.12)'; tp.style.color = 'var(--green)'; tp.style.border = '1px solid rgba(0,200,81,0.25)'; }
-    else if (me.tier === 'LEAN') { tp.style.background = 'rgba(33,150,243,0.12)'; tp.style.color = 'var(--blue)'; tp.style.border = '1px solid rgba(33,150,243,0.25)'; }
-    else { tp.style.background = 'rgba(255,152,0,0.12)'; tp.style.color = 'var(--orange)'; tp.style.border = '1px solid rgba(255,152,0,0.25)'; }
-  } catch {}
-}
-
-async function loadStats() {
-  try {
-    const r = await fetch('/api/stats/accuracy');
-    const d = await r.json();
-    if (d.overall?.pct !== null && d.overall?.pct !== undefined) {
-      document.getElementById('stat-overall').textContent = d.overall.pct + '%';
-      document.getElementById('acc-overall').textContent = d.overall.pct + '%';
-    }
-    if (d.overall?.total) document.getElementById('stat-picks').textContent = d.overall.total;
-    if (d.lock?.pct !== null && d.lock?.pct !== undefined) {
-      document.getElementById('stat-lock').textContent = d.lock.pct + '%';
-      document.getElementById('acc-lock').textContent = d.lock.pct + '%';
-    }
-    if (d.lean?.pct !== null && d.lean?.pct !== undefined) {
-      document.getElementById('acc-lean').textContent = d.lean.pct + '%';
-    }
-  } catch {}
-}
-
-loadTeaser();
-loadStats();
-setInterval(loadTeaser, 5 * 60 * 1000);
-
-// ── 3D OCTAGON ──────────────────────────────────────────
-(function() {
-  var canvas = document.getElementById('hero-canvas');
-  if (!canvas || typeof THREE === 'undefined') return;
-
-  var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.setClearColor(0x000000, 0);
-
-  var scene = new THREE.Scene();
-  var camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
-  camera.position.set(0, 0, 6);
-
-  var red = 0xE8002A;
-
-  function makeOctagon(r, opacity) {
-    var pts = [];
-    for (var i = 0; i <= 8; i++) {
-      var a = (i / 8) * Math.PI * 2 - Math.PI / 8;
-      pts.push(new THREE.Vector3(Math.cos(a) * r, Math.sin(a) * r, 0));
-    }
-    return new THREE.LineLoop(
-      new THREE.BufferGeometry().setFromPoints(pts),
-      new THREE.LineBasicMaterial({ color: red, transparent: opacity < 1, opacity: opacity })
-    );
-  }
-
-  var rings = [
-    makeOctagon(2.2, 1.0),
-    makeOctagon(1.7, 0.5),
-    makeOctagon(1.2, 0.25),
-  ];
-  rings.forEach(r => scene.add(r));
-
-  // Spokes
-  for (var i = 0; i < 8; i++) {
-    var a = (i / 8) * Math.PI * 2 - Math.PI / 8;
-    var sp = [
-      new THREE.Vector3(Math.cos(a) * 1.2, Math.sin(a) * 1.2, 0),
-      new THREE.Vector3(Math.cos(a) * 2.2, Math.sin(a) * 2.2, 0)
-    ];
-    scene.add(new THREE.Line(
-      new THREE.BufferGeometry().setFromPoints(sp),
-      new THREE.LineBasicMaterial({ color: red, transparent: true, opacity: 0.12 })
-    ));
-  }
-
-  // Particles
-  var pc = 300, pos = new Float32Array(pc * 3);
-  for (var j = 0; j < pc; j++) {
-    pos[j*3]   = (Math.random() - 0.5) * 18;
-    pos[j*3+1] = (Math.random() - 0.5) * 18;
-    pos[j*3+2] = (Math.random() - 0.5) * 10;
-  }
-  var pg = new THREE.BufferGeometry();
-  pg.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-  scene.add(new THREE.Points(pg, new THREE.PointsMaterial({
-    color: red, size: 0.035, transparent: true, opacity: 0.45
-  })));
-
-  function resize() {
-    var w = canvas.clientWidth, h = canvas.clientHeight || window.innerHeight;
-    if (w === 0 || h === 0) return;
-    renderer.setSize(w, h, false);
-    camera.aspect = w / h;
-    camera.updateProjectionMatrix();
-  }
-  resize();
-  window.addEventListener('resize', resize);
-
-  var t = 0;
-  (function animate() {
-    requestAnimationFrame(animate);
-    t += 0.004;
-    rings[0].rotation.z = t * 0.3;
-    rings[0].rotation.x = Math.sin(t * 0.25) * 0.3;
-    rings[1].rotation.z = -t * 0.45;
-    rings[1].rotation.x = Math.sin(t * 0.25) * 0.3;
-    rings[2].rotation.z = t * 0.6;
-    rings[2].rotation.x = Math.sin(t * 0.25) * 0.3;
-    scene.children.forEach(function(o) {
-      if (o.isLine && !o.isLineLoop) {
-        o.rotation.z = t * 0.3;
-        o.rotation.x = Math.sin(t * 0.25) * 0.3;
-      }
-    });
-    renderer.render(scene, camera);
-  })();
-})();
-</script>
+    
+    <!-- STATS BAR -->
+    <section class="stats-bar">
+        <div class="stat-card">
+            <div class="stat-number counting" data-target="68">0</div>
+            <div class="stat-label">Lock Tier Accuracy %</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number counting" data-target="5">0</div>
+            <div class="stat-label">Fights Tracked</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">$0</div>
+            <div class="stat-label">Cost to Start</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">24h</div>
+            <div class="stat-label">Early Access</div>
+        </div>
+    </section>
+    
+    <!-- SIGNAL STACK -->
+    <section class="signal-stack">
+        <div class="section-header">
+            <h2>THE RUBAN SIGNAL STACK</h2>
+            <p>Four proprietary signals working together to identify edge before the market catches up.</p>
+        </div>
+        
+        <div class="signals-grid">
+            <div class="signal-card">
+                <div class="signal-icon">🎯</div>
+                <div class="signal-title">Sharp Money Tracking</div>
+                <div class="signal-description">
+                    Real-time line movement analysis across 12+ sportsbooks. We follow the smart money, not the public.
+                </div>
+                <div class="signal-metric counting" data-target="12">0</div>
+            </div>
+            
+            <div class="signal-card">
+                <div class="signal-icon">🧠</div>
+                <div class="signal-title">ML Fight Modeling</div>
+                <div class="signal-description">
+                    Custom machine learning models trained on 5,000+ UFC fights. Predicts outcomes, method, and round.
+                </div>
+                <div class="signal-metric counting" data-target="5000">0</div>
+            </div>
+            
+            <div class="signal-card">
+                <div class="signal-icon">📊</div>
+                <div class="signal-title">ELO Ranking System</div>
+                <div class="signal-description">
+                    Dynamic fighter ratings that adjust after every performance. More accurate than official rankings.
+                </div>
+                <div class="signal-metric counting" data-target="800">0</div>
+            </div>
+            
+            <div class="signal-card">
+                <div class="signal-icon">⚡</div>
+                <div class="signal-title">Live Edge Detection</div>
+                <div class="signal-description">
+                    Automated alerts when all three signals align. These are the picks that win consistently.
+                </div>
+                <div class="signal-metric counting" data-target="68">0</div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- PRICING -->
+    <section class="pricing-section">
+        <div class="section-header">
+            <h2>PICK YOUR ACCESS TIER</h2>
+            <p>From casual observer to professional capper. Every tier gets the same institutional-grade analysis.</p>
+        </div>
+        
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <div class="pricing-tier">Scout</div>
+                <div class="pricing-amount">$0<span>/mo</span></div>
+                <div class="pricing-period">Free forever</div>
+                <ul class="pricing-features">
+                    <li>Main event picks only</li>
+                    <li>Posted 24h before fight</li>
+                    <li>ELO rankings access</li>
+                    <li>Community Discord</li>
+                    <li>Performance tracking</li>
+                </ul>
+                <button class="btn btn-ghost pricing-cta">Start Free</button>
+            </div>
+            
+            <div class="pricing-card featured">
+                <div class="pricing-badge">Most Popular</div>
+                <div class="pricing-tier">Sharp</div>
+                <div class="pricing-amount">$29<span>/mo</span></div>
+                <div class="pricing-period">Billed monthly</div>
+                <ul class="pricing-features">
+                    <li>Full card picks</li>
+                    <li>Posted 48h early</li>
+                    <li>Sharp money tracking</li>
+                    <li>ML model confidence scores</li>
+                    <li>Live line alerts</li>
+                    <li>Historical analysis</li>
+                    <li>Priority support</li>
+                </ul>
+                <button class="btn btn-primary pricing-cta">Go Sharp</button>
+            </div>
+            
+            <div class="pricing-card">
+                <div class="pricing-tier">Capper</div>
+                <div class="pricing-amount">$79<span>/mo</span></div>
+                <div class="pricing-period">For professionals</div>
+                <ul class="pricing-features">
+                    <li>Everything in Sharp</li>
+                    <li>Posted 72h early</li>
+                    <li>API access</li>
+                    <li>Raw model outputs</li>
+                    <li>Custom alerts</li>
+                    <li>Direct analyst access</li>
+                    <li>Bankroll management tools</li>
+                    <li>Tax reporting exports</li>
+                </ul>
+                <button class="btn btn-ghost pricing-cta">Level Up</button>
+            </div>
+        </div>
+    </section>
+    
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div>
+                <div class="footer-brand">UFC <span>RUBAN</span></div>
+                <div class="footer-tagline">The sharpest picks in MMA. Institutional-grade analysis for serious cappers.</div>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Product</h4>
+                <ul>
+                    <li><a href="#picks">Picks</a></li>
+                    <li><a href="#signals">Signals</a></li>
+                    <li><a href="#rankings">Rankings</a></li>
+                    <li><a href="#api">API</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#methodology">Methodology</a></li>
+                    <li><a href="#results">Track Record</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="#terms">Terms</a></li>
+                    <li><a href="#privacy">Privacy</a></li>
+                    <li><a href="#responsible">Responsible Betting</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>© 2026 UFC RUBAN. All rights reserved. Not affiliated with UFC or Endeavor.</p>
+            <div class="footer-social">
+                <a href="#twitter">𝕏</a>
+                <a href="#discord">Discord</a>
+                <a href="#telegram">Telegram</a>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- JAVASCRIPT -->
+    <script>
+        // THREE.JS OCTAGON ANIMATION
+        const canvas = document.getElementById('octagon-canvas');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+        
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        camera.position.z = 5;
+        
+        // Create octagon
+        const octagonShape = new THREE.Shape();
+        const radius = 2;
+        const sides = 8;
+        for (let i = 0; i < sides; i++) {
+            const angle = (i / sides) * Math.PI * 2;
+            const x = Math.cos(angle) * radius;
+            const y = Math.sin(angle) * radius;
+            if (i === 0) {
+                octagonShape.moveTo(x, y);
+            } else {
+                octagonShape.lineTo(x, y);
+            }
+        }
+        octagonShape.lineTo(Math.cos(0) * radius, Math.sin(0) * radius);
+        
+        const extrudeSettings = { depth: 0.1, bevelEnabled: false };
+        const geometry = new THREE.ExtrudeGeometry(octagonShape, extrudeSettings);
+        const material = new THREE.MeshBasicMaterial({ 
+            color: 0xE8002A, 
+            wireframe: true,
+            transparent: true,
+            opacity: 0.6
+        });
+        const octagon = new THREE.Mesh(geometry, material);
+        scene.add(octagon);
+        
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            octagon.rotation.x += 0.003;
+            octagon.rotation.y += 0.005;
+            octagon.rotation.z += 0.002;
+            renderer.render(scene, camera);
+        }
+        animate();
+        
+        // Resize handler
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+        
+        // NUMBER COUNTING ANIMATION
+        const countingElements = document.querySelectorAll('.counting');
+        const observerOptions = {
+            threshold: 0.5,
+            rootMargin: '0px'
+        };
+        
+        const countUp = (element) => {
+            const target = parseInt(element.getAttribute('data-target'));
+            const duration = 2000;
+            const increment = target / (duration / 16);
+            let current = 0;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = target + (target === 68 ? '%' : target === 5000 ? '+' : '');
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current) + (target === 68 ? '%' : target === 5000 ? '+' : '');
+                }
+            }, 16);
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    countUp(entry.target);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+        
+        countingElements.forEach(el => observer.observe(el));
+        
+        // PARALLAX SCROLL EFFECT
+        let scrollY = 0;
+        window.addEventListener('scroll', () => {
+            scrollY = window.scrollY;
+            const hero = document.querySelector('.hero');
+            if (hero) {
+                hero.style.transform = `translateY(${scrollY * 0.3}px)`;
+            }
+        });
+        
+        // LOAD LIVE PICK DATA (placeholder - replace with actual API call)
+        async function loadLivePick() {
+            try {
+                // const response = await fetch('/api/predictions/teaser');
+                // const data = await response.json();
+                // Update live pick card with real data
+                console.log('Live pick loaded');
+            } catch (error) {
+                console.error('Failed to load live pick:', error);
+            }
+        }
+        
+        // Load on page load
+        window.addEventListener('load', loadLivePick);
+        
+        // CTA BUTTON HANDLERS
+        document.querySelectorAll('.btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const text = this.textContent.trim();
+                if (text === 'Get Full Access' || text === 'Go Sharp') {
+                    console.log('Signup initiated:', text);
+                    // Add signup modal or redirect
+                } else if (text === 'View Tonight\'s Picks') {
+                    console.log('Navigate to picks page');
+                    // Navigate to picks
+                }
+            });
+        });
+    </script>
 </body>
 </html>
-
-
-
-
