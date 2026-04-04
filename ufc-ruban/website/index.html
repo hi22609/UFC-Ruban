@@ -3,94 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RUBAN | 67% Accuracy UFC Picks - White House Event</title>
-    <meta name="description" content="347 members won last week. Join the sharpest UFC prediction community. Free pick inside.">
+    <title>RUBAN | UFC White House - AI Predictions</title>
+    <meta name="description" content="67% accuracy. Ilia vs Gaethje prediction inside. Premium UFC analytics.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #050505;
+            --bg: #0a0a0f;
+            --card: #141419;
             --purple: #A855F7;
             --magenta: #C026D3;
+            --gold: #FFD700;
             --green: #10B981;
-            --red: #EF4444;
             --text: #fff;
             --muted: #9ca3af;
+            --border: rgba(168, 85, 247, 0.2);
+            --glow: 0 0 30px rgba(168, 85, 247, 0.4);
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; }
-        h1, h2 { font-family: 'Bebas Neue', sans-serif; text-transform: uppercase; }
-
-        /* STICKY CTA BAR */
-        .sticky-cta {
-            position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999;
-            background: linear-gradient(135deg, var(--purple), var(--magenta));
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 -5px 30px rgba(168, 85, 247, 0.6);
-            animation: slideUp 0.5s ease;
-        }
-        @keyframes slideUp {
-            from { transform: translateY(100%); }
-            to { transform: translateY(0); }
-        }
-        .sticky-cta-text {
-            font-weight: 700;
-            font-size: 1.1rem;
-        }
-        .sticky-cta-btn {
-            background: #fff;
-            color: var(--purple);
-            padding: 0.8rem 2.5rem;
-            border-radius: 30px;
-            font-weight: 800;
-            text-decoration: none;
-            transition: 0.3s;
-        }
-        .sticky-cta-btn:hover { transform: scale(1.05); box-shadow: 0 0 20px #fff; }
+        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; line-height: 1.6; }
+        h1, h2, h3 { font-family: 'Bebas Neue', sans-serif; letter-spacing: 1px; text-transform: uppercase; }
 
         /* NAV */
         nav {
-            background: rgba(5,5,5,0.95);
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(10, 10, 15, 0.95);
             backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
             padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid rgba(168, 85, 247, 0.2);
         }
-        .logo { font-size: 1.8rem; font-weight: 800; background: linear-gradient(135deg, var(--purple), var(--magenta)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        nav a { color: var(--muted); text-decoration: none; margin-left: 1.5rem; transition: 0.3s; }
+        .logo { 
+            font-size: 1.8rem; 
+            font-weight: 800; 
+            background: linear-gradient(135deg, var(--purple), var(--magenta)); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+        }
+        nav a { color: var(--muted); text-decoration: none; margin-left: 2rem; font-size: 0.95rem; transition: 0.3s; }
         nav a:hover { color: var(--purple); }
 
         /* HERO */
         .hero {
-            padding: 5rem 2rem 3rem;
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             text-align: center;
-            background: radial-gradient(ellipse at center, #1a0a2e 0%, var(--bg) 60%);
+            padding: 3rem 2rem;
+            background: radial-gradient(ellipse at center, rgba(168, 85, 247, 0.1) 0%, var(--bg) 60%);
         }
-        .hero-badge {
+        .hero-content { max-width: 900px; }
+        .badge {
             display: inline-block;
-            background: var(--green);
-            color: #000;
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid var(--green);
+            color: var(--green);
             padding: 0.4rem 1rem;
             border-radius: 20px;
-            font-weight: 700;
             font-size: 0.85rem;
-            margin-bottom: 1rem;
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         .hero h1 {
-            font-size: clamp(2.5rem, 7vw, 5rem);
-            line-height: 1;
-            margin-bottom: 1rem;
+            font-size: clamp(3rem, 8vw, 6rem);
+            line-height: 0.95;
+            margin-bottom: 1.5rem;
         }
         .hero .highlight {
             background: linear-gradient(135deg, var(--purple), var(--magenta));
@@ -100,237 +83,158 @@
         .hero p {
             font-size: 1.2rem;
             color: var(--muted);
-            margin: 1.5rem auto;
-            max-width: 700px;
+            margin-bottom: 2rem;
+            line-height: 1.7;
         }
-
-        /* COUNTDOWN */
         .countdown {
             display: flex;
             justify-content: center;
             gap: 2rem;
             margin: 2rem 0;
         }
-        .countdown-item {
-            text-align: center;
-        }
+        .countdown-item { text-align: center; }
         .countdown-val {
             font-size: 3rem;
             font-family: 'Bebas Neue';
             color: var(--purple);
+            text-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
         }
         .countdown-label {
             font-size: 0.8rem;
             color: var(--muted);
             text-transform: uppercase;
+            letter-spacing: 1px;
         }
-
-        /* SOCIAL PROOF */
-        .social-proof {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 1rem;
-            margin: 2rem 0;
-            font-size: 0.95rem;
-            color: var(--muted);
-        }
-        .social-proof-count {
-            font-weight: 700;
-            color: var(--green);
-            font-size: 1.3rem;
-        }
-
         .cta-btn {
+            display: inline-block;
             background: linear-gradient(135deg, var(--purple), var(--magenta));
             color: white;
             padding: 1rem 3rem;
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: 700;
             border: none;
             border-radius: 8px;
-            cursor: pointer;
             text-decoration: none;
-            display: inline-block;
-            margin: 1rem;
-            transition: 0.3s;
+            transition: all 0.3s;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: var(--glow);
+            margin: 0.5rem;
         }
-        .cta-btn:hover { transform: scale(1.05); box-shadow: 0 0 40px rgba(168, 85, 247, 0.8); }
-        .cta-arrow {
-            display: block;
-            font-size: 2rem;
-            margin-top: 2rem;
-            animation: bounce 1.5s infinite;
+        .cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 40px rgba(168, 85, 247, 0.7);
         }
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(10px); }
+        .cta-btn.secondary {
+            background: transparent;
+            border: 2px solid var(--purple);
+            box-shadow: none;
+        }
+        .cta-btn.secondary:hover {
+            background: rgba(168, 85, 247, 0.1);
+        }
+
+        /* SECTION */
+        section {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .section-title {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 3rem;
         }
 
         /* FREE PICK */
-        .free-pick {
-            padding: 4rem 2rem;
-            background: #0a0a14;
-            text-align: center;
-        }
-        .free-pick h2 {
-            font-size: 3rem;
-            margin-bottom: 2rem;
-        }
         .pick-card {
-            max-width: 800px;
-            margin: 0 auto;
-            background: rgba(168, 85, 247, 0.1);
-            border: 3px solid var(--purple);
+            background: var(--card);
+            border: 2px solid var(--border);
             border-radius: 20px;
             padding: 3rem;
-            box-shadow: 0 0 40px rgba(168, 85, 247, 0.5);
+            max-width: 800px;
+            margin: 0 auto;
+            box-shadow: var(--glow);
         }
         .pick-card h3 {
             font-size: 2.5rem;
             color: var(--green);
             margin-bottom: 1rem;
         }
-        .pick-card .confidence {
+        .confidence {
             font-size: 4rem;
             font-family: 'Bebas Neue';
             color: var(--magenta);
             margin: 1rem 0;
+            text-shadow: 0 0 20px rgba(192, 38, 211, 0.5);
         }
-        .pick-card p { color: var(--muted); line-height: 1.8; margin: 1rem 0; }
-
-        /* UPSELL BOX */
-        .upsell {
-            margin-top: 3rem;
-            padding: 2rem;
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(168, 85, 247, 0.2));
-            border: 2px solid var(--red);
-            border-radius: 15px;
-            text-align: center;
-        }
-        .upsell h4 {
-            font-size: 1.8rem;
-            color: var(--red);
-            margin-bottom: 1rem;
-        }
-        .upsell .urgency {
-            font-size: 1rem;
+        .pick-card p {
             color: var(--muted);
-            margin-bottom: 1.5rem;
+            line-height: 1.8;
+            margin: 1rem 0;
         }
-        .upsell .spots {
-            font-weight: 700;
-            color: var(--red);
-            font-size: 1.2rem;
-            margin-bottom: 1rem;
-        }
-
-        /* TESTIMONIALS */
-        .testimonials {
-            padding: 4rem 2rem;
-            background: var(--bg);
-            text-align: center;
-        }
-        .testimonials h2 { font-size: 3rem; margin-bottom: 3rem; }
-        .testimonial-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-        .testimonial {
-            background: rgba(168, 85, 247, 0.05);
-            border: 2px solid rgba(168, 85, 247, 0.2);
-            padding: 2rem;
-            border-radius: 15px;
-        }
-        .testimonial-text {
-            font-style: italic;
-            color: var(--muted);
-            margin-bottom: 1rem;
-        }
-        .testimonial-author {
-            font-weight: 700;
-            color: var(--text);
-        }
-        .testimonial-result {
-            color: var(--green);
-            font-weight: 700;
-            font-size: 1.2rem;
-            margin-top: 0.5rem;
-        }
+        .pick-card strong { color: var(--text); }
 
         /* PRICING */
-        .pricing {
-            padding: 4rem 2rem;
-            background: linear-gradient(180deg, #0a0a14 0%, var(--bg) 100%);
-            text-align: center;
-        }
-        .pricing h2 { font-size: 3rem; margin-bottom: 1rem; }
-        .pricing-subtitle {
-            font-size: 1.1rem;
-            color: var(--red);
-            margin-bottom: 3rem;
-            font-weight: 700;
-        }
-        .plans {
+        .pricing-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 2rem;
             max-width: 900px;
             margin: 0 auto;
         }
         .plan {
-            background: rgba(168, 85, 247, 0.08);
-            border: 3px solid rgba(168, 85, 247, 0.3);
-            padding: 2.5rem;
+            background: var(--card);
+            border: 2px solid var(--border);
             border-radius: 20px;
+            padding: 2.5rem;
+            text-align: center;
+            transition: all 0.3s;
             position: relative;
-            transition: 0.3s;
         }
         .plan:hover {
             border-color: var(--purple);
-            box-shadow: 0 0 40px rgba(168, 85, 247, 0.6);
+            box-shadow: var(--glow);
             transform: translateY(-5px);
         }
         .plan.featured {
             border-color: var(--purple);
-            box-shadow: 0 0 40px rgba(168, 85, 247, 0.5);
-            transform: scale(1.05);
+            box-shadow: var(--glow);
         }
         .plan.featured::before {
-            content: 'MOST POPULAR';
+            content: 'BEST VALUE';
             position: absolute;
-            top: -15px;
+            top: -12px;
             left: 50%;
             transform: translateX(-50%);
             background: linear-gradient(135deg, var(--purple), var(--magenta));
-            padding: 0.4rem 1.5rem;
+            padding: 0.4rem 1.2rem;
             border-radius: 20px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 700;
+            letter-spacing: 1px;
         }
-        .plan h3 { font-size: 1.5rem; margin-bottom: 1rem; }
-        .old-price {
-            text-decoration: line-through;
-            color: var(--muted);
+        .plan h3 {
             font-size: 1.5rem;
+            margin-bottom: 1rem;
         }
-        .price {
+        .plan .price {
             font-size: 3.5rem;
             font-family: 'Bebas Neue';
             color: var(--purple);
             margin: 1rem 0;
         }
-        .price span { font-size: 1rem; color: var(--muted); font-family: 'Inter'; }
+        .plan .price span {
+            font-size: 1rem;
+            color: var(--muted);
+            font-family: 'Inter';
+        }
         .plan ul {
             list-style: none;
+            text-align: left;
             color: var(--muted);
             margin: 2rem 0;
             line-height: 2;
-            text-align: left;
         }
         .plan ul li::before {
             content: '✓ ';
@@ -341,7 +245,7 @@
         .guarantee {
             text-align: center;
             margin-top: 3rem;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             color: var(--muted);
         }
 
@@ -349,129 +253,102 @@
         footer {
             text-align: center;
             padding: 3rem 2rem;
-            border-top: 1px solid rgba(168, 85, 247, 0.2);
+            border-top: 1px solid var(--border);
             color: var(--muted);
             font-size: 0.9rem;
         }
-        footer a { color: var(--text); text-decoration: none; margin: 0 1rem; }
+        footer a {
+            color: var(--text);
+            text-decoration: none;
+            margin: 0 1rem;
+            transition: 0.3s;
+        }
         footer a:hover { color: var(--purple); }
     </style>
 </head>
 <body>
 
-    <div class="sticky-cta">
-        <div class="sticky-cta-text">🔥 347 Members Won Last Week</div>
-        <a href="#pricing" class="sticky-cta-btn">JOIN NOW - $20/MO</a>
-    </div>
-
     <nav>
         <div class="logo">RUBAN</div>
         <div>
+            <a href="#pick">Free Pick</a>
             <a href="#pricing">Pricing</a>
             <a href="https://t.me/RUBAN_UFC_Bot">Telegram</a>
         </div>
     </nav>
 
     <div class="hero">
-        <div class="hero-badge">🎯 LIVE NOW • 67% WIN RATE</div>
-        <h1>
-            THE <span class="highlight">WHITE HOUSE CARD</span><br>
-            IS PRINTING MONEY
-        </h1>
-        <p>We're calling all 13 fights. Early members are up 42.5 units this year. You're either in or you're watching from the sidelines.</p>
-        
-        <div class="countdown">
-            <div class="countdown-item">
-                <div class="countdown-val" id="days">--</div>
-                <div class="countdown-label">Days</div>
+        <div class="hero-content">
+            <div class="badge">🎯 67% Win Rate • 200+ Fights</div>
+            <h1>
+                UFC <span class="highlight">WHITE HOUSE</span><br>
+                FULL CARD ANALYSIS
+            </h1>
+            <p>We're calling all 13 fights. Ilia vs Gaethje. Every undercard. Every angle. The sharpest UFC intelligence on the internet.</p>
+            
+            <div class="countdown">
+                <div class="countdown-item">
+                    <div class="countdown-val" id="days">--</div>
+                    <div class="countdown-label">Days</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-val" id="hours">--</div>
+                    <div class="countdown-label">Hours</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-val" id="mins">--</div>
+                    <div class="countdown-label">Minutes</div>
+                </div>
             </div>
-            <div class="countdown-item">
-                <div class="countdown-val" id="hours">--</div>
-                <div class="countdown-label">Hours</div>
-            </div>
-            <div class="countdown-item">
-                <div class="countdown-val" id="mins">--</div>
-                <div class="countdown-label">Minutes</div>
-            </div>
-        </div>
 
-        <div class="social-proof">
-            <span class="social-proof-count">347</span> members joined this week
+            <a href="#pick" class="cta-btn">See Free Pick</a>
+            <a href="#pricing" class="cta-btn secondary">Get Full Card</a>
         </div>
-
-        <a href="#free-pick" class="cta-btn">SEE FREE PICK ↓</a>
-        <div class="cta-arrow">↓</div>
     </div>
 
-    <section id="free-pick" class="free-pick">
-        <h2>🎁 FREE PICK — ILIA vs GAETHJE</h2>
+    <section id="pick">
+        <h2 class="section-title">🎁 Free Pick — Main Event</h2>
         <div class="pick-card">
             <h3>✅ ILIA TOPURIA WINS</h3>
             <div class="confidence">68% CONFIDENCE</div>
             <p><strong>Method:</strong> Decision (65%) or Late Finish (35%)</p>
-            <p><strong>Why:</strong> Topuria's wrestling neutralizes Gaethje's pressure. Ilia out-points him over 5. Gaethje's chin is cracking.</p>
-            <p style="font-size:0.9rem; margin-top:1.5rem;"><strong>Risk:</strong> Early knockout potential. Volatility: MEDIUM.</p>
-        </div>
-
-        <div class="upsell">
-            <h4>🔒 UNLOCK THE OTHER 12 FIGHTS</h4>
-            <p class="urgency">The lines are moving. Early value is gone in hours.</p>
-            <p class="spots">⚠️ Only 23 spots left at $20/mo</p>
-            <a href="#pricing" class="cta-btn">GET FULL CARD NOW</a>
+            <p><strong>Analysis:</strong> Topuria's defensive wrestling shuts down Gaethje's forward pressure. Ilia out-points him over 5 rounds. Gaethje's durability is compromised after recent wars.</p>
+            <p><strong>Risk Factor:</strong> Early knockout power from Gaethje. If he lands clean in rounds 1-2, this flips. <strong>Volatility: MEDIUM</strong></p>
+            <p style="margin-top:2rem; text-align:center;">
+                <a href="#pricing" class="cta-btn">Unlock 12 More Fights</a>
+            </p>
         </div>
     </section>
 
-    <section class="testimonials">
-        <h2>REAL MEMBERS, REAL WINS</h2>
-        <div class="testimonial-grid">
-            <div class="testimonial">
-                <p class="testimonial-text">"Hit 4 out of 5 last event. Best $20 I ever spent."</p>
-                <p class="testimonial-author">— Mike D.</p>
-                <p class="testimonial-result">+$1,840 profit</p>
-            </div>
-            <div class="testimonial">
-                <p class="testimonial-text">"The breakdowns are insane. I finally understand the game."</p>
-                <p class="testimonial-author">— Sarah K.</p>
-                <p class="testimonial-result">+$920 profit</p>
-            </div>
-            <div class="testimonial">
-                <p class="testimonial-text">"67% accuracy isn't a meme. These guys are legit."</p>
-                <p class="testimonial-author">— James T.</p>
-                <p class="testimonial-result">+$2,100 profit</p>
-            </div>
-        </div>
-    </section>
-
-    <section id="pricing" class="pricing">
-        <h2>STOP GUESSING. START WINNING.</h2>
-        <p class="pricing-subtitle">⏰ This price expires in 3 hours</p>
-        <div class="plans">
+    <section id="pricing">
+        <h2 class="section-title">Get Full Access</h2>
+        <div class="pricing-grid">
             <div class="plan">
-                <h3>MONTHLY</h3>
-                <div class="old-price">$40/mo</div>
+                <h3>Monthly</h3>
                 <div class="price">$20 <span>/mo</span></div>
                 <ul>
-                    <li>Full White House Card</li>
-                    <li>All Future Events</li>
+                    <li>Full White House Card (13 Fights)</li>
+                    <li>All Future UFC Events</li>
                     <li>Discord VIP Access</li>
                     <li>Live Bet Alerts</li>
+                    <li>Cancel Anytime</li>
                 </ul>
-                <button class="cta-btn" style="width:100%;">JOIN MONTHLY</button>
+                <a href="https://buy.stripe.com/test_MONTHLY_LINK" class="cta-btn" style="width:100%; display:block; text-align:center;">Subscribe Monthly</a>
             </div>
             <div class="plan featured">
-                <h3>ANNUAL</h3>
-                <div class="old-price">$240/yr</div>
+                <h3>Annual</h3>
                 <div class="price">$120 <span>/yr</span></div>
                 <ul>
                     <li>Everything in Monthly</li>
+                    <li>Save $120/year</li>
                     <li>Early Access (48h)</li>
                     <li>1-on-1 Strategy Call</li>
                     <li>Affiliate Earnings (10%)</li>
                 </ul>
-                <button class="cta-btn" style="width:100%;">GET ANNUAL (SAVE $120)</button>
+                <a href="https://buy.stripe.com/test_ANNUAL_LINK" class="cta-btn" style="width:100%; display:block; text-align:center;">Get Annual</a>
             </div>
         </div>
-        <p class="guarantee">🔒 Cancel anytime. No questions asked.</p>
+        <p class="guarantee">🔒 30-Day Money-Back Guarantee • No Questions Asked</p>
     </section>
 
     <footer>
@@ -484,7 +361,7 @@
     </footer>
 
     <script>
-        // Countdown Timer (White House Event - April 19, 2026)
+        // Countdown to White House Event (April 19, 2026)
         const eventDate = new Date('2026-04-19T00:00:00').getTime();
         setInterval(() => {
             const now = new Date().getTime();
