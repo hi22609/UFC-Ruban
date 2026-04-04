@@ -24,15 +24,17 @@ function confidenceBar(confidence, width = 16) {
 }
 
 function buildHeaderEmbed(results) {
+  const predictions = results.predictions || [];
+  const errors = results.errors || [];
   return new MessageEmbed()
     .setColor(COLORS.HEADER)
-    .setTitle(`🥊 UFC RUBAN — ${results.event_name.toUpperCase()}`)
+    .setTitle(`🥊 UFC RUBAN — ${(results.event_name || 'UFC Event').toUpperCase()}`)
     .setDescription([
-      `📅 **${results.event_date}** · 📍 ${results.location}`,
+      `📅 **${results.event_date || 'TBD'}** · 📍 ${results.location || 'TBD'}`,
       ``,
-      `**${results.predictions.length} fight predictions** ready.`,
-      results.errors.length > 0
-        ? `⚠️ ${results.errors.length} fight(s) missing data — run \`fix_missing_stats.py\``
+      `**${predictions.length} fight predictions** ready.`,
+      errors.length > 0
+        ? `⚠️ ${errors.length} fight(s) missing data — run \`fix_missing_stats.py\``
         : `✅ Full card coverage`,
       ``,
       `*Built on data. Backed by odds. Honest about uncertainty.*`,
@@ -42,20 +44,21 @@ function buildHeaderEmbed(results) {
 }
 
 function buildFightEmbed(pred) {
-  const tier = pred.tier;
+  const tier = pred.tier || 'LEAN';
   const color = COLORS[tier] || COLORS.LEAN;
   const tierLabel = TIER_LABELS[tier] || tier;
-  const bar = confidenceBar(pred.confidence);
+  const confidence = pred.confidence || 50;
+  const bar = confidenceBar(confidence);
 
-  const methodLine = `📋 **Method:** ${pred.method}`;
+  const methodLine = `📋 **Method:** ${pred.method || 'Decision'}`;
   const breakdownLine = [
     `📊 **Probability Breakdown**`,
-    `\`KO/TKO:     ${String(pred.method_ko_pct).padStart(3)}%  ${confidenceBar(pred.method_ko_pct, 10)}\``,
-    `\`Submission: ${String(pred.method_sub_pct).padStart(3)}%  ${confidenceBar(pred.method_sub_pct, 10)}\``,
-    `\`Decision:   ${String(pred.method_dec_pct).padStart(3)}%  ${confidenceBar(pred.method_dec_pct, 10)}\``,
+    `\`KO/TKO:     ${String(pred.method_ko_pct || 0).padStart(3)}%  ${confidenceBar(pred.method_ko_pct || 0, 10)}\``,
+    `\`Submission: ${String(pred.method_sub_pct || 0).padStart(3)}%  ${confidenceBar(pred.method_sub_pct || 0, 10)}\``,
+    `\`Decision:   ${String(pred.method_dec_pct || 0).padStart(3)}%  ${confidenceBar(pred.method_dec_pct || 0, 10)}\``,
   ].join('\n');
 
-  const keyFactors = pred.key_edge
+  const keyFactors = (pred.key_edge || ['No data available'])
     .map(e => `→ ${e}`)
     .join('\n');
 
@@ -64,19 +67,19 @@ function buildFightEmbed(pred) {
 
   const embed = new MessageEmbed()
     .setColor(color)
-    .setTitle(`🥊 ${pred.fighter1} vs ${pred.fighter2}${titleTag}`)
+    .setTitle(`🥊 ${pred.fighter1 || 'TBD'} vs ${pred.fighter2 || 'TBD'}${titleTag}`)
     .setDescription([
-      `**${pred.weight_class}**${mainEventTag}`,
+      `**${pred.weight_class || 'Unknown'}**${mainEventTag}`,
       ``,
-      `${tierLabel}: **${pred.winner}** · ${pred.confidence.toFixed(0)}% confidence`,
-      `\`${bar}\` ${pred.confidence.toFixed(0)}%`,
+      `${tierLabel}: **${pred.winner || 'TBD'}** · ${confidence.toFixed(0)}% confidence`,
+      `\`${bar}\` ${confidence.toFixed(0)}%`,
       ``,
       methodLine,
       ``,
       breakdownLine,
     ].join('\n'))
     .addField('💡 Key Factors', keyFactors)
-    .addField('📝 Analysis', pred.analysis);
+    .addField('📝 Analysis', pred.analysis || 'Analysis unavailable');
 
   if (pred.risk_flag) {
     embed.addField('⚠️ Risk', pred.risk_flag);
