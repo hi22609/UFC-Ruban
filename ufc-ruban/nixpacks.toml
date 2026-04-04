@@ -8,4 +8,4 @@ cmds = ["npm install"]
 cmds = ["mkdir -p database website data"]
 
 [start]
-cmd = "node server/index.js & node scheduler.js & wait"
+cmd = "node start.js"
