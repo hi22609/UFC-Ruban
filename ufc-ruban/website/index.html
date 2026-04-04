@@ -3,79 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RUBAN | UFC White House Event - Premium AI Picks</title>
-    <meta name="description" content="The world's most advanced UFC prediction engine. 67% accuracy. Live for the White House Event.">
-    <!-- Fonts -->
+    <title>RUBAN | UFC White House - Ilia vs Gaethje Prediction</title>
+    <meta name="description" content="We're calling the entire White House card. Ilia Topuria vs Justin Gaethje. Free pick inside. 67% accuracy.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg: #050505;
-            --bg-card: #0a0a0a;
             --purple: #A855F7;
             --magenta: #C026D3;
-            --text: #ffffff;
+            --text: #fff;
             --muted: #9ca3af;
-            --border: #1f1f1f;
-            --glow: 0 0 20px rgba(168, 85, 247, 0.5);
+            --glow: 0 0 30px rgba(168, 85, 247, 0.6);
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            background-color: var(--bg);
-            color: var(--text);
-            font-family: 'Inter', sans-serif;
-            overflow-x: hidden;
-            line-height: 1.6;
-        }
+        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        h1, h2 { font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; text-transform: uppercase; }
 
-        h1, h2, h3 { font-family: 'Bebas Neue', sans-serif; letter-spacing: 1px; text-transform: uppercase; }
-        
         /* NAV */
         nav {
-            position: fixed;
-            top: 0; left: 0; right: 0;
-            background: rgba(5, 5, 5, 0.8);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border);
-            z-index: 1000;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+            background: rgba(5,5,5,0.9); backdrop-filter: blur(10px);
+            padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #1a1a1a;
         }
-        .logo { font-size: 1.5rem; font-weight: 800; background: linear-gradient(to right, var(--purple), var(--magenta)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .nav-links a { color: var(--muted); text-decoration: none; margin-left: 2rem; font-size: 0.9rem; transition: 0.3s; }
-        .nav-links a:hover { color: var(--purple); }
+        .logo { font-size: 1.8rem; font-weight: 800; background: linear-gradient(to right, var(--purple), var(--magenta)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        nav a { color: var(--muted); text-decoration: none; margin-left: 2rem; transition: 0.3s; font-size: 0.9rem; }
+        nav a:hover { color: var(--purple); }
 
-        /* HERO */
+        /* HERO - FIGHTER MATCHUP */
         .hero {
             height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
             text-align: center;
-            background: radial-gradient(circle at center, #1a1025 0%, var(--bg) 70%);
+            background: radial-gradient(circle at center, #1a0a2e 0%, var(--bg) 70%);
             position: relative;
+            overflow: hidden;
+        }
+        .event-label {
+            font-size: 1rem;
+            color: var(--purple);
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
         }
         .hero h1 {
-            font-size: clamp(4rem, 10vw, 8rem);
+            font-size: clamp(3rem, 8vw, 7rem);
             line-height: 0.9;
             margin-bottom: 1rem;
-            background: linear-gradient(135deg, #fff 30%, var(--purple) 100%);
+            background: linear-gradient(135deg, #fff 20%, var(--purple) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        .hero p { font-size: 1.2rem; color: var(--muted); max-width: 600px; margin-bottom: 2rem; }
-        
+        .matchup {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+        .fighter {
+            text-align: center;
+            position: relative;
+        }
+        .fighter-name {
+            font-size: 2.5rem;
+            font-family: 'Bebas Neue';
+            margin-bottom: 0.5rem;
+        }
+        .fighter-record {
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+        .fighter-icon {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, var(--purple), var(--magenta));
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 6rem;
+            box-shadow: var(--glow);
+        }
+        .vs {
+            font-size: 4rem;
+            font-family: 'Bebas Neue';
+            color: var(--magenta);
+            text-shadow: 0 0 20px var(--magenta);
+        }
+        .hero p {
+            font-size: 1.1rem;
+            color: var(--muted);
+            max-width: 600px;
+            margin-bottom: 2rem;
+        }
         .cta-btn {
             background: linear-gradient(135deg, var(--purple), var(--magenta));
             color: white;
             padding: 1rem 3rem;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             font-weight: 700;
             border: none;
             border-radius: 4px;
@@ -83,147 +116,279 @@
             text-decoration: none;
             box-shadow: var(--glow);
             transition: transform 0.2s;
+            display: inline-block;
         }
         .cta-btn:hover { transform: scale(1.05); }
 
-        /* STATS BAR */
-        .stats-bar {
-            display: flex;
-            justify-content: center;
-            gap: 4rem;
-            padding: 2rem;
-            background: var(--bg-card);
-            border-bottom: 1px solid var(--border);
-            flex-wrap: wrap;
+        /* FREE PICK SECTION */
+        .free-pick {
+            padding: 4rem 2rem;
+            background: linear-gradient(180deg, var(--bg) 0%, #0a0a14 100%);
+            text-align: center;
         }
-        .stat-item { text-align: center; }
-        .stat-val { font-family: 'Bebas Neue'; font-size: 2.5rem; color: var(--purple); }
-        .stat-label { color: var(--muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }
+        .free-pick h2 {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            color: var(--text);
+        }
+        .pick-card {
+            max-width: 700px;
+            margin: 0 auto;
+            background: rgba(168, 85, 247, 0.05);
+            border: 2px solid var(--purple);
+            border-radius: 12px;
+            padding: 3rem;
+            box-shadow: var(--glow);
+        }
+        .pick-card h3 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--purple);
+        }
+        .pick-card .confidence {
+            font-size: 4rem;
+            font-family: 'Bebas Neue';
+            color: var(--magenta);
+            margin: 1rem 0;
+        }
+        .pick-card p {
+            color: var(--muted);
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+        .lock-icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+        }
 
-        /* SECTIONS */
-        section { padding: 6rem 2rem; max-width: 1200px; margin: 0 auto; }
-        .section-title { font-size: 3rem; text-align: center; margin-bottom: 3rem; color: var(--text); }
-        
-        /* CARDS */
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
-        .card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            padding: 2rem;
-            border-radius: 8px;
-            transition: 0.3s;
+        /* FULL CARD TEASE */
+        .full-card {
+            padding: 4rem 2rem;
+            text-align: center;
+            background: var(--bg);
         }
-        .card:hover { border-color: var(--purple); box-shadow: var(--glow); transform: translateY(-5px); }
-        .card h3 { font-size: 1.5rem; margin-bottom: 1rem; color: var(--magenta); }
+        .full-card h2 {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+        }
+        .full-card p {
+            font-size: 1.2rem;
+            color: var(--muted);
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            line-height: 1.8;
+        }
+        .fight-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            max-width: 1000px;
+            margin: 0 auto 3rem;
+        }
+        .fight-item {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid #1a1a1a;
+            padding: 1.5rem;
+            border-radius: 8px;
+            position: relative;
+            filter: blur(5px);
+            opacity: 0.4;
+        }
+        .fight-item::after {
+            content: '🔒';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3rem;
+            filter: blur(0);
+        }
 
         /* PRICING */
-        .price { font-size: 3rem; font-family: 'Bebas Neue'; color: var(--text); margin: 1rem 0; }
-        .price span { font-size: 1rem; color: var(--muted); font-family: 'Inter'; }
+        .pricing {
+            padding: 4rem 2rem;
+            background: linear-gradient(180deg, #0a0a14 0%, var(--bg) 100%);
+        }
+        .pricing h2 {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .plans {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .plan {
+            background: rgba(168, 85, 247, 0.05);
+            border: 2px solid #1a1a1a;
+            padding: 2.5rem;
+            border-radius: 12px;
+            text-align: center;
+            transition: 0.3s;
+        }
+        .plan:hover {
+            border-color: var(--purple);
+            box-shadow: var(--glow);
+            transform: translateY(-5px);
+        }
+        .plan.featured {
+            border-color: var(--purple);
+            box-shadow: var(--glow);
+            position: relative;
+        }
+        .plan.featured::before {
+            content: 'BEST VALUE';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--purple), var(--magenta));
+            padding: 0.4rem 1.5rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        .plan h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+        .price {
+            font-size: 3.5rem;
+            font-family: 'Bebas Neue';
+            color: var(--purple);
+            margin: 1rem 0;
+        }
+        .price span {
+            font-size: 1rem;
+            color: var(--muted);
+            font-family: 'Inter';
+        }
+        .plan ul {
+            list-style: none;
+            color: var(--muted);
+            margin: 2rem 0;
+            line-height: 2;
+            text-align: left;
+        }
+        .plan ul li::before {
+            content: '✓ ';
+            color: var(--purple);
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
 
         /* FOOTER */
-        footer { text-align: center; padding: 4rem 2rem; border-top: 1px solid var(--border); color: var(--muted); }
-        .socials { margin-bottom: 1rem; }
-        .socials a { color: var(--text); margin: 0 1rem; text-decoration: none; }
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            border-top: 1px solid #1a1a1a;
+            color: var(--muted);
+        }
+        footer a {
+            color: var(--text);
+            text-decoration: none;
+            margin: 0 1rem;
+        }
+        footer a:hover { color: var(--purple); }
     </style>
 </head>
 <body>
 
     <nav>
         <div class="logo">RUBAN</div>
-        <div class="nav-links">
-            <a href="#methodology">Methodology</a>
-            <a href="#results">Results</a>
-            <a href="#pricing">Access</a>
+        <div>
+            <a href="#free-pick">Free Pick</a>
+            <a href="#pricing">Get Full Card</a>
             <a href="https://t.me/RUBAN_UFC_Bot" target="_blank">Telegram</a>
         </div>
     </nav>
 
     <div class="hero">
-        <h1>WHITE HOUSE<br>EDITION</h1>
-        <p>AI-Driven UFC Intelligence. 67% Accuracy. The sharpest edge in sports betting.</p>
-        <a href="#pricing" class="cta-btn">GET ACCESS</a>
+        <div class="event-label">🏛️ UFC WHITE HOUSE EVENT</div>
+        <h1>WE'RE CALLING<br>THE ENTIRE CARD</h1>
+        <div class="matchup">
+            <div class="fighter">
+                <div class="fighter-icon">🦅</div>
+                <div class="fighter-name">ILIA TOPURIA</div>
+                <div class="fighter-record">17-0 • Champion</div>
+            </div>
+            <div class="vs">VS</div>
+            <div class="fighter">
+                <div class="fighter-icon">💀</div>
+                <div class="fighter-name">JUSTIN GAETHJE</div>
+                <div class="fighter-record">26-5 • Challenger</div>
+            </div>
+        </div>
+        <p>The biggest card of the year. We're predicting all 13 fights. The early movers are printing money.</p>
+        <a href="#free-pick" class="cta-btn">SEE FREE PICK</a>
     </div>
 
-    <div class="stats-bar">
-        <div class="stat-item">
-            <div class="stat-val">67%</div>
-            <div class="stat-label">Accuracy</div>
+    <section id="free-pick" class="free-pick">
+        <h2>🎁 FREE PICK — MAIN EVENT</h2>
+        <div class="pick-card">
+            <div class="lock-icon">🔓</div>
+            <h3>ILIA TOPURIA WINS</h3>
+            <div class="confidence">68% CONFIDENCE</div>
+            <p><strong>Method:</strong> Decision (65%) or Late Finish (35%)</p>
+            <p style="margin-top:1rem;"><strong>Why:</strong> Topuria's defensive wrestling neutralizes Gaethje's pressure. Ilia out-points him over 5 rounds. Gaethje's chin is showing cracks, but he's dangerous until he's not.</p>
+            <p style="margin-top:1rem; font-size:0.9rem; color:var(--muted);"><strong>Risk:</strong> If Gaethje lands clean early, this flips. Volatility: MEDIUM.</p>
         </div>
-        <div class="stat-item">
-            <div class="stat-val">200+</div>
-            <div class="stat-label">Fights Analyzed</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-val">24/7</div>
-            <div class="stat-label">Live Data</div>
-        </div>
-    </div>
-
-    <section id="methodology">
-        <h2 class="section-title">THE RUBAN EDGE</h2>
-        <div class="grid">
-            <div class="card">
-                <h3>01. DEEP LEARNING</h3>
-                <p style="color:var(--muted)">Proprietary neural networks analyze 50+ data points per fighter, from strike variance to camp stability.</p>
-            </div>
-            <div class="card">
-                <h3>02. SHARP MONEY</h3>
-                <p style="color:var(--muted)">We track line movement from Vegas sharps to identify where the real money is going.</p>
-            </div>
-            <div class="card">
-                <h3>03. CONTEXT ENGINE</h3>
-                <p style="color:var(--muted)">Weight cuts, short notice, travel fatigue. Our AI weighs the invisible factors humans miss.</p>
-            </div>
-        </div>
+        <p style="margin-top:2rem; font-size:1rem; color:var(--muted);">Want the other 12 fights? <a href="#pricing" style="color:var(--purple); text-decoration:none; font-weight:bold;">Unlock Full Card Access.</a></p>
     </section>
 
-    <section id="results">
-        <h2 class="section-title">PROVEN TRACK RECORD</h2>
-        <div class="card" style="text-align:center;">
-            <h3 style="font-size:4rem; color:var(--purple);">+42.5 UNITS</h3>
-            <p style="color:var(--muted)">Profit in 2025 (All-Time High)</p>
-            <div style="margin-top:2rem; font-size:0.9rem; color:var(--muted);">
-                Last 5 Fights: <span style="color:#22c55e">W W L W W</span>
-            </div>
+    <section class="full-card">
+        <h2>THE FULL WHITE HOUSE CARD</h2>
+        <p>12 more fights. 12 more edges. Our subscribers are locking in value before the lines move. Don't get priced out.</p>
+        <div class="fight-list">
+            <div class="fight-item">Co-Main Event</div>
+            <div class="fight-item">Fight #3</div>
+            <div class="fight-item">Fight #4</div>
+            <div class="fight-item">Fight #5</div>
+            <div class="fight-item">Fight #6</div>
+            <div class="fight-item">Fight #7</div>
         </div>
+        <a href="#pricing" class="cta-btn">GET FULL ACCESS</a>
     </section>
 
-    <section id="pricing">
-        <h2 class="section-title">INVEST IN WINNING</h2>
-        <div class="grid">
-            <div class="card">
+    <section id="pricing" class="pricing">
+        <h2>INVEST IN THE EDGE</h2>
+        <div class="plans">
+            <div class="plan">
                 <h3>MONTHLY</h3>
                 <div class="price">$20 <span>/mo</span></div>
-                <ul style="list-style:none; color:var(--muted); line-height:2;">
-                    <li>✓ Full Card Access</li>
-                    <li>✓ Live Bet Alerts</li>
-                    <li>✓ Discord VIP Role</li>
+                <ul>
+                    <li>Full White House Card</li>
+                    <li>All Future Events</li>
+                    <li>Discord VIP Access</li>
+                    <li>Live Line Alerts</li>
                 </ul>
-                <button class="cta-btn" style="width:100%; margin-top:2rem;">SUBSCRIBE</button>
+                <button class="cta-btn" style="width:100%;">SUBSCRIBE</button>
             </div>
-            <div class="card" style="border-color:var(--purple); box-shadow:var(--glow);">
-                <div style="color:var(--purple); font-size:0.8rem; font-weight:bold; margin-bottom:0.5rem;">BEST VALUE</div>
-                <h3>LIFETIME</h3>
+            <div class="plan featured">
+                <h3>ANNUAL</h3>
                 <div class="price">$120 <span>/yr</span></div>
-                <ul style="list-style:none; color:var(--muted); line-height:2;">
-                    <li>✓ Everything in Monthly</li>
-                    <li>✓ 1-on-1 Strategy Call</li>
-                    <li>✓ Private Discord Channel</li>
-                    <li>✓ Early Access to White House Card</li>
+                <ul>
+                    <li>Everything in Monthly</li>
+                    <li>Early Access (48h)</li>
+                    <li>Private Strategy Call</li>
+                    <li>Affiliate Kickback (10%)</li>
                 </ul>
-                <button class="cta-btn" style="width:100%; margin-top:2rem;">GET LIFETIME</button>
+                <button class="cta-btn" style="width:100%;">GET ANNUAL</button>
             </div>
         </div>
     </section>
 
     <footer>
-        <div class="socials">
-            <a href="#">Twitter/X</a>
+        <div>
+            <a href="#">Twitter</a>
             <a href="https://t.me/RUBAN_UFC_Bot">Telegram</a>
             <a href="#">Discord</a>
         </div>
-        <p>&copy; 2026 RUBAN Analytics. All rights reserved.</p>
-        <p style="font-size:0.8rem; margin-top:1rem;">For entertainment purposes only. Please gamble responsibly.</p>
+        <p style="margin-top:1.5rem; font-size:0.9rem;">&copy; 2026 RUBAN. For entertainment only. Gamble responsibly.</p>
     </footer>
 
 </body>
