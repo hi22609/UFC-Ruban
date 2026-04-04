@@ -3,529 +3,574 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>UFC Ruban — Dashboard</title>
+<title>RUBAN Pro Terminal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --red: #E8002A;
-    --bg: #0A0A0B;
-    --bg2: #111113;
-    --bg3: #18181C;
-    --border: #2A2A30;
-    --text: #F0F0F0;
-    --muted: #888890;
-    --green: #00C851;
-    --blue: #2196F3;
-    --orange: #FF9800;
-    --purple: #AA00FF;
-  }
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: 'Inter', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-  }
-
-  /* TOP BAR */
-  .topbar {
-    position: sticky; top: 0; z-index: 100;
-    background: var(--bg2);
-    border-bottom: 1px solid var(--border);
-    padding: 0 32px;
-    height: 60px;
-    display: flex; align-items: center; justify-content: space-between;
-  }
-
-  .topbar-logo {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 22px;
-    letter-spacing: 3px;
-  }
-  .topbar-logo span { color: var(--red); }
-
-  .topbar-right {
-    display: flex; align-items: center; gap: 20px;
-    font-size: 13px;
-  }
-
-  .pro-badge {
-    background: linear-gradient(135deg, var(--red), #ff5060);
-    color: white;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    padding: 3px 10px;
-    border-radius: 3px;
-    text-transform: uppercase;
-  }
-
-  .topbar-email { color: var(--muted); }
-
-  .btn-logout {
-    background: none; border: 1px solid var(--border);
-    color: var(--muted); padding: 6px 14px; border-radius: 4px;
-    font-size: 12px; cursor: pointer;
-  }
-
-  .btn-logout:hover { color: var(--text); border-color: var(--muted); }
-
-  /* LAYOUT */
-  .layout {
-    display: grid;
-    grid-template-columns: 260px 1fr;
-    min-height: calc(100vh - 60px);
-  }
-
-  /* SIDEBAR */
-  .sidebar {
-    background: var(--bg2);
-    border-right: 1px solid var(--border);
-    padding: 32px 20px;
-  }
-
-  .sidebar-section {
-    margin-bottom: 32px;
-  }
-
-  .sidebar-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    color: var(--muted);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 12px;
-    padding-left: 12px;
-  }
-
-  .sidebar-nav-item {
-    display: block; width: 100%;
-    padding: 10px 12px;
-    background: none; border: none;
-    color: var(--muted);
-    font-size: 14px;
-    font-family: 'Inter', sans-serif;
-    text-align: left;
-    cursor: pointer;
-    border-radius: 6px;
-    margin-bottom: 2px;
-    transition: all 0.15s;
-    text-decoration: none;
-  }
-
-  .sidebar-nav-item:hover { background: var(--bg3); color: var(--text); }
-  .sidebar-nav-item.active { background: rgba(232,0,42,0.12); color: var(--red); }
-
-  /* POST-PAYMENT LOGIN OVERLAY */
-  .payment-overlay {
-    position: fixed; inset: 0; z-index: 999;
-    background: rgba(10,10,11,0.96);
-    display: flex; align-items: center; justify-content: center;
-  }
-
-  .payment-box {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-top: 3px solid var(--green);
-    border-radius: 12px;
-    padding: 48px 40px;
-    max-width: 420px; width: 100%;
-    text-align: center;
-  }
-
-  .payment-icon { font-size: 48px; margin-bottom: 16px; }
-  .payment-title { font-family: 'Bebas Neue', sans-serif; font-size: 32px; letter-spacing: 2px; color: var(--green); margin-bottom: 8px; }
-  .payment-sub { color: var(--muted); font-size: 14px; margin-bottom: 32px; line-height: 1.6; }
-
-  .payment-input {
-    width: 100%;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    color: var(--text);
-    font-size: 15px;
-    padding: 12px 16px;
-    margin-bottom: 12px;
-    font-family: 'Inter', sans-serif;
-  }
-
-  .payment-input:focus { outline: none; border-color: var(--green); }
-
-  .payment-btn {
-    width: 100%;
-    background: var(--green);
-    color: #000;
-    border: none;
-    border-radius: 6px;
-    font-size: 15px;
-    font-weight: 700;
-    padding: 14px;
-    cursor: pointer;
-    font-family: 'Inter', sans-serif;
-    letter-spacing: 0.5px;
-  }
-
-  .payment-btn:hover { opacity: 0.9; }
-
-  .payment-error {
-    color: var(--red);
-    font-size: 13px;
-    margin-top: 10px;
-    display: none;
-  }
-
-  /* ACCURACY MINI */
-  .acc-mini {
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 16px;
-  }
-
-  .acc-mini-row {
-    display: flex; justify-content: space-between;
-    font-size: 13px; padding: 6px 0;
-    border-bottom: 1px solid var(--border);
-  }
-  .acc-mini-row:last-child { border-bottom: none; }
-  .acc-mini-label { color: var(--muted); }
-  .acc-mini-val { font-weight: 600; }
-  .acc-mini-val.green { color: var(--green); }
-  .acc-mini-val.blue { color: var(--blue); }
-
-  /* MAIN CONTENT */
-  .main {
-    padding: 32px;
-    max-width: 1100px;
-  }
-
-  /* EVENT HEADER */
-  .event-header {
-    display: flex; justify-content: space-between; align-items: flex-start;
-    margin-bottom: 32px;
-    padding-bottom: 24px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .event-name {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 36px;
-    letter-spacing: 2px;
-    line-height: 1;
-    margin-bottom: 6px;
-  }
-
-  .event-meta {
-    font-family: 'DM Mono', monospace;
-    font-size: 12px;
-    color: var(--muted);
-    letter-spacing: 1px;
-  }
-
-  .last-updated {
-    font-size: 11px;
-    color: var(--muted);
-    font-family: 'DM Mono', monospace;
-    text-align: right;
-  }
-
-  /* FIGHT CARDS */
-  .fights-grid {
-    display: flex; flex-direction: column; gap: 16px;
-  }
-
-  .fight-card {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    overflow: hidden;
-    transition: border-color 0.2s;
-  }
-
-  .fight-card:hover { border-color: #3A3A42; }
-
-  .fight-card.main-event { border-color: rgba(232,0,42,0.3); }
-  .fight-card.lock { border-left: 3px solid var(--green); }
-  .fight-card.lean { border-left: 3px solid var(--blue); }
-  .fight-card.tossup { border-left: 3px solid var(--orange); }
-
-  .fight-card-header {
-    padding: 16px 20px 12px;
-    display: flex; justify-content: space-between; align-items: center;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .fight-matchup {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 22px;
-    letter-spacing: 1px;
-  }
-
-  .fight-weight {
-    font-size: 12px;
-    color: var(--muted);
-    font-family: 'DM Mono', monospace;
-  }
-
-  .fight-badges { display: flex; gap: 8px; align-items: center; }
-
-  .tier-badge {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    padding: 4px 10px;
-    border-radius: 4px;
-    font-family: 'DM Mono', monospace;
-  }
-
-  .tier-badge.LOCK { background: rgba(0,200,81,0.15); color: var(--green); border: 1px solid rgba(0,200,81,0.3); }
-  .tier-badge.LEAN { background: rgba(33,150,243,0.15); color: var(--blue); border: 1px solid rgba(33,150,243,0.3); }
-  .tier-badge.TOSS-UP { background: rgba(255,152,0,0.15); color: var(--orange); border: 1px solid rgba(255,152,0,0.3); }
-
-  .main-badge {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    padding: 3px 8px;
-    border-radius: 3px;
-    background: var(--red);
-    color: white;
-    text-transform: uppercase;
-  }
-
-  .fight-body {
-    padding: 20px;
-    display: grid;
-    grid-template-columns: 220px 1fr;
-    gap: 24px;
-  }
-
-  /* Prediction column */
-  .pred-col {}
-
-  .pred-winner-name {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 28px;
-    letter-spacing: 1px;
-    margin-bottom: 4px;
-  }
-
-  .pred-conf {
-    font-family: 'DM Mono', monospace;
-    font-size: 13px;
-    color: var(--muted);
-    margin-bottom: 12px;
-  }
-
-  .conf-bar-track {
-    height: 6px;
-    background: var(--bg3);
-    border-radius: 3px;
-    overflow: hidden;
-    margin-bottom: 16px;
-  }
-
-  .conf-bar-fill {
-    height: 100%;
-    border-radius: 3px;
-    transition: width 0.8s ease;
-  }
-
-  .conf-bar-fill.lock-color { background: var(--green); }
-  .conf-bar-fill.lean-color { background: var(--blue); }
-  .conf-bar-fill.tossup-color { background: var(--orange); }
-
-  /* Method breakdown */
-  .method-header {
-    font-size: 11px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    font-family: 'DM Mono', monospace;
-    margin-bottom: 10px;
-  }
-
-  .method-row {
-    display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
-  }
-
-  .method-label { font-size: 12px; color: var(--muted); width: 80px; flex-shrink: 0; }
-  .method-bar-track { flex: 1; height: 5px; background: var(--bg3); border-radius: 3px; overflow: hidden; }
-  .method-bar-fill { height: 100%; border-radius: 3px; }
-  .method-bar-fill.ko { background: var(--red); }
-  .method-bar-fill.sub { background: var(--purple); }
-  .method-bar-fill.dec { background: var(--blue); }
-  .method-pct { font-size: 12px; font-family: 'DM Mono', monospace; color: var(--muted); width: 36px; text-align: right; }
-
-  /* Right column */
-  .analysis-col {}
-
-  .key-factors {
-    margin-bottom: 16px;
-  }
-
-  .kf-title {
-    font-size: 11px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    font-family: 'DM Mono', monospace;
-    margin-bottom: 10px;
-  }
-
-  .kf-item {
-    font-size: 13px;
-    color: var(--text);
-    padding: 8px 0;
-    border-bottom: 1px solid var(--border);
-    line-height: 1.5;
-  }
-
-  .kf-item:last-child { border-bottom: none; }
-  .kf-item::before { content: '→ '; color: var(--red); }
-
-  .analysis-text {
-    font-size: 14px;
-    color: var(--muted);
-    line-height: 1.7;
-    font-style: italic;
-    padding: 16px;
-    background: var(--bg3);
-    border-radius: 6px;
-    border-left: 3px solid var(--red);
-  }
-
-  .risk-flag {
-    margin-top: 12px;
-    padding: 10px 14px;
-    background: rgba(255,152,0,0.08);
-    border: 1px solid rgba(255,152,0,0.2);
-    border-radius: 6px;
-    font-size: 13px;
-    color: var(--orange);
-  }
-
-  .risk-flag::before { content: '⚠️ '; }
-
-  /* PARLAY SECTION */
-  .parlay-section {
-    background: rgba(170,0,255,0.06);
-    border: 1px solid rgba(170,0,255,0.2);
-    border-radius: 10px;
-    padding: 24px;
-    margin-top: 24px;
-  }
-
-  .parlay-header {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 24px;
-    letter-spacing: 2px;
-    color: var(--purple);
-    margin-bottom: 20px;
-  }
-
-  .parlay-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-
-  .parlay-card {
-    background: var(--bg3);
-    border: 1px solid rgba(170,0,255,0.2);
-    border-radius: 8px;
-    padding: 20px;
-  }
-
-  .parlay-legs {
-    font-size: 11px;
-    color: var(--purple);
-    font-family: 'DM Mono', monospace;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 12px;
-  }
-
-  .parlay-pick {
-    font-size: 14px;
-    padding: 8px 0;
-    border-bottom: 1px solid var(--border);
-    display: flex; justify-content: space-between;
-  }
-
-  .parlay-pick:last-of-type { border-bottom: none; }
-  .parlay-conf { color: var(--muted); font-family: 'DM Mono', monospace; font-size: 12px; }
-
-  .parlay-combined {
-    margin-top: 16px;
-    padding-top: 12px;
-    border-top: 1px solid rgba(170,0,255,0.2);
-    font-family: 'DM Mono', monospace;
-    font-size: 13px;
-    display: flex; justify-content: space-between;
-    align-items: center;
-  }
-
-  .parlay-prob {
-    font-size: 20px;
-    font-family: 'Bebas Neue', sans-serif;
-    color: var(--purple);
-    letter-spacing: 1px;
-  }
-
-  /* ERRORS */
-  .error-section {
-    background: rgba(232,0,42,0.06);
-    border: 1px solid rgba(232,0,42,0.2);
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 24px;
-    font-size: 13px;
-    color: var(--red);
-  }
-
-  /* NO DATA */
-  .no-data {
-    text-align: center; padding: 80px 40px;
-    color: var(--muted);
-  }
-
-  .no-data-icon { font-size: 56px; margin-bottom: 16px; }
-  .no-data-title { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 2px; margin-bottom: 8px; color: var(--text); }
-  .no-data-sub { font-size: 14px; }
-
-  /* LOADING */
-  .loading {
-    display: flex; align-items: center; justify-content: center;
-    height: 200px;
-    color: var(--muted);
-    font-family: 'DM Mono', monospace;
-    font-size: 13px;
-    letter-spacing: 2px;
-  }
-
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .spinner {
-    width: 24px; height: 24px;
-    border: 2px solid var(--border);
-    border-top-color: var(--red);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    margin-right: 16px;
-  }
-
-  /* Responsive */
-  @media (max-width: 900px) {
-    .layout { grid-template-columns: 1fr; }
-    .sidebar { display: none; }
-    .fight-body { grid-template-columns: 1fr; }
-    .main { padding: 20px; }
-    .parlay-grid { grid-template-columns: 1fr; }
-  }
+:root {
+  --red: #E8002A;
+  --bg: #0A0A0B;
+  --bg2: #111113;
+  --bg3: #18181C;
+  --border: #2A2A30;
+  --text: #F0F0F0;
+  --muted: #888890;
+  --green: #00C851;
+  --blue: #2196F3;
+  --orange: #FF9800;
+  --purple: #AA00FF;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* TOP BAR */
+.topbar {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--bg2);
+  border-bottom: 2px solid var(--border);
+  padding: 0 40px;
+  height: 72px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+
+.topbar-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  letter-spacing: 4px;
+}
+.topbar-logo span { color: var(--red); }
+
+.topbar-center {
+  display: flex; gap: 32px; font-size: 12px;
+  font-family: 'DM Mono', monospace;
+  color: var(--muted);
+}
+
+.topbar-stat-item { display: flex; flex-direction: column; align-items: center; }
+.topbar-stat-label { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 4px; }
+.topbar-stat-value { font-size: 16px; font-weight: 500; color: var(--text); }
+.topbar-stat-value.green { color: var(--green); }
+
+.topbar-right {
+  display: flex; align-items: center; gap: 20px;
+  font-size: 13px;
+}
+
+.pro-badge {
+  background: linear-gradient(135deg, var(--red), #ff5060);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  padding: 4px 12px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.topbar-email { color: var(--muted); font-size: 12px; }
+
+.btn-logout {
+  background: none; border: 1px solid var(--border);
+  color: var(--muted); padding: 8px 16px; border-radius: 4px;
+  font-size: 12px; cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-logout:hover { color: var(--text); border-color: var(--muted); background: var(--bg3); }
+
+/* POST-PAYMENT LOGIN OVERLAY */
+.payment-overlay {
+  position: fixed; inset: 0; z-index: 999;
+  background: rgba(10,10,11,0.98);
+  display: flex; align-items: center; justify-content: center;
+}
+
+.payment-box {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--green);
+  border-radius: 12px;
+  padding: 48px 40px;
+  max-width: 420px; width: 100%;
+  text-align: center;
+}
+
+.payment-icon { font-size: 48px; margin-bottom: 16px; }
+.payment-title { font-family: 'Bebas Neue', sans-serif; font-size: 32px; letter-spacing: 2px; color: var(--green); margin-bottom: 8px; }
+.payment-sub { color: var(--muted); font-size: 14px; margin-bottom: 32px; line-height: 1.6; }
+
+.payment-input {
+  width: 100%;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 15px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  font-family: 'Inter', sans-serif;
+}
+
+.payment-input:focus { outline: none; border-color: var(--green); }
+
+.payment-btn {
+  width: 100%;
+  background: var(--green);
+  color: #000;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 14px;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 0.5px;
+}
+
+.payment-btn:hover { opacity: 0.9; }
+
+.payment-error {
+  color: var(--red);
+  font-size: 13px;
+  margin-top: 10px;
+  display: none;
+}
+
+/* MAIN CONTAINER */
+.container {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 32px 40px;
+}
+
+/* EVENT HEADER */
+.event-header {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 2px solid var(--border);
+}
+
+.event-title-section {
+  display: flex; align-items: center; gap: 16px;
+}
+
+.event-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 42px;
+  letter-spacing: 3px;
+  line-height: 1;
+}
+
+.event-meta {
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  color: var(--muted);
+  letter-spacing: 1px;
+  margin-top: 6px;
+}
+
+.event-stats {
+  display: flex; gap: 24px;
+  font-family: 'DM Mono', monospace;
+  text-align: right;
+}
+
+.event-stat-box {
+  display: flex; flex-direction: column;
+}
+
+.event-stat-label {
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.event-stat-value {
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+/* PREDICTION TABLE */
+.predictions-table-wrapper {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 32px;
+}
+
+.predictions-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.predictions-table thead {
+  background: var(--bg3);
+  border-bottom: 2px solid var(--border);
+}
+
+.predictions-table th {
+  padding: 16px 20px;
+  text-align: left;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.predictions-table th:first-child { padding-left: 24px; }
+.predictions-table th:last-child { padding-right: 24px; }
+
+.predictions-table tbody tr {
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+}
+
+.predictions-table tbody tr:hover {
+  background: rgba(255,255,255,0.02);
+}
+
+.predictions-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.predictions-table td {
+  padding: 20px 20px;
+  vertical-align: middle;
+}
+
+.predictions-table td:first-child { padding-left: 24px; }
+.predictions-table td:last-child { padding-right: 24px; }
+
+/* Table content styling */
+.tier-indicator {
+  width: 4px;
+  height: 56px;
+  border-radius: 2px;
+  margin-right: 16px;
+  flex-shrink: 0;
+}
+
+.tier-indicator.lock { background: var(--green); }
+.tier-indicator.lean { background: var(--blue); }
+.tier-indicator.tossup { background: var(--orange); }
+
+.fight-cell {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.fight-details {}
+
+.fight-matchup {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+
+.fight-meta {
+  font-size: 12px;
+  color: var(--muted);
+  font-family: 'DM Mono', monospace;
+}
+
+.badge {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 3px 6px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  margin-left: 6px;
+}
+
+.badge.title { background: var(--red); color: white; }
+.badge.main { background: rgba(232,0,42,0.2); color: var(--red); border: 1px solid var(--red); }
+
+.winner-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.winner-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.winner-badge {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.winner-badge.lock { background: rgba(0,200,81,0.15); color: var(--green); border: 1px solid rgba(0,200,81,0.3); }
+.winner-badge.lean { background: rgba(33,150,243,0.15); color: var(--blue); border: 1px solid rgba(33,150,243,0.3); }
+.winner-badge.tossup { background: rgba(255,152,0,0.15); color: var(--orange); border: 1px solid rgba(255,152,0,0.3); }
+
+.confidence-cell {
+  font-family: 'DM Mono', monospace;
+}
+
+.conf-number {
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.conf-bar-track {
+  width: 100px;
+  height: 4px;
+  background: var(--bg3);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.conf-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.6s ease;
+}
+
+.conf-bar-fill.lock { background: var(--green); }
+.conf-bar-fill.lean { background: var(--blue); }
+.conf-bar-fill.tossup { background: var(--orange); }
+
+.method-cell {
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+}
+
+.method-primary {
+  color: var(--text);
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.method-breakdown {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.factors-cell {
+  font-size: 13px;
+  line-height: 1.6;
+  max-width: 400px;
+}
+
+.factor-item {
+  margin-bottom: 6px;
+  color: var(--text);
+}
+
+.factor-item:last-child { margin-bottom: 0; }
+.factor-item::before { content: '→ '; color: var(--red); margin-right: 4px; }
+
+.risk-inline {
+  color: var(--orange);
+  font-size: 12px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.risk-inline::before { content: '⚠️ '; }
+
+/* PARLAY SECTION */
+.parlay-section {
+  background: var(--bg2);
+  border: 2px solid rgba(170,0,255,0.3);
+  border-radius: 8px;
+  padding: 32px;
+  margin-bottom: 32px;
+}
+
+.parlay-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid var(--border);
+}
+
+.parlay-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 32px;
+  letter-spacing: 3px;
+  color: var(--purple);
+}
+
+.parlay-subtitle {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.parlay-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 24px;
+}
+
+.parlay-card {
+  background: var(--bg3);
+  border: 1px solid rgba(170,0,255,0.3);
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.parlay-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.parlay-legs-badge {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px;
+  letter-spacing: 2px;
+  color: var(--purple);
+}
+
+.parlay-combined-prob {
+  font-family: 'DM Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+  color: var(--purple);
+}
+
+.parlay-picks-list {}
+
+.parlay-pick-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.parlay-pick-item:last-child { border-bottom: none; }
+
+.parlay-pick-name {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.parlay-pick-conf {
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* LOADING & EMPTY STATES */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  color: var(--muted);
+  font-family: 'DM Mono', monospace;
+  font-size: 14px;
+  letter-spacing: 2px;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.spinner {
+  width: 32px; height: 32px;
+  border: 3px solid var(--border);
+  border-top-color: var(--red);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-right: 20px;
+}
+
+.no-data {
+  text-align: center;
+  padding: 100px 40px;
+  color: var(--muted);
+}
+
+.no-data-icon {
+  font-size: 64px;
+  margin-bottom: 20px;
+  opacity: 0.5;
+}
+
+.no-data-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 36px;
+  letter-spacing: 3px;
+  margin-bottom: 12px;
+  color: var(--text);
+}
+
+.no-data-sub {
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.error-section {
+  background: rgba(232,0,42,0.08);
+  border: 1px solid rgba(232,0,42,0.3);
+  border-left: 4px solid var(--red);
+  border-radius: 6px;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  font-size: 13px;
+  color: var(--red);
+  line-height: 1.6;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1200px) {
+  .topbar-center { display: none; }
+  .container { padding: 24px 20px; }
+  .event-header { flex-direction: column; gap: 20px; }
+  .event-stats { width: 100%; justify-content: flex-start; }
+}
+
+@media (max-width: 900px) {
+  .topbar { padding: 0 20px; height: 64px; }
+  .topbar-logo { font-size: 22px; }
+  
+  .predictions-table-wrapper { overflow-x: auto; }
+  .predictions-table { min-width: 900px; }
+  
+  .parlay-grid { grid-template-columns: 1fr; }
+}
 </style>
 </head>
 <body>
 
-<!-- POST-PAYMENT LOGIN OVERLAY (shown only when ?subscribed=true and not logged in) -->
+<!-- POST-PAYMENT LOGIN OVERLAY -->
 <div id="payment-overlay" class="payment-overlay" style="display:none">
   <div class="payment-box">
     <div class="payment-icon">✅</div>
@@ -540,54 +585,35 @@
 <!-- TOP BAR -->
 <div class="topbar">
   <div class="topbar-logo">UFC <span>RUBAN</span></div>
+  
+  <div class="topbar-center" id="topbar-stats">
+    <div class="topbar-stat-item">
+      <div class="topbar-stat-label">Lock Tier</div>
+      <div class="topbar-stat-value green" id="stat-lock">—</div>
+    </div>
+    <div class="topbar-stat-item">
+      <div class="topbar-stat-label">Lean Tier</div>
+      <div class="topbar-stat-value" id="stat-lean">—</div>
+    </div>
+    <div class="topbar-stat-item">
+      <div class="topbar-stat-label">Overall</div>
+      <div class="topbar-stat-value" id="stat-overall">—</div>
+    </div>
+  </div>
+
   <div class="topbar-right">
     <div class="pro-badge">PRO</div>
     <span class="topbar-email" id="user-email">Loading...</span>
-    <button class="btn-logout" onclick="logout()">Log out</button>
+    <button class="btn-logout" onclick="logout()">Logout</button>
   </div>
 </div>
 
-<div class="layout">
-  <!-- SIDEBAR -->
-  <div class="sidebar">
-    <div class="sidebar-section">
-      <div class="sidebar-label">Navigation</div>
-      <button class="sidebar-nav-item active">🥊 Current Card</button>
-      <button class="sidebar-nav-item" onclick="window.location.href='/history'">📅 Past Events</button>
-      <button class="sidebar-nav-item" onclick="window.location.href='/history'">📊 Accuracy History</button>
-    </div>
-
-    <div class="sidebar-section">
-      <div class="sidebar-label">Track Record</div>
-      <div class="acc-mini" id="acc-sidebar">
-        <div class="acc-mini-row">
-          <span class="acc-mini-label">🔒 Lock</span>
-          <span class="acc-mini-val green" id="sb-lock">—</span>
-        </div>
-        <div class="acc-mini-row">
-          <span class="acc-mini-label">✅ Lean</span>
-          <span class="acc-mini-val blue" id="sb-lean">—</span>
-        </div>
-        <div class="acc-mini-row">
-          <span class="acc-mini-label">Overall</span>
-          <span class="acc-mini-val" id="sb-overall">—</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="sidebar-section">
-      <div class="sidebar-label">System</div>
-      <button class="sidebar-nav-item" onclick="window.location.href='/'">← Back to site</button>
-    </div>
-  </div>
-
-  <!-- MAIN -->
-  <div class="main">
-    <div id="content">
-      <div class="loading">
-        <div class="spinner"></div>
-        Loading predictions...
-      </div>
+<!-- MAIN CONTAINER -->
+<div class="container">
+  <div id="content">
+    <div class="loading">
+      <div class="spinner"></div>
+      LOADING PREDICTIONS...
     </div>
   </div>
 </div>
@@ -595,6 +621,7 @@
 <script>
 let predictions = null;
 
+// AUTH
 async function checkAuth() {
   const params = new URLSearchParams(window.location.search);
   const justSubscribed = params.get('subscribed') === 'true';
@@ -604,7 +631,6 @@ async function checkAuth() {
 
   if (!data.authenticated || !data.isPro) {
     if (justSubscribed) {
-      // Show inline login form — Stripe webhook may need a moment, let them log in
       document.getElementById('payment-overlay').style.display = 'flex';
       return false;
     }
@@ -627,7 +653,6 @@ async function postPaymentLogin() {
     return;
   }
 
-  // Brief pause to let Stripe webhook finish if it hasn't yet
   await new Promise(r => setTimeout(r, 1500));
 
   const res = await fetch('/api/auth/login', {
@@ -643,10 +668,15 @@ async function postPaymentLogin() {
     return;
   }
 
-  // Reload cleanly without ?subscribed=true
   window.location.href = '/dashboard';
 }
 
+async function logout() {
+  await fetch('/api/auth/logout', { method: 'POST' });
+  window.location.href = '/';
+}
+
+// LOAD DATA
 async function loadPredictions() {
   try {
     const res = await fetch('/api/predictions/full');
@@ -660,8 +690,8 @@ async function loadPredictions() {
     document.getElementById('content').innerHTML = `
       <div class="no-data">
         <div class="no-data-icon">⚠️</div>
-        <div class="no-data-title">Failed to load predictions</div>
-        <div class="no-data-sub">Check server connection and try refreshing.</div>
+        <div class="no-data-title">Connection Failed</div>
+        <div class="no-data-sub">Unable to load predictions. Check server connection and refresh.</div>
       </div>
     `;
   }
@@ -671,129 +701,185 @@ async function loadStats() {
   try {
     const res = await fetch('/api/stats/accuracy');
     const data = await res.json();
-    if (data.lock.pct !== null) document.getElementById('sb-lock').textContent = data.lock.pct + '%';
-    if (data.lean.pct !== null) document.getElementById('sb-lean').textContent = data.lean.pct + '%';
-    if (data.overall.pct !== null) document.getElementById('sb-overall').textContent = data.overall.pct + '%';
-  } catch {}
+    
+    if (data.lock.pct !== null) {
+      document.getElementById('stat-lock').textContent = data.lock.pct + '%';
+    }
+    if (data.lean.pct !== null) {
+      document.getElementById('stat-lean').textContent = data.lean.pct + '%';
+    }
+    if (data.overall.pct !== null) {
+      document.getElementById('stat-overall').textContent = data.overall.pct + '%';
+    }
+  } catch (err) {
+    console.error('Failed to load stats:', err);
+  }
 }
 
-function confidenceBarColor(tier) {
-  return { 'LOCK': 'lock-color', 'LEAN': 'lean-color', 'TOSS-UP': 'tossup-color' }[tier] || 'lean-color';
+// RENDER
+function getTierClass(tier) {
+  return tier.toLowerCase().replace('-', '');
 }
 
-function renderFightCard(pred) {
-  const tierClass = pred.tier.replace('-', '').toLowerCase();
-  const barColor = confidenceBarColor(pred.tier);
-  const mainBadge = pred.is_main_event ? '<span class="main-badge">Main Event</span>' : '';
-  const titleBadge = pred.is_title_fight ? '<span class="main-badge">🏆 Title</span>' : '';
+function getMethodDisplay(pred) {
+  const methods = [
+    { label: 'KO/TKO', pct: pred.method_ko_pct },
+    { label: 'Submission', pct: pred.method_sub_pct },
+    { label: 'Decision', pct: pred.method_dec_pct }
+  ];
+  
+  methods.sort((a, b) => b.pct - a.pct);
+  
+  const primary = methods[0];
+  const breakdown = methods.map(m => `${m.label} ${m.pct}%`).join(' • ');
+  
+  return { primary: `${primary.label} (${primary.pct}%)`, breakdown };
+}
 
-  const factors = (pred.key_edge || []).map(e =>
-    `<div class="kf-item">${e}</div>`
-  ).join('');
-
-  const riskHtml = pred.risk_flag
-    ? `<div class="risk-flag">${pred.risk_flag}</div>`
-    : '';
-
-  const cardClass = pred.is_main_event ? 'fight-card main-event' :
-    `fight-card ${tierClass}`;
-
-  return `
-    <div class="${cardClass}">
-      <div class="fight-card-header">
-        <div>
-          <div class="fight-matchup">${pred.fighter1} vs ${pred.fighter2}</div>
-          <div class="fight-weight">${pred.weight_class}</div>
-        </div>
-        <div class="fight-badges">
-          ${mainBadge}${titleBadge}
-          <span class="tier-badge ${pred.tier}">${
-            pred.tier === 'LOCK' ? '🔒 LOCK' :
-            pred.tier === 'LEAN' ? '✅ LEAN' : '⚖️ TOSS-UP'
-          }</span>
-        </div>
-      </div>
-      <div class="fight-body">
-        <div class="pred-col">
-          <div class="pred-winner-name">${pred.winner}</div>
-          <div class="pred-conf">${pred.confidence.toFixed(0)}% confidence</div>
-          <div class="conf-bar-track">
-            <div class="conf-bar-fill ${barColor}" style="width:${pred.confidence}%"></div>
-          </div>
-
-          <div class="method-header">Method</div>
-          <div class="method-row">
-            <span class="method-label">KO/TKO</span>
-            <div class="method-bar-track">
-              <div class="method-bar-fill ko" style="width:${pred.method_ko_pct}%"></div>
+function renderPredictionsTable(predictions) {
+  const sorted = predictions.sort((a, b) => a.fight_order - b.fight_order);
+  
+  const rows = sorted.map(pred => {
+    const tierClass = getTierClass(pred.tier);
+    const tierLabel = pred.tier === 'LOCK' ? '🔒 LOCK' :
+                     pred.tier === 'LEAN' ? '✅ LEAN' : '⚖️ TOSS-UP';
+    
+    const method = getMethodDisplay(pred);
+    
+    const titleBadge = pred.is_title_fight ? '<span class="badge title">🏆 Title</span>' : '';
+    const mainBadge = pred.is_main_event ? '<span class="badge main">Main</span>' : '';
+    
+    const factors = (pred.key_edge || []).slice(0, 3).map(f =>
+      `<div class="factor-item">${f}</div>`
+    ).join('');
+    
+    const riskHtml = pred.risk_flag
+      ? `<div class="risk-inline">${pred.risk_flag}</div>`
+      : '';
+    
+    return `
+      <tr>
+        <td>
+          <div class="fight-cell">
+            <div class="tier-indicator ${tierClass}"></div>
+            <div class="fight-details">
+              <div class="fight-matchup">
+                ${pred.fighter1} vs ${pred.fighter2}${titleBadge}${mainBadge}
+              </div>
+              <div class="fight-meta">${pred.weight_class}</div>
             </div>
-            <span class="method-pct">${pred.method_ko_pct}%</span>
           </div>
-          <div class="method-row">
-            <span class="method-label">Submission</span>
-            <div class="method-bar-track">
-              <div class="method-bar-fill sub" style="width:${pred.method_sub_pct}%"></div>
+        </td>
+        <td>
+          <div class="winner-cell">
+            <div class="winner-name">${pred.winner}</div>
+            <div class="winner-badge ${tierClass}">${tierLabel}</div>
+          </div>
+        </td>
+        <td>
+          <div class="confidence-cell">
+            <div class="conf-number">${pred.confidence.toFixed(0)}%</div>
+            <div class="conf-bar-track">
+              <div class="conf-bar-fill ${tierClass}" style="width:${pred.confidence}%"></div>
             </div>
-            <span class="method-pct">${pred.method_sub_pct}%</span>
           </div>
-          <div class="method-row">
-            <span class="method-label">Decision</span>
-            <div class="method-bar-track">
-              <div class="method-bar-fill dec" style="width:${pred.method_dec_pct}%"></div>
-            </div>
-            <span class="method-pct">${pred.method_dec_pct}%</span>
+        </td>
+        <td>
+          <div class="method-cell">
+            <div class="method-primary">${method.primary}</div>
+            <div class="method-breakdown">${method.breakdown}</div>
           </div>
-        </div>
-
-        <div class="analysis-col">
-          <div class="key-factors">
-            <div class="kf-title">💡 Key Factors</div>
+        </td>
+        <td>
+          <div class="factors-cell">
             ${factors}
+            ${riskHtml}
           </div>
-          <div class="analysis-text">${pred.analysis}</div>
-          ${riskHtml}
-        </div>
-      </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+  
+  return `
+    <div class="predictions-table-wrapper">
+      <table class="predictions-table">
+        <thead>
+          <tr>
+            <th>Fight</th>
+            <th>Predicted Winner</th>
+            <th>Confidence</th>
+            <th>Method</th>
+            <th>Key Factors</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows}
+        </tbody>
+      </table>
     </div>
   `;
 }
 
-function renderParlay(parlays) {
-  if (!parlays || (!parlays.two_leg && !parlays.three_leg)) return '';
-
-  const twoLeg = parlays.two_leg ? `
-    <div class="parlay-card">
-      <div class="parlay-legs">2-Leg Parlay</div>
-      ${parlays.two_leg.picks.map(p =>
-        `<div class="parlay-pick"><span>${p.fighter}</span><span class="parlay-conf">${p.confidence.toFixed(0)}%</span></div>`
-      ).join('')}
-      <div class="parlay-combined">
-        <span>Combined probability</span>
-        <span class="parlay-prob">${parlays.two_leg.combined_probability.toFixed(1)}%</span>
+function renderParlaySection(parlays) {
+  if (!parlays || (!parlays.two_leg && !parlays.three_leg)) {
+    return '';
+  }
+  
+  const cards = [];
+  
+  if (parlays.two_leg) {
+    const picks = parlays.two_leg.picks.map(p =>
+      `<div class="parlay-pick-item">
+        <div class="parlay-pick-name">${p.fighter}</div>
+        <div class="parlay-pick-conf">${p.confidence.toFixed(0)}%</div>
+      </div>`
+    ).join('');
+    
+    cards.push(`
+      <div class="parlay-card">
+        <div class="parlay-card-header">
+          <div class="parlay-legs-badge">2-Leg Parlay</div>
+          <div class="parlay-combined-prob">${parlays.two_leg.combined_probability.toFixed(1)}%</div>
+        </div>
+        <div class="parlay-picks-list">
+          ${picks}
+        </div>
       </div>
-    </div>
-  ` : '';
-
-  const threeLeg = parlays.three_leg ? `
-    <div class="parlay-card">
-      <div class="parlay-legs">3-Leg Parlay</div>
-      ${parlays.three_leg.picks.map(p =>
-        `<div class="parlay-pick"><span>${p.fighter}</span><span class="parlay-conf">${p.confidence.toFixed(0)}%</span></div>`
-      ).join('')}
-      <div class="parlay-combined">
-        <span>Combined probability</span>
-        <span class="parlay-prob">${parlays.three_leg.combined_probability.toFixed(1)}%</span>
+    `);
+  }
+  
+  if (parlays.three_leg) {
+    const picks = parlays.three_leg.picks.map(p =>
+      `<div class="parlay-pick-item">
+        <div class="parlay-pick-name">${p.fighter}</div>
+        <div class="parlay-pick-conf">${p.confidence.toFixed(0)}%</div>
+      </div>`
+    ).join('');
+    
+    cards.push(`
+      <div class="parlay-card">
+        <div class="parlay-card-header">
+          <div class="parlay-legs-badge">3-Leg Parlay</div>
+          <div class="parlay-combined-prob">${parlays.three_leg.combined_probability.toFixed(1)}%</div>
+        </div>
+        <div class="parlay-picks-list">
+          ${picks}
+        </div>
       </div>
-    </div>
-  ` : '';
-
+    `);
+  }
+  
   return `
     <div class="parlay-section">
-      <div class="parlay-header">🎯 PARLAY BUILDER</div>
-      <div style="font-size:13px; color:var(--muted); margin-bottom:20px">
-        Eligible picks: ≥60% confidence only. Combined probabilities are independent-event estimates.
+      <div class="parlay-header">
+        <div>
+          <div class="parlay-title">🎯 PARLAY BUILDER</div>
+          <div class="parlay-subtitle">High-confidence picks ≥60% • Combined probabilities shown</div>
+        </div>
       </div>
-      <div class="parlay-grid">${twoLeg}${threeLeg}</div>
+      <div class="parlay-grid">
+        ${cards.join('')}
+      </div>
     </div>
   `;
 }
@@ -803,62 +889,79 @@ function render(data) {
     document.getElementById('content').innerHTML = `
       <div class="no-data">
         <div class="no-data-icon">📅</div>
-        <div class="no-data-title">No Upcoming Card</div>
-        <div class="no-data-sub">Predictions post fight week. Check back closer to event day.</div>
+        <div class="no-data-title">No Active Card</div>
+        <div class="no-data-sub">Predictions are published during fight week.<br>Check back closer to event day.</div>
       </div>
     `;
     return;
   }
-
-  const predictions = (data.predictions || []).sort((a, b) => a.fight_order - b.fight_order);
+  
+  const predictions = data.predictions || [];
   const errors = data.errors || [];
-
+  
   const errorHtml = errors.length > 0 ? `
     <div class="error-section">
-      ⚠️ Missing data for ${errors.length} fight(s). Run <code>python fix_missing_stats.py</code>
-      <br>${errors.map(e => `• ${e.message}`).join('<br>')}
+      <strong>⚠️ Data Warning:</strong> Missing stats for ${errors.length} fight(s).<br>
+      ${errors.map(e => `• ${e.message}`).join('<br>')}
     </div>
   ` : '';
-
-  const updatedAt = new Date().toLocaleTimeString();
-
+  
+  const fightsCount = predictions.length;
+  const avgConf = predictions.length > 0
+    ? (predictions.reduce((sum, p) => sum + p.confidence, 0) / predictions.length).toFixed(1)
+    : '—';
+  
+  const lockCount = predictions.filter(p => p.tier === 'LOCK').length;
+  
   document.getElementById('content').innerHTML = `
     <div class="event-header">
       <div>
-        <div class="event-name">${data.event_name || 'Upcoming UFC Event'}</div>
+        <div class="event-title-section">
+          <div class="event-title">${data.event_name || 'Upcoming UFC Event'}</div>
+        </div>
         <div class="event-meta">📅 ${data.event_date || 'TBD'} · 📍 ${data.location || 'TBD'}</div>
       </div>
-      <div class="last-updated">Last updated<br>${updatedAt}</div>
+      <div class="event-stats">
+        <div class="event-stat-box">
+          <div class="event-stat-label">Fights</div>
+          <div class="event-stat-value">${fightsCount}</div>
+        </div>
+        <div class="event-stat-box">
+          <div class="event-stat-label">Locks</div>
+          <div class="event-stat-value">${lockCount}</div>
+        </div>
+        <div class="event-stat-box">
+          <div class="event-stat-label">Avg Conf</div>
+          <div class="event-stat-value">${avgConf}%</div>
+        </div>
+      </div>
     </div>
 
     ${errorHtml}
 
-    <div class="fights-grid">
-      ${predictions.map(renderFightCard).join('')}
-    </div>
+    ${renderPredictionsTable(predictions)}
 
-    ${renderParlay(data.parlays)}
+    ${renderParlaySection(data.parlays)}
   `;
 }
 
-async function logout() {
-  await fetch('/api/auth/logout', { method: 'POST' });
-  window.location.href = '/';
-}
-
-// Init
+// INIT
 (async () => {
   const authed = await checkAuth();
   if (authed) {
-    await loadPredictions();
-    await loadStats();
+    await Promise.all([
+      loadPredictions(),
+      loadStats()
+    ]);
   }
 })();
 
-// Auto-refresh every 5 minutes
+// AUTO-REFRESH every 5 minutes
 setInterval(async () => {
-  await loadPredictions();
-  await loadStats();
+  await Promise.all([
+    loadPredictions(),
+    loadStats()
+  ]);
 }, 5 * 60 * 1000);
 </script>
 </body>
