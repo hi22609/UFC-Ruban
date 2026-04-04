@@ -1,4 +1,4 @@
-/**
+﻿/**
  * RUBAN Local Prediction Engine
  * Uses Ollama (local AI) — zero API cost, runs on your 32GB RAM
  * Falls back to Anthropic if Ollama is unavailable
@@ -19,9 +19,12 @@ function ollamaRequest(prompt, model = OLLAMA_MODEL) {
       prompt,
       stream: false,
       options: {
-        temperature: 0.3,
-        top_p: 0.9,
-        num_predict: 1500,
+        temperature: 0.1,
+        top_p: 0.85,
+        top_k: 40,
+        num_predict: 800,
+        repeat_penalty: 1.3,
+        stop: ['}', '`']
       }
     });
 
@@ -183,3 +186,4 @@ if (require.main === module) {
 }
 
 module.exports = { predictFight, predictCard, ollamaHealthCheck };
+
