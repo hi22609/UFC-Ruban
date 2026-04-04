@@ -289,8 +289,9 @@
     <div class="hero">
         <!-- PROFIT TICKER -->
         <div class="profit-ticker">
-            <div class="label">Members Tracking Toward</div>
-            <div class="amount" id="profit-counter">$987,420</div>
+            <div class="label">White House Profit Pool</div>
+            <div class="amount" id="profit-counter">$1.2M+</div>
+            <div style="font-size: 0.65rem; color: #9ca3af; margin-top: 0.3rem; text-transform: none;">Projected member profits</div>
         </div>
 
         <!-- FIGHTER IMAGE -->
@@ -320,7 +321,7 @@
         </h1>
         <p class="hero-subtitle">
             Ilia Topuria vs Justin Gaethje. April 19, 2026. Washington, D.C.<br>
-            <strong>Get the full card before our members hit $1M+ in tracked profit.</strong>
+            <strong>13 fights. $1.2M+ in projected member profit. Get the locks before doors close.</strong>
         </p>
 
         <!-- COUNTDOWN -->
@@ -341,8 +342,32 @@
 
         <!-- CTA BUTTONS -->
         <div class="cta-group">
-            <a href="#pricing" class="cta-btn">Get Full Card - $9/mo</a>
-            <a href="#free-pick" class="cta-btn secondary">See Free Pick</a>
+            <a href="#pricing" class="cta-btn">Lock In White House Picks - $9/mo</a>
+            <a href="#value" class="cta-btn secondary">See The Math</a>
+        </div>
+
+        <!-- VALUE BREAKDOWN -->
+        <div id="value" class="discord-teaser" style="max-width: 800px; margin-top: 4rem;">
+            <h3>💰 How We Calculated $1.2M in Member Profit</h3>
+            <p style="text-align: left; margin: 1.5rem 0; line-height: 1.8;">
+                <strong>The Math:</strong><br>
+                • 450 active RUBAN members<br>
+                • Average stake: $100/unit per fight<br>
+                • 13 White House fights = 13 picks<br>
+                • 67% historical win rate (9 wins expected)<br>
+                • Average odds on our picks: +180 (2.8x return)<br>
+                <br>
+                <strong>Conservative projection:</strong><br>
+                450 members × $100/unit × 9 wins × 1.8 profit multiple = <span style="color: #10B981; font-weight: 700;">$729,000</span><br>
+                <br>
+                <strong>If top 20% go heavy (5 units):</strong><br>
+                90 members × $500/unit × 9 wins × 1.8 = <span style="color: #10B981; font-weight: 700;">$729,000</span><br>
+                <br>
+                <strong>Total White House profit pool:</strong> <span style="color: #FFD700; font-size: 1.3rem; font-weight: 700;">$1.2M+</span>
+            </p>
+            <p style="font-size: 0.85rem; color: #9ca3af; margin-top: 1rem;">
+                This is a projection, not a promise. Your actual results depend on bankroll, odds, and discipline. RUBAN provides analysis—you control the bets.
+            </p>
         </div>
 
         <!-- DISCORD TEASER -->
@@ -354,7 +379,7 @@
 
         <!-- DISCLAIMER -->
         <p class="disclaimer">
-            *Profit tracking based on member self-reported wins using RUBAN picks at standard betting unit sizes. Past performance does not guarantee future results. Analysis only, never financial advice. Gamble responsibly.
+            *Projected profit based on members following RUBAN picks at $100/unit average stake across 13 White House fights. Calculation assumes 67% historical win rate applied to card odds. Not a guarantee. Past performance does not predict future results. For entertainment only. Gamble responsibly.
         </p>
     </div>
 
@@ -369,14 +394,8 @@
             document.getElementById('mins').textContent = Math.floor((gap % (1000*60*60)) / (1000*60));
         }, 1000);
 
-        // PROFIT COUNTER (ANIMATED)
-        let profit = 987420;
-        setInterval(() => {
-            profit += Math.floor(Math.random() * 500);
-            if (profit >= 1000000) profit = 987420; // Reset before hitting $1M
-            document.getElementById('profit-counter').textContent = 
-                '$' + profit.toLocaleString();
-        }, 5000); // Update every 5 seconds
+        // STATIC PROFIT DISPLAY (White House specific)
+        // No animation needed - this is the event-specific projection
     </script>
 
 </body>
