@@ -253,6 +253,17 @@ app.get('/affiliate', (req, res) => {
 });
 
 // ─────────────────────────────────────────────
+// HEALTH CHECK (Railway requirement)
+// ─────────────────────────────────────────────
+app.get('/health', (req, res) => {
+  res.status(200).json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    predictions_available: fs.existsSync(PREDICTIONS_PATH)
+  });
+});
+
+// ─────────────────────────────────────────────
 // START
 // ─────────────────────────────────────────────
 app.listen(PORT, () => {

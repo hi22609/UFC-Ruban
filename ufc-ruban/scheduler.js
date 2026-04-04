@@ -1,6 +1,6 @@
 // UFC Ruban - Scheduler + Discord Bot
 // discord.js v13 — runs alongside server/index.js
-// Handles: fight card detection, AI predictions, Discord posting
+// Handles: fight card detection, AI predictions, Discord posting, auto-responses
 
 const { Client, Intents, MessageEmbed } = require('discord.js');
 const fs = require('fs');
@@ -28,6 +28,114 @@ const client = new Client({
     Intents.FLAGS.GUILDS,
     Intents.FLAGS.GUILD_MESSAGES,
   ]
+});
+
+// ── AUTO-RESPONSES ────────────────────────────────────────
+const AUTO_RESPONSES = {
+  'subscribe': `💳 **Subscribe to UFC RUBAN Pro**
+
+Get full fight card predictions, confidence scores, parlay builders, and exclusive analysis.
+
+✅ **$9.99/month** or **$79.99/year** (save 17%)
+🔗 Subscribe at: ${process.env.SITE_URL || 'https://superb-unity-production-531a.up.railway.app'}
+
+Free picks posted here before every event!`,
+  
+  'how do i': `💳 **How to Subscribe**
+
+1. Visit ${process.env.SITE_URL || 'https://superb-unity-production-531a.up.railway.app'}
+2. Choose your plan ($9.99/mo or $79.99/yr)
+3. Complete payment via Stripe
+4. Get instant access to all Pro predictions!
+
+Free picks posted here — no subscription needed.`,
+  
+  'free pick': function() {
+    const data = loadPredictions();
+    if (!data || !data.predictions || data.predictions.length === 0) {
+      return `🆓 **Free Picks**\n\nWe post the **main event prediction** here before every UFC card — no subscription needed.\n\nWant the full card with confidence scores, method predictions, and parlay builders? Upgrade to Pro at ${process.env.SITE_URL || 'https://superb-unity-production-531a.up.railway.app'}`;
+    }
+    const mainEvent = data.predictions.find(p => p.is_main_event) || data.predictions[0];
+    const tierEmoji = { LOCK: '🔒', LEAN: '⚡', 'TOSS-UP': '🎲' }[mainEvent.tier] || '🥊';
+    return `🆓 **Today's Free Pick** (${data.event_name})\n\n${tierEmoji} **${mainEvent.fighter1} vs ${mainEvent.fighter2}**\nPick: **${mainEvent.winner}** (${mainEvent.tier})\nMethod: ${mainEvent.method || 'Decision'}\n\nWant full card predictions? Subscribe at ${process.env.SITE_URL || 'https://superb-unity-production-531a.up.railway.app'}`;
+  },
+  
+  'what is ruban': `🥊 **What is RUBAN?**
+
+UFC RUBAN is the most accurate, data-driven UFC prediction platform available.
+
+🧠 **How it works:**
+• 50% Machine Learning (XGBoost ensemble, 32 features)
+• 35% Market Consensus (sharp money from BestFightOdds)
+• 15% FightMatrix ELO ratings
+• +AI Review (Claude qualitative analysis)
+
+🔒 **Honest confidence caps** — max 76%, no BS hype picks
+📈 **Track record posted after every event**
+
+Built by fight fans, for fight fans. Subscribe at ${process.env.SITE_URL || 'https://superb-unity-production-531a.up.railway.app'}`,
+  
+  'about ruban': `🥊 **About RUBAN**
+
+The first truly transparent UFC prediction platform. We combine machine learning, sharp betting lines, and ELO ratings to generate honest, data-backed predictions.
+
+✅ Track record published after every event
+✅ Confidence capped at 76% (no fake hype)
+✅ Method predictions + parlay builders
+
+Free main event picks posted here. Full card access at ${process.env.SITE_URL || 'https://superb-unity-production-531a.up.railway.app'}`,
+  
+  'invite': `👋 **Invite Friends to RUBAN**
+
+Share this Discord server or send them directly to ${process.env.SITE_URL || 'https://superb-unity-production-531a.up.railway.app'} to subscribe and get predictions delivered here + on the website dashboard.`,
+  
+  'accuracy': `🎯 **RUBAN Accuracy**
+
+We track and publish our results after every event — transparency is core to our credibility.
+
+View full history at: ${process.env.SITE_URL || 'https://superb-unity-production-531a.up.railway.app'}/history
+
+Our tier system:
+🔒 **LOCK** (≥65%): High confidence
+⚡ **LEAN** (54-64%): Solid edge
+🎲 **TOSS-UP** (<54%): Coin flip, no strong lean
+
+We cap max confidence at 76% — MMA is unpredictable and we respect that.`
+};
+
+function matchesKeyword(content, keyword) {
+  const lower = content.toLowerCase();
+  const kw = keyword.toLowerCase();
+  // Match whole phrases or question patterns
+  return lower.includes(kw) || 
+         lower.includes(kw.replace(/ /g, '')) || 
+         (kw.split(' ').length > 1 && kw.split(' ').every(word => lower.includes(word)));
+}
+
+client.on('messageCreate', async (message) => {
+  // Ignore bot messages and DMs
+  if (message.author.bot || !message.guild) return;
+  
+  const content = message.content.toLowerCase().trim();
+  const isMentioned = message.mentions.has(client.user);
+  const isPicksChannel = message.channel.name?.toLowerCase().includes('pick');
+  
+  // Only auto-reply if bot is mentioned OR message is in a picks channel
+  if (!isMentioned && !isPicksChannel) return;
+  
+  // Check for auto-response triggers
+  for (const [trigger, response] of Object.entries(AUTO_RESPONSES)) {
+    if (matchesKeyword(content, trigger)) {
+      try {
+        const reply = typeof response === 'function' ? response() : response;
+        await message.reply(reply);
+        console.log(`[Bot] Auto-replied to "${trigger}" in ${message.channel.name}`);
+      } catch (err) {
+        console.error('[Bot] Auto-reply error:', err.message);
+      }
+      break; // Only reply once per message
+    }
+  }
 });
 
 // ── POSTED EVENTS TRACKING ────────────────────────────────
@@ -236,6 +344,7 @@ client.once('ready', async () => {
   console.log(`[Bot] Online as ${client.user.tag}`);
   console.log(`[Bot] Free channel: ${FREE_CHANNEL}`);
   console.log(`[Bot] Pro channel: ${PRO_CHANNEL}`);
+  console.log(`[Bot] Auto-responses enabled for: ${Object.keys(AUTO_RESPONSES).join(', ')}`);
 
   // Run immediately on startup
   await runCycle();
