@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UFC Ruban — Track Record</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #E8002A;
+    --bg: #0A0A0B;
+    --bg2: #111113;
+    --bg3: #18181C;
+    --border: #2A2A30;
+    --text: #F0F0F0;
+    --muted: #888890;
+    --green: #00C851;
+    --blue: #2196F3;
+    --orange: #FF9800;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    height: 60px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+
+  .topbar-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px; letter-spacing: 3px;
+  }
+  .topbar-logo span { color: var(--red); }
+
+  .topbar-nav {
+    display: flex; gap: 24px; font-size: 13px; color: var(--muted);
+  }
+
+  .topbar-nav a {
+    color: var(--muted); text-decoration: none;
+  }
+  .topbar-nav a:hover { color: var(--text); }
+  .topbar-nav a.active { color: var(--text); }
+
+  .page {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 48px 32px;
+  }
+
+  .page-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 42px;
+    letter-spacing: 3px;
+    margin-bottom: 8px;
+  }
+
+  .page-sub {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 48px;
+  }
+
+  /* STAT CARDS */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+
+  .stat-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px 20px;
+    text-align: center;
+  }
+
+  .stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .stat-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    letter-spacing: 1px;
+    line-height: 1;
+  }
+
+  .stat-value.green { color: var(--green); }
+  .stat-value.blue { color: var(--blue); }
+  .stat-value.orange { color: var(--orange); }
+
+  .stat-sub {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    margin-top: 6px;
+  }
+
+  /* SECTION */
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* RESULTS TABLE */
+  .results-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 48px;
+  }
+
+  .results-table th {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .results-table td {
+    padding: 14px 12px;
+    font-size: 13px;
+    border-bottom: 1px solid rgba(42,42,48,0.6);
+  }
+
+  .results-table tr:hover td { background: var(--bg2); }
+
+  .tier-dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+  }
+  .tier-dot.lock { background: var(--green); }
+  .tier-dot.lean { background: var(--blue); }
+  .tier-dot.tossup { background: var(--orange); }
+
+  .result-correct { color: var(--green); font-weight: 600; }
+  .result-wrong { color: var(--red); font-weight: 600; }
+  .result-pending { color: var(--muted); }
+
+  /* NO DATA */
+  .no-data {
+    text-align: center;
+    padding: 80px 40px;
+    color: var(--muted);
+  }
+  .no-data-icon { font-size: 56px; margin-bottom: 16px; }
+  .no-data-title { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 2px; margin-bottom: 8px; color: var(--text); }
+  .no-data-sub { font-size: 14px; line-height: 1.6; }
+
+  /* TIER EXPLAINER */
+  .explainer {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 28px;
+    margin-bottom: 48px;
+  }
+
+  .explainer-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .explainer-rows { display: flex; gap: 24px; flex-wrap: wrap; }
+
+  .explainer-item {
+    flex: 1; min-width: 160px;
+    display: flex; align-items: flex-start; gap: 12px;
+  }
+
+  .explainer-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+
+  .explainer-text strong { display: block; font-size: 14px; margin-bottom: 4px; }
+  .explainer-text span { font-size: 12px; color: var(--muted); }
+
+  @media (max-width: 768px) {
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .page { padding: 24px 16px; }
+    .results-table th:nth-child(4),
+    .results-table td:nth-child(4) { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-logo">UFC <span>RUBAN</span></div>
+  <div class="topbar-nav">
+    <a href="/">Home</a>
+    <a href="/dashboard">Dashboard</a>
+    <a href="/history" class="active">Track Record</a>
+  </div>
+</div>
+
+<div class="page">
+  <div class="page-title">Track Record</div>
+  <div class="page-sub">All predictions with verified outcomes. Updated after each event.</div>
+
+  <!-- ACCURACY STATS -->
+  <div class="stats-grid" id="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">Overall</div>
+      <div class="stat-value" id="stat-overall">—</div>
+      <div class="stat-sub" id="stat-overall-sub">No results yet</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">🔒 Lock</div>
+      <div class="stat-value green" id="stat-lock">—</div>
+      <div class="stat-sub" id="stat-lock-sub">≥65% confidence</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">✅ Lean</div>
+      <div class="stat-value blue" id="stat-lean">—</div>
+      <div class="stat-sub" id="stat-lean-sub">≥54% confidence</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">⚖️ Toss-Up</div>
+      <div class="stat-value orange" id="stat-tossup">—</div>
+      <div class="stat-sub" id="stat-tossup-sub">&lt;54% confidence</div>
+    </div>
+  </div>
+
+  <!-- TIER EXPLAINER -->
+  <div class="explainer">
+    <div class="explainer-title">Confidence Tiers Explained</div>
+    <div class="explainer-rows">
+      <div class="explainer-item">
+        <div class="explainer-icon">🔒</div>
+        <div class="explainer-text">
+          <strong>LOCK</strong>
+          <span>≥65% model confidence. All four signal layers agree. Highest conviction picks.</span>
+        </div>
+      </div>
+      <div class="explainer-item">
+        <div class="explainer-icon">✅</div>
+        <div class="explainer-text">
+          <strong>LEAN</strong>
+          <span>54–64% confidence. A clear statistical edge exists but meaningful variance remains.</span>
+        </div>
+      </div>
+      <div class="explainer-item">
+        <div class="explainer-icon">⚖️</div>
+        <div class="explainer-text">
+          <strong>TOSS-UP</strong>
+          <span>&lt;54% confidence. Too close to call — treat as informational, not actionable.</span>
+        </div>
+      </div>
+      <div class="explainer-item">
+        <div class="explainer-icon">📊</div>
+        <div class="explainer-text">
+          <strong>Max 76%</strong>
+          <span>Confidence is hard-capped at 76%. MMA is volatile. Overconfidence destroys credibility.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTS TABLE -->
+  <div class="section-title">All Predictions</div>
+  <div id="results-container">
+    <div class="no-data">
+      <div class="no-data-icon">📋</div>
+      <div class="no-data-title">Loading Results...</div>
+    </div>
+  </div>
+</div>
+
+<script>
+async function loadStats() {
+  try {
+    const res = await fetch('/api/stats/accuracy');
+    const data = await res.json();
+
+    function fmt(stat) {
+      return stat && stat.pct !== null ? stat.pct + '%' : '—';
+    }
+    function sub(stat) {
+      return stat && stat.total > 0 ? `${stat.wins}/${stat.total} correct` : 'No results yet';
+    }
+
+    document.getElementById('stat-overall').textContent = fmt(data.overall);
+    document.getElementById('stat-overall-sub').textContent = sub(data.overall);
+    document.getElementById('stat-lock').textContent = fmt(data.lock);
+    document.getElementById('stat-lock-sub').textContent = sub(data.lock);
+    document.getElementById('stat-lean').textContent = fmt(data.lean);
+    document.getElementById('stat-lean-sub').textContent = sub(data.lean);
+    document.getElementById('stat-tossup').textContent = fmt(data.tossup);
+    document.getElementById('stat-tossup-sub').textContent = sub(data.tossup);
+  } catch (e) {
+    console.error('Failed to load stats', e);
+  }
+}
+
+async function loadResults() {
+  try {
+    const res = await fetch('/api/history');
+    if (!res.ok) throw new Error('Not available');
+    const data = await res.json();
+    renderResults(data);
+  } catch (e) {
+    document.getElementById('results-container').innerHTML = `
+      <div class="no-data">
+        <div class="no-data-icon">📅</div>
+        <div class="no-data-title">No Results Yet</div>
+        <div class="no-data-sub">Predictions are recorded after each event.<br>Check back after the next UFC card.</div>
+      </div>
+    `;
+  }
+}
+
+function tierDot(tier) {
+  const cls = tier === 'LOCK' ? 'lock' : tier === 'LEAN' ? 'lean' : 'tossup';
+  return `<span class="tier-dot ${cls}"></span>`;
+}
+
+function renderResults(rows) {
+  if (!rows || rows.length === 0) {
+    document.getElementById('results-container').innerHTML = `
+      <div class="no-data">
+        <div class="no-data-icon">📅</div>
+        <div class="no-data-title">No Results Yet</div>
+        <div class="no-data-sub">Predictions are recorded after each event.</div>
+      </div>
+    `;
+    return;
+  }
+
+  const tbody = rows.map(r => {
+    let resultHtml;
+    if (r.actual_winner === null) {
+      resultHtml = `<span class="result-pending">Pending</span>`;
+    } else if (r.correct === 1) {
+      resultHtml = `<span class="result-correct">✓ Correct</span>`;
+    } else {
+      resultHtml = `<span class="result-wrong">✗ Wrong</span>`;
+    }
+
+    const date = r.predicted_at ? r.predicted_at.slice(0, 10) : '—';
+
+    return `
+      <tr>
+        <td style="color:var(--muted);font-family:'DM Mono',monospace;font-size:11px">${date}</td>
+        <td>${r.fighter1} vs ${r.fighter2}</td>
+        <td>${r.event_name}</td>
+        <td>${tierDot(r.tier)}${r.tier} · ${Math.round(r.confidence)}%</td>
+        <td style="font-weight:600">${r.predicted_winner}</td>
+        <td>${resultHtml}</td>
+      </tr>
+    `;
+  }).join('');
+
+  document.getElementById('results-container').innerHTML = `
+    <table class="results-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Fight</th>
+          <th>Event</th>
+          <th>Tier</th>
+          <th>Pick</th>
+          <th>Result</th>
+        </tr>
+      </thead>
+      <tbody>${tbody}</tbody>
+    </table>
+  `;
+}
+
+loadStats();
+loadResults();
+</script>
+</body>
+</html>

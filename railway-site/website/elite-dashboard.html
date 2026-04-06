@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RUBAN | White House Event Board</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #07070b;
+            --card: #12121a;
+            --purple: #8b5cf6;
+            --magenta: #c026d3;
+            --gold: #fbbf24;
+            --green: #10b981;
+            --red: #ef4444;
+            --text: #f8fafc;
+            --muted: #9ca3af;
+            --border: rgba(139, 92, 246, 0.2);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: radial-gradient(circle at top, rgba(139, 92, 246, 0.12), transparent 28%), #07070b;
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+        h1, h2, h3 { font-family: 'Bebas Neue', sans-serif; letter-spacing: 1px; text-transform: uppercase; }
+        .header {
+            max-width: 1200px;
+            margin: 0 auto 2rem;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: clamp(3rem, 8vw, 5rem);
+            background: linear-gradient(135deg, var(--purple), var(--magenta), var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.75rem;
+        }
+        .subtitle {
+            color: var(--muted);
+            max-width: 840px;
+            margin: 0 auto;
+        }
+        .board {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            gap: 1.5rem;
+        }
+        .panel {
+            background: rgba(18,18,26,0.92);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 0 30px rgba(139, 92, 246, 0.12);
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 1rem;
+        }
+        .stat-label {
+            color: var(--muted);
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.45rem;
+        }
+        .stat-value {
+            font-size: 2.2rem;
+            font-family: 'Bebas Neue', sans-serif;
+        }
+        .stat-value.green { color: var(--green); }
+        .stat-value.gold { color: var(--gold); }
+        .stat-value.purple { color: var(--purple); }
+        .split {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 1.5rem;
+        }
+        .list {
+            list-style: none;
+            display: grid;
+            gap: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        .list li {
+            color: var(--muted);
+        }
+        .fight-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        .fight-table th,
+        .fight-table td {
+            text-align: left;
+            padding: 0.95rem 0.8rem;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            vertical-align: top;
+        }
+        .fight-table th {
+            color: var(--muted);
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+        .tag {
+            display: inline-block;
+            padding: 0.25rem 0.65rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .tag.low { background: rgba(16, 185, 129, 0.15); color: var(--green); }
+        .tag.medium { background: rgba(251, 191, 36, 0.15); color: var(--gold); }
+        .tag.high { background: rgba(239, 68, 68, 0.15); color: var(--red); }
+        .muted { color: var(--muted); }
+        .callout {
+            border-left: 3px solid var(--gold);
+            padding-left: 1rem;
+            color: #e5e7eb;
+        }
+        .cta-row {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.95rem 1.25rem;
+            border-radius: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .btn.primary {
+            background: linear-gradient(135deg, var(--purple), var(--magenta));
+            color: white;
+        }
+        .btn.secondary {
+            border: 1px solid var(--border);
+            color: var(--text);
+            background: rgba(139,92,246,0.08);
+        }
+        @media (max-width: 900px) {
+            .stats-grid, .split { grid-template-columns: 1fr; }
+            body { padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>White House Event Board</h1>
+        <p class="subtitle">
+            This page is now a real event-facing board, not a fake PnL dashboard. It shows actual event framing, real named fighters, real premium positioning, and where charts/Discord delivery fit once the tracked data feed is finalized.
+        </p>
+    </div>
+
+    <div class="board">
+        <div class="panel stats-grid">
+            <div>
+                <div class="stat-label">Event</div>
+                <div class="stat-value purple">UFC White House</div>
+            </div>
+            <div>
+                <div class="stat-label">Tracked Fights</div>
+                <div class="stat-value">13</div>
+            </div>
+            <div>
+                <div class="stat-label">Main Event Confidence</div>
+                <div class="stat-value green">68%</div>
+            </div>
+            <div>
+                <div class="stat-label">Framing</div>
+                <div class="stat-value gold">Select Edges</div>
+            </div>
+        </div>
+
+        <div class="split">
+            <div class="panel">
+                <h2 style="font-size:2rem; margin-bottom:0.75rem;">Main Event Read</h2>
+                <p class="callout">
+                    Ilia Topuria is the cleaner, more controlled side of the read. Justin Gaethje remains the high-variance danger side. The angle is not “free money.” The angle is controlled exposure where the data leans strongest.
+                </p>
+                <ul class="list">
+                    <li><strong style="color:var(--text);">Topuria edge:</strong> cleaner layered offense, defensive wrestling, better control over pace and phase-winning.</li>
+                    <li><strong style="color:var(--text);">Gaethje danger:</strong> early chaos, power variance, damage upside in rounds 1–2.</li>
+                    <li><strong style="color:var(--text);">Volatility:</strong> medium — sharp side, real risk.</li>
+                </ul>
+                <div class="cta-row">
+                    <a class="btn primary" href="index.html#pricing">Unlock White House Access</a>
+                    <a class="btn secondary" href="index.html#performance">See Premium Delivery</a>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2 style="font-size:2rem; margin-bottom:0.75rem;">How This Board Is Used</h2>
+                <ul class="list">
+                    <li>• Free layer shows one real read, not the whole slate.</li>
+                    <li>• Premium layer surfaces select positions only.</li>
+                    <li>• Confidence and volatility travel with the pick.</li>
+                    <li>• Discord is the delivery environment, not the marketing page.</li>
+                    <li>• Charts belong here only when backed by real tracked data.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2 style="font-size:2rem; margin-bottom:0.75rem;">Known Fight Board</h2>
+            <table class="fight-table">
+                <thead>
+                    <tr>
+                        <th>Fight</th>
+                        <th>Status</th>
+                        <th>Confidence</th>
+                        <th>Volatility</th>
+                        <th>Note</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Ilia Topuria vs Justin Gaethje</strong><br><span class="muted">Main Event</span></td>
+                        <td>Public Read</td>
+                        <td>68%</td>
+                        <td><span class="tag medium">Medium</span></td>
+                        <td class="muted">Named, live, and framed on the site.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Shavkat Rakhmonov vs Sean Brady</strong><br><span class="muted">Co-Main</span></td>
+                        <td>Premium</td>
+                        <td>72%</td>
+                        <td><span class="tag low">Low</span></td>
+                        <td class="muted">Stronger structured edge, kept behind premium layer.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Remaining White House card positions</strong></td>
+                        <td>Premium</td>
+                        <td>Varies</td>
+                        <td><span class="tag medium">Mixed</span></td>
+                        <td class="muted">Only surfaced with context, not fake filler names.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="panel">
+            <h2 style="font-size:2rem; margin-bottom:0.75rem;">Why The Old Dashboard Was Removed</h2>
+            <ul class="list">
+                <li>• Fake PnL numbers hurt trust.</li>
+                <li>• Random or fabricated fight labels cheapen the product.</li>
+                <li>• Auto-updating fake profit counters are scam behavior.</li>
+                <li>• Premium intelligence needs real tracked data or no chart at all.</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
