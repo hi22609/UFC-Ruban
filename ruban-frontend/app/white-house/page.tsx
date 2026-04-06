@@ -2,8 +2,8 @@
 
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Environment, Float, Html } from '@react-three/drei';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { useMemo, useRef, useState } from 'react';
+import { motion, useScroll, useTransform, useMotionValueEvent } from 'framer-motion';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
 import Link from 'next/link';
 
@@ -119,10 +119,19 @@ function Scene({ progress }: { progress: number }) {
 }
 
 export default function WhiteHousePage() {
-  const [autoMotion, setAutoMotion] = useState(true);
+  const [scrollMode, setScrollMode] = useState(true);
+  const [progress, setProgress] = useState(0);
   const { scrollYProgress } = useScroll();
   const closeness = useTransform(scrollYProgress, [0, 0.85], [0, 1]);
   const heroHeight = useMemo(() => 'min-h-[160vh]', []);
+
+  useMotionValueEvent(closeness, 'change', (latest) => {
+    if (scrollMode) setProgress(latest);
+  });
+
+  useEffect(() => {
+    if (!scrollMode) setProgress(0.52);
+  }, [scrollMode]);
 
   return (
     <div className={`bg-gradient-to-b from-void to-graphite-dark ${heroHeight}`}>
@@ -130,7 +139,7 @@ export default function WhiteHousePage() {
         <div className="absolute inset-0 z-10 pointer-events-none bg-[radial-gradient(circle_at_top,rgba(139,92,246,0.22),transparent_35%)]" />
 
         <Canvas camera={{ position: [0, 1.6, 7.2], fov: 42 }} shadows>
-          <Scene progress={autoMotion ? 0.45 : 0} />
+          <Scene progress={progress} />
         </Canvas>
 
         <motion.div className="absolute inset-0 z-20 pointer-events-none" style={{ opacity: 1 }}>
@@ -139,10 +148,10 @@ export default function WhiteHousePage() {
               ← Back to Home
             </Link>
             <button
-              onClick={() => setAutoMotion(!autoMotion)}
+              onClick={() => setScrollMode(!scrollMode)}
               className="px-4 py-2 rounded-full border border-white/10 bg-black/40 text-white text-sm backdrop-blur-md"
             >
-              {autoMotion ? 'Scroll Mode On' : 'Lock Hero'}
+              {scrollMode ? 'Scroll Reactive' : 'Hero Locked'}
             </button>
           </div>
 
@@ -192,8 +201,8 @@ export default function WhiteHousePage() {
             </div>
           </motion.div>
 
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-xs uppercase tracking-[0.22em] text-zinc-400">
-            Scroll to tighten the scene
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-xs uppercase tracking-[0.22em] text-zinc-400 text-center px-4">
+            Scroll to tighten the scene • fighters close as the board opens
           </div>
         </motion.div>
       </div>
