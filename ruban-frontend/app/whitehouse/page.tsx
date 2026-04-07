@@ -73,7 +73,7 @@ export default function WhiteHousePage() {
               marginBottom: 16,
             }}
           >
-            April 12 · 2026 · Live Event
+            June 14 · 2026 · Live Event
           </span>
 
           <h1
@@ -84,7 +84,7 @@ export default function WhiteHousePage() {
             }}
           >
             White House<br />
-            <span className="text-gradient-gold">Card · 2026</span>
+            <span className="text-gradient-gold">Card · June 14</span>
           </h1>
 
           <p
