@@ -1,121 +1,121 @@
 {
-  "event_name": "UFC Fight Night: Moicano vs. Duncan",
-  "event_date": "2026-04-04",
+  "event_name": "UFC Fight Night: Prochazka vs. Ulberg",
+  "event_date": "2026-04-12",
   "location": "UFC Apex, Las Vegas",
-  "generated_at": "2026-04-04T00:00:00Z",
+  "generated_at": "2026-04-07T00:00:00Z",
   "predictions": [
     {
-      "fighter1": "Renato Moicano",
-      "fighter2": "Drew Duncan",
-      "weight_class": "Heavyweight",
+      "fighter1": "Jiri Prochazka",
+      "fighter2": "Carlos Ulberg",
+      "weight_class": "Light Heavyweight",
       "is_main_event": true,
-      "winner": "Renato Moicano",
+      "winner": "Jiri Prochazka",
+      "confidence": 62,
+      "tier": "LEAN",
+      "method": "KO/TKO",
+      "method_breakdown": { "KO_TKO": 58, "Submission": 8, "Decision": 34 },
+      "key_factors": [
+        "Prochazka's unorthodox striking creates serious problems for linear fighters",
+        "Ulberg has never faced a striker with Jiri's chaos and unpredictability",
+        "Prochazka's finishing ability is elite — 9 of 16 wins by KO/TKO",
+        "Ulberg is durable but gets touched clean by pressure fighters"
+      ],
+      "analysis": "Prochazka brings a level of striking unpredictability that Ulberg has never faced. Jiri's style is disorganized by design — angles, pace changes, and constant finish hunting. Ulberg is a solid striker but linear. Lean toward Prochazka by stoppage, with medium volatility — Jiri can get hit clean too.",
+      "ml_confidence": 60,
+      "market_implied": 61,
+      "elo_edge": 5
+    },
+    {
+      "fighter1": "Brendan Allen",
+      "fighter2": "Chris Curtis",
+      "weight_class": "Middleweight",
+      "is_main_event": false,
+      "winner": "Brendan Allen",
+      "confidence": 65,
+      "tier": "LOCK",
+      "method": "Submission",
+      "method_breakdown": { "KO_TKO": 18, "Submission": 52, "Decision": 30 },
+      "key_factors": [
+        "Allen's grappling is elite — 11 submission wins",
+        "Curtis has been finished on the ground before",
+        "Sharp money moving toward Allen"
+      ],
+      "analysis": "Allen is a submission specialist and Curtis has shown vulnerability on the ground. If Allen gets this to the mat, he wins. High confidence lean with finish upside.",
+      "ml_confidence": 64,
+      "market_implied": 63,
+      "elo_edge": 7
+    },
+    {
+      "fighter1": "Cesar Almeida",
+      "fighter2": "Roman Dolidze",
+      "weight_class": "Middleweight",
+      "is_main_event": false,
+      "winner": "Cesar Almeida",
       "confidence": 68,
+      "tier": "LOCK",
+      "method": "Decision",
+      "method_breakdown": { "KO_TKO": 28, "Submission": 22, "Decision": 50 },
+      "key_factors": [
+        "Almeida's wrestling and pressure game neutralizes Dolidze's power",
+        "Dolidze tends to fade late — Almeida thrives in championship rounds",
+        "Model and sharp money aligned on Almeida"
+      ],
+      "analysis": "Almeida is the more complete fighter. His wrestling, volume, and durability stack up well against Dolidze's one-dimensional power game. Strong lean on Almeida by decision.",
+      "ml_confidence": 67,
+      "market_implied": 65,
+      "elo_edge": 8
+    },
+    {
+      "fighter1": "Manel Kape",
+      "fighter2": "Muhammad Mokaev",
+      "weight_class": "Flyweight",
+      "is_main_event": false,
+      "winner": "Muhammad Mokaev",
+      "confidence": 63,
+      "tier": "LEAN",
+      "method": "Decision",
+      "method_breakdown": { "KO_TKO": 14, "Submission": 32, "Decision": 54 },
+      "key_factors": [
+        "Mokaev's grappling volume smothers striker-types like Kape",
+        "Kape's power is real but Mokaev doesn't stand and trade",
+        "Lean toward Mokaev if he controls pace and distance"
+      ],
+      "analysis": "Mokaev is a grappling machine. Kape has knockout power but Mokaev will drag this into uncomfortable territory and grind out rounds. Lean Mokaev.",
+      "ml_confidence": 62,
+      "market_implied": 60,
+      "elo_edge": 5
+    },
+    {
+      "fighter1": "Rinat Fakhretdinov",
+      "fighter2": "Bassil Hafez",
+      "weight_class": "Welterweight",
+      "is_main_event": false,
+      "winner": "Rinat Fakhretdinov",
+      "confidence": 71,
       "tier": "LOCK",
       "method": "Decision",
       "method_breakdown": { "KO_TKO": 22, "Submission": 18, "Decision": 60 },
       "key_factors": [
-        "Moicano's elite grappling and submission threat neutralizes Duncan's power",
-        "Significant reach and volume striking advantage for Moicano",
-        "Duncan has never faced elite-level MMA competition at this weight",
-        "Sharp money moved heavily toward Moicano fight week"
+        "Fakhretdinov is a dominant wrestler making his UFC debut with elite credentials",
+        "Hafez is stepping up in competition significantly",
+        "Sharp money heavy on Fakhretdinov"
       ],
-      "analysis": "Moicano steps up to heavyweight as a massive underdog on paper but the data tells a different story. His grappling credentials at lightweight/welterweight translate upward — Duncan has never faced a submission specialist of this caliber. Expect Moicano to drag this to the mat early, neutralize Duncan's size advantage, and grind out a decision or find a late submission. LOCK tier — model and market consensus aligned.",
-      "ml_confidence": 65,
-      "market_implied": 62,
-      "elo_edge": 8
-    },
-    {
-      "fighter1": "Dustin Jacoby",
-      "fighter2": "Marcin Prachnio",
-      "weight_class": "Light Heavyweight",
-      "is_main_event": false,
-      "winner": "Dustin Jacoby",
-      "confidence": 61,
-      "tier": "LEAN",
-      "method": "Decision",
-      "method_breakdown": { "KO_TKO": 35, "Submission": 8, "Decision": 57 },
-      "key_factors": [
-        "Jacoby's striking volume and output advantage over 3 rounds",
-        "Prachnio's durability is a concern — gets hit clean regularly",
-        "Jacoby coming off two solid performances, momentum on his side"
-      ],
-      "analysis": "Jacoby is the cleaner striker with better gas tank. Prachnio brings raw power but gets touched up by elite strikers. Lean toward Jacoby on points.",
-      "ml_confidence": 60,
-      "market_implied": 58,
-      "elo_edge": 5
-    },
-    {
-      "fighter1": "Mateusz Rebecki",
-      "fighter2": "Viacheslav Borshchev",
-      "weight_class": "Lightweight",
-      "is_main_event": false,
-      "winner": "Mateusz Rebecki",
-      "confidence": 63,
-      "tier": "LEAN",
-      "method": "KO/TKO",
-      "method_breakdown": { "KO_TKO": 52, "Submission": 12, "Decision": 36 },
-      "key_factors": [
-        "Rebecki's relentless pressure and volume output at lightweight",
-        "Borshchev's chin has been tested — stopped twice in UFC",
-        "Model favors Rebecki's pace to break Borshchev down late"
-      ],
-      "analysis": "Rebecki is a high-output pressure fighter who wears people down. Borshchev has been stopped before and Rebecki's style exposes that. Lean with finish upside.",
-      "ml_confidence": 61,
-      "market_implied": 60,
-      "elo_edge": 6
-    },
-    {
-      "fighter1": "Erin Blanchfield",
-      "fighter2": "Manon Fiorot",
-      "weight_class": "Women's Flyweight",
-      "is_main_event": false,
-      "winner": "Erin Blanchfield",
-      "confidence": 58,
-      "tier": "TOSS-UP",
-      "method": "Decision",
-      "method_breakdown": { "KO_TKO": 12, "Submission": 28, "Decision": 60 },
-      "key_factors": [
-        "Blanchfield's submission game is best in division",
-        "Fiorot's striking is elite — keeps range well",
-        "Toss-up: model splits 51/49, market near even"
-      ],
-      "analysis": "One of the tightest fights on the card. Fiorot is the better striker, Blanchfield the better grappler. If this stays standing Fiorot wins, if Blanchfield gets it down she wins. Slight lean Blanchfield — her submission threat forces Fiorot into uncomfortable positions.",
-      "ml_confidence": 54,
-      "market_implied": 52,
-      "elo_edge": 2
-    },
-    {
-      "fighter1": "Billy Quarantillo",
-      "fighter2": "Chepe Mariscal",
-      "weight_class": "Featherweight",
-      "is_main_event": false,
-      "winner": "Billy Quarantillo",
-      "confidence": 65,
-      "tier": "LOCK",
-      "method": "KO/TKO",
-      "method_breakdown": { "KO_TKO": 58, "Submission": 15, "Decision": 27 },
-      "key_factors": [
-        "Quarantillo's power and pressure style tailor-made for Mariscal",
-        "Mariscal has been finished by strikers of this caliber before",
-        "Sharp line movement — Quarantillo opened -160, now -210"
-      ],
-      "analysis": "Billy Q is a bully on the feet and Mariscal doesn't have the footwork to stay clean. Sharp money moved hard toward Quarantillo — when public and sharp money align, you follow. LOCK tier.",
-      "ml_confidence": 66,
+      "analysis": "Fakhretdinov is a decorated wrestler with serious credentials. Hafez has not faced this level of wrestling. Strong lean on Fakhretdinov to control and win by decision.",
+      "ml_confidence": 70,
       "market_implied": 68,
       "elo_edge": 9
     }
   ],
   "parlay": {
     "two_leg": {
-      "picks": ["Renato Moicano", "Billy Quarantillo"],
-      "combined_confidence": 66,
-      "note": "Both LOCK tier. Strong correlation — both finish-capable, both sharp money backed."
+      "picks": ["Brendan Allen", "Rinat Fakhretdinov"],
+      "combined_confidence": 67,
+      "note": "Both LOCK tier. Allen's submission threat + Fakhretdinov's wrestling dominance."
     },
     "three_leg": {
-      "picks": ["Renato Moicano", "Billy Quarantillo", "Mateusz Rebecki"],
-      "combined_confidence": 61,
-      "note": "Add Rebecki for upside — finish potential inflates parlay value."
+      "picks": ["Brendan Allen", "Rinat Fakhretdinov", "Cesar Almeida"],
+      "combined_confidence": 63,
+      "note": "All three LOCK tier. Strong card for disciplined parlay construction."
     }
   }
 }
