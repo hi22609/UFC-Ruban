@@ -14,14 +14,14 @@ export default function Pricing() {
           ENTER THE WHITE HOUSE ROOM
         </h1>
         <p className="text-xl text-muted max-w-3xl mx-auto">
-          Unlock all 13 White House fight reads, confidence ratings, volatility notes, tracked performance visibility, and premium Discord access.
+          Unlock all 13 White House fight reads, confidence ratings, volatility notes, and premium Discord delivery built for members who want structure before they act.
         </p>
       </div>
 
       <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-8 mb-12">
         <div className="card">
           <h3 className="text-3xl font-bold mb-2">OPERATOR</h3>
-          <p className="text-muted mb-4">Monthly access for active fight weeks</p>
+          <p className="text-muted mb-4">Monthly access for active fight weeks and premium card coverage</p>
           <div className="text-6xl font-extrabold mb-6">
             $20<span className="text-2xl text-muted">/mo</span>
           </div>
@@ -44,7 +44,7 @@ export default function Pricing() {
             </li>
             <li className="flex items-start">
               <span className="text-signal-green mr-3 text-xl">✓</span>
-              <span>Tracked performance visibility</span>
+              <span>Structured member delivery for the full card</span>
             </li>
           </ul>
           <a
@@ -60,7 +60,7 @@ export default function Pricing() {
             BEST VALUE
           </div>
           <h3 className="text-3xl font-bold mb-2 text-gold">SYNDICATE</h3>
-          <p className="text-muted mb-4">Annual access for disciplined operators</p>
+          <p className="text-muted mb-4">Annual access for disciplined operators who want the full RUBAN layer</p>
           <div className="text-6xl font-extrabold mb-2">
             $120<span className="text-2xl text-muted">/yr</span>
           </div>
@@ -80,11 +80,11 @@ export default function Pricing() {
             </li>
             <li className="flex items-start">
               <span className="text-signal-green mr-3 text-xl">✓</span>
-              <span>Premium chart visibility</span>
+              <span>Priority access to deeper reporting as product layers expand</span>
             </li>
             <li className="flex items-start">
               <span className="text-signal-green mr-3 text-xl">✓</span>
-              <span>Priority member path as systems mature</span>
+              <span>Priority member path as new tools and reporting modules go live</span>
             </li>
           </ul>
           <a
@@ -100,26 +100,26 @@ export default function Pricing() {
         <div className="card text-center">
           <div className="text-4xl font-extrabold text-accent mb-3">1</div>
           <h3 className="text-2xl font-bold mb-2">Choose Access</h3>
-          <p className="text-muted">Select the level that matches how aggressively you want to track the card.</p>
+          <p className="text-muted">Select the access level that matches how closely you want to track the card.</p>
         </div>
         <div className="card text-center">
           <div className="text-4xl font-extrabold text-accent mb-3">2</div>
           <h3 className="text-2xl font-bold mb-2">Get Your Discord Path</h3>
-          <p className="text-muted">Receive access instructions and enter the premium environment where the board actually lives.</p>
+          <p className="text-muted">Receive access instructions and enter the premium Discord environment where the board actually lives.</p>
         </div>
         <div className="card text-center">
           <div className="text-4xl font-extrabold text-accent mb-3">3</div>
           <h3 className="text-2xl font-bold mb-2">Track The Full Card</h3>
-          <p className="text-muted">See the complete White House slate, confidence scores, volatility notes, and event-night movement.</p>
+          <p className="text-muted">See the complete White House slate, confidence scores, volatility notes, and event-night updates in one place.</p>
         </div>
       </div>
 
       <div className="max-w-3xl mx-auto text-center text-muted space-y-3">
         <p>🔒 <strong>Cancel anytime.</strong> No fake lock-in.</p>
-        <p>💬 <strong>Discord access instructions are delivered after payment.</strong> Automated role access is being tightened for this event.</p>
+        <p>💬 <strong>Discord access instructions are delivered after payment.</strong> If automated role routing is still being finalized, manual onboarding instructions follow immediately.</p>
         <p>⚖️ Analysis only. Never guaranteed outcomes.</p>
         <p>
-          Need more proof first? <Link href="/methodology" className="text-accent underline">Review methodology</Link> or <Link href="/discord" className="text-accent underline">see the premium Discord flow</Link>.
+          Need more proof first? <Link href="/methodology" className="text-accent underline">Review methodology</Link> or <Link href="/discord" className="text-accent underline">see the premium Discord flow</Link> before buying.
         </p>
       </div>
     </div>

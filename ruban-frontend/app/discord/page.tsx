@@ -11,7 +11,7 @@ export default function Discord() {
           THE INNER CHAMBER
         </h1>
         <p className="text-xl text-muted max-w-3xl mx-auto">
-          The site is the showroom. Discord is where the full board opens up: fight reads, confidence bands, volatility notes, chart visibility, and event-night updates.
+          The site is the front door. Discord is where members receive the full board: fight reads, confidence bands, volatility notes, and event-night updates in a cleaner operating environment.
         </p>
       </div>
 
@@ -40,21 +40,21 @@ export default function Discord() {
         <div className="card">
           <h3 className="text-2xl font-bold mb-3">📈 Performance Visibility</h3>
           <p className="text-muted">
-            Premium members get chart visibility and tracked performance framing so the system feels calculated, not random.
+            Members get organized delivery and a clearer record of how the board is framed, so the system feels calculated instead of chaotic.
           </p>
         </div>
 
         <div className="card">
           <h3 className="text-2xl font-bold mb-3">💬 Member-Only Separation</h3>
           <p className="text-muted">
-            Free vs premium separation is intentional. Public gets the showroom. Paid members get the sharp board, premium rooms, and cleaner signal.
+            Free vs premium separation is intentional. Public gets the preview. Paid members get the sharp board, premium rooms, and cleaner signal.
           </p>
         </div>
 
         <div className="card">
           <h3 className="text-2xl font-bold mb-3">🔒 Private By Design</h3>
           <p className="text-muted">
-            This is not built like a public gambling page. It’s structured like a premium intelligence layer for disciplined operators.
+            This is not built like a public gambling page. It’s structured like a premium intelligence layer for disciplined operators who value context.
           </p>
         </div>
       </div>
@@ -78,7 +78,7 @@ export default function Discord() {
       </div>
 
       <div className="text-center space-y-4">
-        <p className="text-muted">Not every fight is worth touching — these are.</p>
+        <p className="text-muted">Not every fight is worth touching. The value is in knowing which ones deserve attention.</p>
         <div className="flex flex-col sm:flex-row justify-center gap-4">
           <Link href="/pricing" className="btn-primary text-xl px-10 py-4 text-center">
             GET WHITE HOUSE ACCESS
