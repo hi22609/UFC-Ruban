@@ -69,8 +69,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Link href="/" className="nav-link">
                 Home
               </Link>
-              <Link href="/whitehouse" className="nav-link">
-                Board
+              <Link href="/track-record" className="nav-link">
+                Record
               </Link>
               <Link href="/whitehouse" className="nav-link">
                 White House
@@ -126,6 +126,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               >
                 <Link href="/" style={{ color: 'var(--muted)' }}>
                   Home
+                </Link>
+                <Link href="/track-record" style={{ color: 'var(--muted)' }}>
+                  Record
                 </Link>
                 <Link href="/whitehouse" style={{ color: 'var(--muted)' }}>
                   White House
