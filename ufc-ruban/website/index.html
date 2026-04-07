@@ -245,58 +245,118 @@
         }
         .fighter {
             position: absolute;
-            top: 52px;
-            width: 220px;
-            height: 410px;
+            top: 42px;
+            width: 230px;
+            height: 430px;
             border-radius: 28px;
             overflow: hidden;
             border: 1px solid rgba(255,255,255,0.12);
             box-shadow: 0 20px 50px rgba(0,0,0,0.45);
             transition: transform 0.2s ease-out;
-            background:
-                radial-gradient(circle at 50% 14%, rgba(255,255,255,0.18), transparent 20%),
-                linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
+            background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
         }
-        .fighter::before {
-            content: '';
+        .fighter-core {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+        }
+        .fighter-head {
             position: absolute;
             top: 38px;
             left: 50%;
-            width: 68px;
-            height: 68px;
+            width: 70px;
+            height: 76px;
             transform: translateX(-50%);
-            border-radius: 50%;
-            background: rgba(255,255,255,0.14);
-            z-index: 1;
+            border-radius: 45% 45% 50% 50%;
+            background: rgba(255,255,255,0.16);
+            filter: drop-shadow(0 0 22px rgba(255,255,255,0.06));
         }
-        .fighter::after {
-            content: '';
+        .fighter-torso {
             position: absolute;
+            top: 108px;
             left: 50%;
-            top: 96px;
-            width: 112px;
-            height: 210px;
+            width: 118px;
+            height: 172px;
             transform: translateX(-50%);
-            border-radius: 56px 56px 30px 30px;
-            background: rgba(255,255,255,0.12);
-            box-shadow:
-                0 0 0 28px rgba(255,255,255,0.04),
-                -64px 24px 0 -42px rgba(255,255,255,0.12),
-                64px 24px 0 -42px rgba(255,255,255,0.12),
-                -22px 220px 0 -6px rgba(255,255,255,0.12),
-                22px 220px 0 -6px rgba(255,255,255,0.12);
-            z-index: 1;
+            border-radius: 44px 44px 28px 28px;
+            background: rgba(255,255,255,0.14);
+        }
+        .fighter-arm {
+            position: absolute;
+            width: 34px;
+            height: 128px;
+            border-radius: 26px;
+            background: rgba(255,255,255,0.14);
+            top: 120px;
+        }
+        .fighter-forearm {
+            position: absolute;
+            width: 30px;
+            height: 98px;
+            border-radius: 24px;
+            background: rgba(255,255,255,0.14);
+            top: 132px;
+        }
+        .fighter-leg {
+            position: absolute;
+            width: 40px;
+            height: 150px;
+            border-radius: 28px;
+            background: rgba(255,255,255,0.13);
+            top: 252px;
+        }
+        .fighter-glove {
+            position: absolute;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.18);
+            box-shadow: 0 0 18px rgba(255,255,255,0.08);
+        }
+        .fighter-rim {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            opacity: 0.9;
+            filter: blur(18px);
         }
         .fighter.left {
             left: 30px;
             background-color: rgba(239, 68, 68, 0.12);
             box-shadow: 0 0 35px rgba(239, 68, 68, 0.18), 0 18px 50px rgba(0,0,0,0.48);
         }
+        .fighter.left .fighter-rim {
+            background: radial-gradient(circle at 50% 20%, rgba(239, 68, 68, 0.45), transparent 55%);
+        }
+        .fighter.left .fighter-head { width: 74px; height: 78px; }
+        .fighter.left .fighter-torso { width: 126px; height: 184px; border-radius: 46px 46px 34px 34px; }
+        .fighter.left .arm-back { left: 44px; transform: rotate(18deg); }
+        .fighter.left .arm-front { right: 48px; transform: rotate(-30deg); height: 116px; top: 104px; }
+        .fighter.left .forearm-back { left: 40px; top: 188px; transform: rotate(30deg); }
+        .fighter.left .forearm-front { right: 54px; top: 110px; transform: rotate(-55deg); }
+        .fighter.left .glove-back { left: 34px; top: 258px; }
+        .fighter.left .glove-front { right: 48px; top: 94px; }
+        .fighter.left .leg-left { left: 84px; transform: rotate(6deg); }
+        .fighter.left .leg-right { right: 82px; transform: rotate(-6deg); }
+
         .fighter.right {
             right: 30px;
             background-color: rgba(59, 130, 246, 0.12);
             box-shadow: 0 0 35px rgba(59, 130, 246, 0.16), 0 18px 50px rgba(0,0,0,0.48);
         }
+        .fighter.right .fighter-rim {
+            background: radial-gradient(circle at 50% 20%, rgba(59, 130, 246, 0.42), transparent 55%);
+        }
+        .fighter.right .fighter-head { width: 64px; height: 74px; top: 42px; }
+        .fighter.right .fighter-torso { width: 108px; height: 164px; top: 116px; }
+        .fighter.right .arm-back { left: 58px; transform: rotate(-12deg); height: 120px; }
+        .fighter.right .arm-front { right: 42px; transform: rotate(36deg); height: 132px; top: 118px; }
+        .fighter.right .forearm-back { left: 62px; top: 198px; transform: rotate(-28deg); }
+        .fighter.right .forearm-front { right: 36px; top: 202px; transform: rotate(60deg); }
+        .fighter.right .glove-back { left: 58px; top: 272px; }
+        .fighter.right .glove-front { right: 28px; top: 276px; }
+        .fighter.right .leg-left { left: 92px; transform: rotate(3deg); height: 158px; }
+        .fighter.right .leg-right { right: 88px; transform: rotate(-10deg); height: 152px; }
         .fighter-label {
             position: absolute;
             left: 18px;
@@ -778,16 +838,42 @@
                 <div class="octagon"></div>
 
                 <div class="fighter left" id="fighter-left" aria-label="Ilia Topuria stylized fighter silhouette">
+                    <div class="fighter-rim"></div>
+                    <div class="fighter-core">
+                        <div class="fighter-head"></div>
+                        <div class="fighter-torso"></div>
+                        <div class="fighter-arm arm-back"></div>
+                        <div class="fighter-arm arm-front"></div>
+                        <div class="fighter-forearm forearm-back"></div>
+                        <div class="fighter-forearm forearm-front"></div>
+                        <div class="fighter-glove glove-back"></div>
+                        <div class="fighter-glove glove-front"></div>
+                        <div class="fighter-leg leg-left"></div>
+                        <div class="fighter-leg leg-right"></div>
+                    </div>
                     <div class="fighter-label">
                         <div class="name">Ilia Topuria</div>
-                        <div class="meta">16-0 • Pressure, control, cleaner reads</div>
+                        <div class="meta">Compact pressure • composed forward engine</div>
                     </div>
                 </div>
 
                 <div class="fighter right" id="fighter-right" aria-label="Justin Gaethje stylized fighter silhouette">
+                    <div class="fighter-rim"></div>
+                    <div class="fighter-core">
+                        <div class="fighter-head"></div>
+                        <div class="fighter-torso"></div>
+                        <div class="fighter-arm arm-back"></div>
+                        <div class="fighter-arm arm-front"></div>
+                        <div class="fighter-forearm forearm-back"></div>
+                        <div class="fighter-forearm forearm-front"></div>
+                        <div class="fighter-glove glove-back"></div>
+                        <div class="fighter-glove glove-front"></div>
+                        <div class="fighter-leg leg-left"></div>
+                        <div class="fighter-leg leg-right"></div>
+                    </div>
                     <div class="fighter-label">
                         <div class="name">Justin Gaethje</div>
-                        <div class="meta">25-5 • Violence, variance, early danger</div>
+                        <div class="meta">Explosive danger • looser, sharper variance</div>
                     </div>
                 </div>
 
