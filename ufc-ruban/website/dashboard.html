@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RUBAN Pro Terminal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red: #E8002A;
+  --bg: #0A0A0B;
+  --bg2: #111113;
+  --bg3: #18181C;
+  --border: #2A2A30;
+  --text: #F0F0F0;
+  --muted: #888890;
+  --green: #00C851;
+  --blue: #2196F3;
+  --orange: #FF9800;
+  --purple: #AA00FF;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* TOP BAR */
+.topbar {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--bg2);
+  border-bottom: 2px solid var(--border);
+  padding: 0 40px;
+  height: 72px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+
+.topbar-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  letter-spacing: 4px;
+}
+.topbar-logo span { color: var(--red); }
+
+.topbar-center {
+  display: flex; gap: 32px; font-size: 12px;
+  font-family: 'DM Mono', monospace;
+  color: var(--muted);
+}
+
+.topbar-stat-item { display: flex; flex-direction: column; align-items: center; }
+.topbar-stat-label { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 4px; }
+.topbar-stat-value { font-size: 16px; font-weight: 500; color: var(--text); }
+.topbar-stat-value.green { color: var(--green); }
+
+.topbar-right {
+  display: flex; align-items: center; gap: 20px;
+  font-size: 13px;
+}
+
+.pro-badge {
+  background: linear-gradient(135deg, var(--red), #ff5060);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  padding: 4px 12px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.topbar-email { color: var(--muted); font-size: 12px; }
+
+.btn-logout {
+  background: none; border: 1px solid var(--border);
+  color: var(--muted); padding: 8px 16px; border-radius: 4px;
+  font-size: 12px; cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-logout:hover { color: var(--text); border-color: var(--muted); background: var(--bg3); }
+
+/* POST-PAYMENT LOGIN OVERLAY */
+.payment-overlay {
+  position: fixed; inset: 0; z-index: 999;
+  background: rgba(10,10,11,0.98);
+  display: flex; align-items: center; justify-content: center;
+}
+
+.payment-box {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--green);
+  border-radius: 12px;
+  padding: 48px 40px;
+  max-width: 420px; width: 100%;
+  text-align: center;
+}
+
+.payment-icon { font-size: 48px; margin-bottom: 16px; }
+.payment-title { font-family: 'Bebas Neue', sans-serif; font-size: 32px; letter-spacing: 2px; color: var(--green); margin-bottom: 8px; }
+.payment-sub { color: var(--muted); font-size: 14px; margin-bottom: 32px; line-height: 1.6; }
+
+.payment-input {
+  width: 100%;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 15px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  font-family: 'Inter', sans-serif;
+}
+
+.payment-input:focus { outline: none; border-color: var(--green); }
+
+.payment-btn {
+  width: 100%;
+  background: var(--green);
+  color: #000;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 14px;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 0.5px;
+}
+
+.payment-btn:hover { opacity: 0.9; }
+
+.payment-error {
+  color: var(--red);
+  font-size: 13px;
+  margin-top: 10px;
+  display: none;
+}
+
+/* MAIN CONTAINER */
+.container {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 32px 40px;
+}
+
+/* EVENT HEADER */
+.event-header {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 2px solid var(--border);
+}
+
+.event-title-section {
+  display: flex; align-items: center; gap: 16px;
+}
+
+.event-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 42px;
+  letter-spacing: 3px;
+  line-height: 1;
+}
+
+.event-meta {
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  color: var(--muted);
+  letter-spacing: 1px;
+  margin-top: 6px;
+}
+
+.event-stats {
+  display: flex; gap: 24px;
+  font-family: 'DM Mono', monospace;
+  text-align: right;
+}
+
+.event-stat-box {
+  display: flex; flex-direction: column;
+}
+
+.event-stat-label {
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.event-stat-value {
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+/* PREDICTION TABLE */
+.predictions-table-wrapper {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 32px;
+}
+
+.predictions-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.predictions-table thead {
+  background: var(--bg3);
+  border-bottom: 2px solid var(--border);
+}
+
+.predictions-table th {
+  padding: 16px 20px;
+  text-align: left;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.predictions-table th:first-child { padding-left: 24px; }
+.predictions-table th:last-child { padding-right: 24px; }
+
+.predictions-table tbody tr {
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+}
+
+.predictions-table tbody tr:hover {
+  background: rgba(255,255,255,0.02);
+}
+
+.predictions-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.predictions-table td {
+  padding: 20px 20px;
+  vertical-align: middle;
+}
+
+.predictions-table td:first-child { padding-left: 24px; }
+.predictions-table td:last-child { padding-right: 24px; }
+
+/* Table content styling */
+.tier-indicator {
+  width: 4px;
+  height: 56px;
+  border-radius: 2px;
+  margin-right: 16px;
+  flex-shrink: 0;
+}
+
+.tier-indicator.lock { background: var(--green); }
+.tier-indicator.lean { background: var(--blue); }
+.tier-indicator.tossup { background: var(--orange); }
+
+.fight-cell {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.fight-details {}
+
+.fight-matchup {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+
+.fight-meta {
+  font-size: 12px;
+  color: var(--muted);
+  font-family: 'DM Mono', monospace;
+}
+
+.badge {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 3px 6px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  margin-left: 6px;
+}
+
+.badge.title { background: var(--red); color: white; }
+.badge.main { background: rgba(232,0,42,0.2); color: var(--red); border: 1px solid var(--red); }
+
+.winner-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.winner-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.winner-badge {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.winner-badge.lock { background: rgba(0,200,81,0.15); color: var(--green); border: 1px solid rgba(0,200,81,0.3); }
+.winner-badge.lean { background: rgba(33,150,243,0.15); color: var(--blue); border: 1px solid rgba(33,150,243,0.3); }
+.winner-badge.tossup { background: rgba(255,152,0,0.15); color: var(--orange); border: 1px solid rgba(255,152,0,0.3); }
+
+.confidence-cell {
+  font-family: 'DM Mono', monospace;
+}
+
+.conf-number {
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.conf-bar-track {
+  width: 100px;
+  height: 4px;
+  background: var(--bg3);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.conf-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.6s ease;
+}
+
+.conf-bar-fill.lock { background: var(--green); }
+.conf-bar-fill.lean { background: var(--blue); }
+.conf-bar-fill.tossup { background: var(--orange); }
+
+.method-cell {
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+}
+
+.method-primary {
+  color: var(--text);
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.method-breakdown {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.factors-cell {
+  font-size: 13px;
+  line-height: 1.6;
+  max-width: 400px;
+}
+
+.factor-item {
+  margin-bottom: 6px;
+  color: var(--text);
+}
+
+.factor-item:last-child { margin-bottom: 0; }
+.factor-item::before { content: '→ '; color: var(--red); margin-right: 4px; }
+
+.risk-inline {
+  color: var(--orange);
+  font-size: 12px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.risk-inline::before { content: '⚠️ '; }
+
+/* PARLAY SECTION */
+.parlay-section {
+  background: var(--bg2);
+  border: 2px solid rgba(170,0,255,0.3);
+  border-radius: 8px;
+  padding: 32px;
+  margin-bottom: 32px;
+}
+
+.parlay-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid var(--border);
+}
+
+.parlay-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 32px;
+  letter-spacing: 3px;
+  color: var(--purple);
+}
+
+.parlay-subtitle {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.parlay-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 24px;
+}
+
+.parlay-card {
+  background: var(--bg3);
+  border: 1px solid rgba(170,0,255,0.3);
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.parlay-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.parlay-legs-badge {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px;
+  letter-spacing: 2px;
+  color: var(--purple);
+}
+
+.parlay-combined-prob {
+  font-family: 'DM Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+  color: var(--purple);
+}
+
+.parlay-picks-list {}
+
+.parlay-pick-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.parlay-pick-item:last-child { border-bottom: none; }
+
+.parlay-pick-name {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.parlay-pick-conf {
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* LOADING & EMPTY STATES */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  color: var(--muted);
+  font-family: 'DM Mono', monospace;
+  font-size: 14px;
+  letter-spacing: 2px;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.spinner {
+  width: 32px; height: 32px;
+  border: 3px solid var(--border);
+  border-top-color: var(--red);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-right: 20px;
+}
+
+.no-data {
+  text-align: center;
+  padding: 100px 40px;
+  color: var(--muted);
+}
+
+.no-data-icon {
+  font-size: 64px;
+  margin-bottom: 20px;
+  opacity: 0.5;
+}
+
+.no-data-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 36px;
+  letter-spacing: 3px;
+  margin-bottom: 12px;
+  color: var(--text);
+}
+
+.no-data-sub {
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.error-section {
+  background: rgba(232,0,42,0.08);
+  border: 1px solid rgba(232,0,42,0.3);
+  border-left: 4px solid var(--red);
+  border-radius: 6px;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  font-size: 13px;
+  color: var(--red);
+  line-height: 1.6;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1200px) {
+  .topbar-center { display: none; }
+  .container { padding: 24px 20px; }
+  .event-header { flex-direction: column; gap: 20px; }
+  .event-stats { width: 100%; justify-content: flex-start; }
+}
+
+@media (max-width: 900px) {
+  .topbar { padding: 0 20px; height: 64px; }
+  .topbar-logo { font-size: 22px; }
+  
+  .predictions-table-wrapper { overflow-x: auto; }
+  .predictions-table { min-width: 900px; }
+  
+  .parlay-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- POST-PAYMENT LOGIN OVERLAY -->
+<div id="payment-overlay" class="payment-overlay" style="display:none">
+  <div class="payment-box">
+    <div class="payment-icon">✅</div>
+    <div class="payment-title">Payment Successful</div>
+    <div class="payment-sub">Your Pro subscription is active. Enter the email you used to subscribe to access your dashboard.</div>
+    <input class="payment-input" id="payment-email" type="email" placeholder="your@email.com" />
+    <button class="payment-btn" onclick="postPaymentLogin()">Access My Dashboard</button>
+    <div class="payment-error" id="payment-error"></div>
+  </div>
+</div>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-logo">UFC <span>RUBAN</span></div>
+  
+  <div class="topbar-center" id="topbar-stats">
+    <div class="topbar-stat-item">
+      <div class="topbar-stat-label">Lock Tier</div>
+      <div class="topbar-stat-value green" id="stat-lock">—</div>
+    </div>
+    <div class="topbar-stat-item">
+      <div class="topbar-stat-label">Lean Tier</div>
+      <div class="topbar-stat-value" id="stat-lean">—</div>
+    </div>
+    <div class="topbar-stat-item">
+      <div class="topbar-stat-label">Overall</div>
+      <div class="topbar-stat-value" id="stat-overall">—</div>
+    </div>
+  </div>
+
+  <div class="topbar-right">
+    <div class="pro-badge">PRO</div>
+    <span class="topbar-email" id="user-email">Loading...</span>
+    <button class="btn-logout" onclick="logout()">Logout</button>
+  </div>
+</div>
+
+<!-- MAIN CONTAINER -->
+<div class="container">
+  <div id="content">
+    <div class="loading">
+      <div class="spinner"></div>
+      LOADING PREDICTIONS...
+    </div>
+  </div>
+</div>
+
+<script>
+let predictions = null;
+
+// AUTH
+async function checkAuth() {
+  const params = new URLSearchParams(window.location.search);
+  const justSubscribed = params.get('subscribed') === 'true';
+
+  const res = await fetch('/api/auth/status');
+  const data = await res.json();
+
+  if (!data.authenticated || !data.isPro) {
+    if (justSubscribed) {
+      document.getElementById('payment-overlay').style.display = 'flex';
+      return false;
+    }
+    window.location.href = '/?upgrade=true';
+    return false;
+  }
+
+  document.getElementById('user-email').textContent = data.email;
+  return true;
+}
+
+async function postPaymentLogin() {
+  const email = document.getElementById('payment-email').value.trim();
+  const errEl = document.getElementById('payment-error');
+  errEl.style.display = 'none';
+
+  if (!email || !email.includes('@')) {
+    errEl.textContent = 'Enter a valid email address.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  await new Promise(r => setTimeout(r, 1500));
+
+  const res = await fetch('/api/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email })
+  });
+  const data = await res.json();
+
+  if (!res.ok || data.error) {
+    errEl.textContent = data.error || 'Login failed. Your payment may still be processing — try again in a moment.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  window.location.href = '/dashboard';
+}
+
+async function logout() {
+  await fetch('/api/auth/logout', { method: 'POST' });
+  window.location.href = '/';
+}
+
+// LOAD DATA
+async function loadPredictions() {
+  try {
+    const res = await fetch('/api/predictions/full');
+    if (res.status === 401) {
+      window.location.href = '/?upgrade=true';
+      return;
+    }
+    predictions = await res.json();
+    render(predictions);
+  } catch (err) {
+    document.getElementById('content').innerHTML = `
+      <div class="no-data">
+        <div class="no-data-icon">⚠️</div>
+        <div class="no-data-title">Connection Failed</div>
+        <div class="no-data-sub">Unable to load predictions. Check server connection and refresh.</div>
+      </div>
+    `;
+  }
+}
+
+async function loadStats() {
+  try {
+    const res = await fetch('/api/stats/accuracy');
+    const data = await res.json();
+    
+    if (data.lock.pct !== null) {
+      document.getElementById('stat-lock').textContent = data.lock.pct + '%';
+    }
+    if (data.lean.pct !== null) {
+      document.getElementById('stat-lean').textContent = data.lean.pct + '%';
+    }
+    if (data.overall.pct !== null) {
+      document.getElementById('stat-overall').textContent = data.overall.pct + '%';
+    }
+  } catch (err) {
+    console.error('Failed to load stats:', err);
+  }
+}
+
+// RENDER
+function getTierClass(tier) {
+  return tier.toLowerCase().replace('-', '');
+}
+
+function getMethodDisplay(pred) {
+  const methods = [
+    { label: 'KO/TKO', pct: pred.method_ko_pct },
+    { label: 'Submission', pct: pred.method_sub_pct },
+    { label: 'Decision', pct: pred.method_dec_pct }
+  ];
+  
+  methods.sort((a, b) => b.pct - a.pct);
+  
+  const primary = methods[0];
+  const breakdown = methods.map(m => `${m.label} ${m.pct}%`).join(' • ');
+  
+  return { primary: `${primary.label} (${primary.pct}%)`, breakdown };
+}
+
+function renderPredictionsTable(predictions) {
+  const sorted = predictions.sort((a, b) => a.fight_order - b.fight_order);
+  
+  const rows = sorted.map(pred => {
+    const tierClass = getTierClass(pred.tier);
+    const tierLabel = pred.tier === 'LOCK' ? '🔒 LOCK' :
+                     pred.tier === 'LEAN' ? '✅ LEAN' : '⚖️ TOSS-UP';
+    
+    const method = getMethodDisplay(pred);
+    
+    const titleBadge = pred.is_title_fight ? '<span class="badge title">🏆 Title</span>' : '';
+    const mainBadge = pred.is_main_event ? '<span class="badge main">Main</span>' : '';
+    
+    const factors = (pred.key_edge || []).slice(0, 3).map(f =>
+      `<div class="factor-item">${f}</div>`
+    ).join('');
+    
+    const riskHtml = pred.risk_flag
+      ? `<div class="risk-inline">${pred.risk_flag}</div>`
+      : '';
+    
+    return `
+      <tr>
+        <td>
+          <div class="fight-cell">
+            <div class="tier-indicator ${tierClass}"></div>
+            <div class="fight-details">
+              <div class="fight-matchup">
+                ${pred.fighter1} vs ${pred.fighter2}${titleBadge}${mainBadge}
+              </div>
+              <div class="fight-meta">${pred.weight_class}</div>
+            </div>
+          </div>
+        </td>
+        <td>
+          <div class="winner-cell">
+            <div class="winner-name">${pred.winner}</div>
+            <div class="winner-badge ${tierClass}">${tierLabel}</div>
+          </div>
+        </td>
+        <td>
+          <div class="confidence-cell">
+            <div class="conf-number">${pred.confidence.toFixed(0)}%</div>
+            <div class="conf-bar-track">
+              <div class="conf-bar-fill ${tierClass}" style="width:${pred.confidence}%"></div>
+            </div>
+          </div>
+        </td>
+        <td>
+          <div class="method-cell">
+            <div class="method-primary">${method.primary}</div>
+            <div class="method-breakdown">${method.breakdown}</div>
+          </div>
+        </td>
+        <td>
+          <div class="factors-cell">
+            ${factors}
+            ${riskHtml}
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+  
+  return `
+    <div class="predictions-table-wrapper">
+      <table class="predictions-table">
+        <thead>
+          <tr>
+            <th>Fight</th>
+            <th>Predicted Winner</th>
+            <th>Confidence</th>
+            <th>Method</th>
+            <th>Key Factors</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function renderParlaySection(parlays) {
+  if (!parlays || (!parlays.two_leg && !parlays.three_leg)) {
+    return '';
+  }
+  
+  const cards = [];
+  
+  if (parlays.two_leg) {
+    const picks = parlays.two_leg.picks.map(p =>
+      `<div class="parlay-pick-item">
+        <div class="parlay-pick-name">${p.fighter}</div>
+        <div class="parlay-pick-conf">${p.confidence.toFixed(0)}%</div>
+      </div>`
+    ).join('');
+    
+    cards.push(`
+      <div class="parlay-card">
+        <div class="parlay-card-header">
+          <div class="parlay-legs-badge">2-Leg Parlay</div>
+          <div class="parlay-combined-prob">${parlays.two_leg.combined_probability.toFixed(1)}%</div>
+        </div>
+        <div class="parlay-picks-list">
+          ${picks}
+        </div>
+      </div>
+    `);
+  }
+  
+  if (parlays.three_leg) {
+    const picks = parlays.three_leg.picks.map(p =>
+      `<div class="parlay-pick-item">
+        <div class="parlay-pick-name">${p.fighter}</div>
+        <div class="parlay-pick-conf">${p.confidence.toFixed(0)}%</div>
+      </div>`
+    ).join('');
+    
+    cards.push(`
+      <div class="parlay-card">
+        <div class="parlay-card-header">
+          <div class="parlay-legs-badge">3-Leg Parlay</div>
+          <div class="parlay-combined-prob">${parlays.three_leg.combined_probability.toFixed(1)}%</div>
+        </div>
+        <div class="parlay-picks-list">
+          ${picks}
+        </div>
+      </div>
+    `);
+  }
+  
+  return `
+    <div class="parlay-section">
+      <div class="parlay-header">
+        <div>
+          <div class="parlay-title">🎯 PARLAY BUILDER</div>
+          <div class="parlay-subtitle">High-confidence picks ≥60% • Combined probabilities shown</div>
+        </div>
+      </div>
+      <div class="parlay-grid">
+        ${cards.join('')}
+      </div>
+    </div>
+  `;
+}
+
+function render(data) {
+  if (!data || data.available === false) {
+    document.getElementById('content').innerHTML = `
+      <div class="no-data">
+        <div class="no-data-icon">📅</div>
+        <div class="no-data-title">No Active Card</div>
+        <div class="no-data-sub">Predictions are published during fight week.<br>Check back closer to event day.</div>
+      </div>
+    `;
+    return;
+  }
+  
+  const predictions = data.predictions || [];
+  const errors = data.errors || [];
+  
+  const errorHtml = errors.length > 0 ? `
+    <div class="error-section">
+      <strong>⚠️ Data Warning:</strong> Missing stats for ${errors.length} fight(s).<br>
+      ${errors.map(e => `• ${e.message}`).join('<br>')}
+    </div>
+  ` : '';
+  
+  const fightsCount = predictions.length;
+  const avgConf = predictions.length > 0
+    ? (predictions.reduce((sum, p) => sum + p.confidence, 0) / predictions.length).toFixed(1)
+    : '—';
+  
+  const lockCount = predictions.filter(p => p.tier === 'LOCK').length;
+  
+  document.getElementById('content').innerHTML = `
+    <div class="event-header">
+      <div>
+        <div class="event-title-section">
+          <div class="event-title">${data.event_name || 'Upcoming UFC Event'}</div>
+        </div>
+        <div class="event-meta">📅 ${data.event_date || 'TBD'} · 📍 ${data.location || 'TBD'}</div>
+      </div>
+      <div class="event-stats">
+        <div class="event-stat-box">
+          <div class="event-stat-label">Fights</div>
+          <div class="event-stat-value">${fightsCount}</div>
+        </div>
+        <div class="event-stat-box">
+          <div class="event-stat-label">Locks</div>
+          <div class="event-stat-value">${lockCount}</div>
+        </div>
+        <div class="event-stat-box">
+          <div class="event-stat-label">Avg Conf</div>
+          <div class="event-stat-value">${avgConf}%</div>
+        </div>
+      </div>
+    </div>
+
+    ${errorHtml}
+
+    ${renderPredictionsTable(predictions)}
+
+    ${renderParlaySection(data.parlays)}
+  `;
+}
+
+// INIT
+(async () => {
+  const authed = await checkAuth();
+  if (authed) {
+    await Promise.all([
+      loadPredictions(),
+      loadStats()
+    ]);
+  }
+})();
+
+// AUTO-REFRESH every 5 minutes
+setInterval(async () => {
+  await Promise.all([
+    loadPredictions(),
+    loadStats()
+  ]);
+}, 5 * 60 * 1000);
+</script>
+</body>
+</html>

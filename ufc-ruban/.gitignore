@@ -1,0 +1,28 @@
+# Environment — NEVER commit secrets
+.env
+.env.*
+
+# Database & runtime files
+database/ufc.db
+database/posted_events.json
+
+# ML model (large binary, store separately)
+python/model/model.pkl
+
+# Node
+node_modules/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+DISCORD_BOT_SETUP.md

@@ -2,182 +2,486 @@ import Link from 'next/link';
 import Countdown from './components/Countdown';
 import predictionsData from './data/predictions.json';
 
-const freePick = predictionsData.predictions.find((p) => !p.is_main_event === false) || predictionsData.predictions[0];
+const freePick = predictionsData.predictions.find((p) => p.is_main_event) || predictionsData.predictions[0];
 const eventName = predictionsData.event_name;
 const eventDate = predictionsData.event_date;
 
 export default function Home() {
   return (
     <>
-      {/* HERO — RUBAN as the system */}
-      <section className="relative overflow-hidden px-4 py-16 lg:py-24 xl:py-28">
-        <div className="absolute inset-0 bg-gradient-radial from-accent-glow via-transparent to-transparent opacity-20"></div>
-        <div className="max-w-6xl mx-auto relative z-10 grid gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(340px,0.9fr)] lg:gap-14 xl:gap-16 items-center">
-          <div className="max-w-3xl">
-            <div className="inline-block mb-5 px-4 py-2 bg-accent/10 border border-accent/30 rounded-full text-accent text-sm font-bold uppercase tracking-wider">
-              Premium Fight Intelligence System
-            </div>
-            <h1 className="text-5xl md:text-7xl font-extrabold mb-6 leading-[0.92]">
-              THE EDGE IS IN<br />
-              <span className="text-accent">THE STRUCTURE</span>
-            </h1>
-            <p className="text-xl text-white/90 mb-4 max-w-2xl leading-relaxed">
-              RUBAN is a fight intelligence system built for disciplined operators. Every read comes with confidence framing, volatility scoring, and structural reasoning — not picks, not hype.
-            </p>
-            <p className="text-lg text-muted mb-8 max-w-2xl leading-relaxed">
-              Members receive the full board before the market moves, inside a private Discord where every position is framed for conviction and risk. No recycled tout language. No fake locks.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 mb-10">
-              <Link href="/pricing" className="btn-primary text-center">GET ACCESS</Link>
-              <Link href="/whitehouse" className="btn-secondary text-center">WHITE HOUSE CARD →</Link>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-              <div className="card"><p className="text-xs text-muted uppercase tracking-wider mb-2">Framework</p><p className="text-xl font-extrabold">Confidence + Volatility</p></div>
-              <div className="card"><p className="text-xs text-muted uppercase tracking-wider mb-2">Delivery</p><p className="text-xl font-extrabold">Private Discord</p></div>
-              <div className="card"><p className="text-xs text-muted uppercase tracking-wider mb-2">Model</p><p className="text-xl font-extrabold">Structural Reads</p></div>
-            </div>
-          </div>
-          <div className="relative flex items-center lg:justify-end">
-            <div className="absolute left-1/2 top-1/2 h-[320px] w-[320px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/15 blur-3xl sm:h-[380px] sm:w-[380px]"></div>
-            <div className="relative z-10 w-full max-w-md rounded-[1.5rem] border border-accent/30 bg-[#141419]/95 p-6 shadow-[0_30px_80px_rgba(10,10,15,0.45)] sm:p-7">
-              <div className="text-xs uppercase tracking-[0.18em] text-gold font-bold mb-5">White House Window</div>
-              <Countdown className="mb-6 justify-center" />
-              <div className="text-center border-t border-white/5 pt-6">
-                <div className="text-4xl font-extrabold text-signal-green mb-2">$1M+</div>
-                <div className="text-sm text-muted mb-5 max-w-[16rem] mx-auto">Projected member profit pool — White House card</div>
+      {/* ═══════════════════════════════════════════
+          HERO
+      ═══════════════════════════════════════════ */}
+      <section
+        className="hero"
+        id="hook"
+        style={{ position: 'relative', padding: '32px 0 58px' }}
+      >
+        {/* top gold glow */}
+        <div style={{
+          content: '',
+          position: 'absolute',
+          inset: '0 0 auto 0',
+          height: 560,
+          background: 'radial-gradient(circle at 65% 18%, rgba(251,191,36,0.07), transparent 22%)',
+          pointerEvents: 'none',
+        }} />
+
+        <div style={{ width: 'min(1180px, calc(100% - 32px))', margin: '0 auto' }}>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'minmax(0, 0.96fr) minmax(0, 1.04fr)',
+            gap: 30,
+            alignItems: 'center',
+          }} className="hero-grid-responsive">
+
+            {/* ── Left: copy ── */}
+            <div>
+              <div className="eyebrow" style={{ marginBottom: 18 }}>
+                <span className="eyebrow-dot" />
+                UFC · White House Event · April 2026
               </div>
-              <Link href="/whitehouse" className="btn-primary w-full text-center text-sm">SEE THE FULL CASE</Link>
+
+              <h1 style={{
+                fontSize: 'clamp(4.4rem, 10vw, 8.4rem)',
+                lineHeight: 0.84,
+                marginBottom: 16,
+              }}>
+                THE WHITE<br />
+                <span className="text-gradient-hero">HOUSE CARD.</span>
+              </h1>
+
+              <p style={{
+                fontSize: '1.18rem',
+                lineHeight: 1.58,
+                color: '#edf2f7',
+                maxWidth: 590,
+                marginBottom: 14,
+                fontFamily: 'Inter, sans-serif',
+              }}>
+                Fourteen fights. One historic venue. Every casual bettor in America watching. RUBAN maps the board before the noise takes over.
+              </p>
+              <p style={{
+                fontSize: '0.98rem',
+                lineHeight: 1.65,
+                color: 'var(--muted)',
+                maxWidth: 570,
+                marginBottom: 24,
+                fontFamily: 'Inter, sans-serif',
+              }}>
+                Not picks. Not predictions. A structured read of the full card — confidence levels, volatility flags, and fight-by-fight framing — delivered privately before fight week gets loud.
+              </p>
+
+              <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 22 }}>
+                <Link href="/pricing" className="btn-primary">Access The Full Board</Link>
+                <Link href="#free-pick" className="btn-secondary">See The Free Main Event Read</Link>
+              </div>
+
+              {/* mini stats */}
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+                gap: 12,
+                maxWidth: 640,
+                marginBottom: 14,
+              }}>
+                <div className="mini-card">
+                  <div className="kicker">Event</div>
+                  <div className="value">White House · April 2026</div>
+                </div>
+                <div className="mini-card">
+                  <div className="kicker">Coverage</div>
+                  <div className="value">Full card, not just the main</div>
+                </div>
+                <div className="mini-card">
+                  <div className="kicker">Delivery</div>
+                  <div className="value">Private members only</div>
+                </div>
+              </div>
+
+              <p style={{
+                maxWidth: 620,
+                color: '#cfd6df',
+                fontSize: '0.86rem',
+                lineHeight: 1.55,
+                fontFamily: 'Inter, sans-serif',
+              }}>
+                No win-rate guarantees. No spam picks. Structured analysis for people who treat the card like a business.
+              </p>
+            </div>
+
+            {/* ── Right: cinematic fight stage ── */}
+            <div className="hero-stage">
+              <div className="hero-aura" />
+              <div className="stage-tag">White House Event · Main Event</div>
+
+              {/* side info card */}
+              <div className="stage-side-card">
+                <div className="label">The opportunity</div>
+                <h3>Historic card. More casual money. Bigger spreads.</h3>
+                <p>High-attention events pull in noise that disciplined readers can work against.</p>
+              </div>
+
+              <div className="hero-rings" />
+              <div className="stage-lines" />
+
+              {/* Left fighter — Topuria */}
+              <div className="fighter left" aria-label="Ilia Topuria stylized silhouette">
+                <div className="fighter-rim" />
+                <div className="fighter-core">
+                  <div className="fighter-part fighter-head" />
+                  <div className="fighter-part fighter-torso" />
+                  <div className="fighter-part fighter-arm arm-a1" />
+                  <div className="fighter-part fighter-arm arm-a2" />
+                  <div className="fighter-part fighter-forearm forearm-f1" />
+                  <div className="fighter-part fighter-forearm forearm-f2" />
+                  <div className="fighter-part fighter-glove glove-g1" />
+                  <div className="fighter-part fighter-glove glove-g2" />
+                  <div className="fighter-part fighter-leg leg-l1" />
+                  <div className="fighter-part fighter-leg leg-l2" />
+                </div>
+                <div className="fighter-label">
+                  <div className="fighter-name">Topuria</div>
+                  <div className="fighter-meta">Pressure • Control • Tight phases</div>
+                </div>
+              </div>
+
+              {/* Right fighter — Gaethje */}
+              <div className="fighter right" aria-label="Justin Gaethje stylized silhouette">
+                <div className="fighter-rim" />
+                <div className="fighter-core">
+                  <div className="fighter-part fighter-head" />
+                  <div className="fighter-part fighter-torso" />
+                  <div className="fighter-part fighter-arm arm-a1" />
+                  <div className="fighter-part fighter-arm arm-a2" />
+                  <div className="fighter-part fighter-forearm forearm-f1" />
+                  <div className="fighter-part fighter-forearm forearm-f2" />
+                  <div className="fighter-part fighter-glove glove-g1" />
+                  <div className="fighter-part fighter-glove glove-g2" />
+                  <div className="fighter-part fighter-leg leg-l1" />
+                  <div className="fighter-part fighter-leg leg-l2" />
+                </div>
+                <div className="fighter-label">
+                  <div className="fighter-name">Gaethje</div>
+                  <div className="fighter-meta">Violence • Variance • Early danger</div>
+                </div>
+              </div>
+
+              <div className="hero-vs"><span>VS</span></div>
+
+              <div className="story-card">
+                <div className="kicker">Main Event · Topuria vs Gaethje</div>
+                <h3>Control vs Chaos</h3>
+                <p>
+                  One man compresses the fight. One man detonates it. RUBAN tells you where the structure holds — and where the danger lives.
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* WHITE HOUSE URGENCY BLOCK */}
-      <section className="py-16 px-4 bg-elevated/50 border-y border-gold/20">
-        <div className="max-w-5xl mx-auto text-center">
-          <div className="inline-block mb-4 px-4 py-2 bg-gold/10 border border-gold/30 rounded-full text-gold text-sm font-bold uppercase tracking-wider">
-            Biggest Event of the Year
+      {/* ═══════════════════════════════════════════
+          WHITE HOUSE URGENCY BLOCK
+      ═══════════════════════════════════════════ */}
+      <section style={{ padding: '84px 0', borderTop: '1px solid var(--line)', borderBottom: '1px solid var(--line)' }}>
+        <div style={{ width: 'min(1180px, calc(100% - 32px))', margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', maxWidth: 840, margin: '0 auto' }}>
+            <div className="eyebrow" style={{ marginBottom: 18, display: 'inline-flex' }}>
+              <span className="eyebrow-dot" />
+              Biggest Event of the Year
+            </div>
+            <h2 style={{ fontSize: 'clamp(2.7rem, 6vw, 4.6rem)', lineHeight: 0.95, marginBottom: 16 }}>
+              White House Card · April 12 · 2026
+            </h2>
+            <p style={{
+              fontSize: '1.18rem',
+              lineHeight: 1.58,
+              color: '#edf2f7',
+              marginBottom: 14,
+              fontFamily: 'Inter, sans-serif',
+            }}>
+              The largest influx of casual money UFC has seen in years floods this card. Mainstream attention spikes favorites, inflates certain lines, and creates edges that disappear by fight week. Members who are locked in before that happens get the full board read before the market gets loud.
+            </p>
+            <p style={{
+              fontSize: '1rem',
+              lineHeight: 1.7,
+              color: 'var(--muted)',
+              marginBottom: 28,
+              fontFamily: 'Inter, sans-serif',
+            }}>
+              We are projecting over{' '}
+              <span style={{ color: 'var(--green)', fontWeight: 800 }}>$1,000,000 in member profits</span>{' '}
+              generated from this card alone. The window to get positioned early is now — not fight week, not when the odds have already moved.
+            </p>
+            <Countdown className="justify-center mb-8" />
+            <div style={{ marginTop: 28 }}>
+              <Link href="/pricing" className="btn-primary" style={{ fontSize: '1rem', padding: '0 32px' }}>
+                Lock In Before The Odds Move
+              </Link>
+            </div>
+            <p style={{ fontSize: '0.78rem', color: 'var(--muted)', marginTop: 14, fontFamily: 'Inter, sans-serif' }}>
+              Projected profits based on member position sizing and read confidence. Not a guarantee of returns.
+            </p>
           </div>
-          <h2 className="text-4xl md:text-5xl font-extrabold mb-6">
-            WHITE HOUSE CARD · APRIL 12 · 2026
-          </h2>
-          <p className="text-xl text-white/90 max-w-4xl mx-auto mb-6 leading-relaxed">
-            The largest influx of casual money UFC has seen in years floods this card. Mainstream attention spikes favorites, inflates certain lines, and creates edges that disappear by fight week. Members who are locked in before that happens get the full board read before the market gets loud.
-          </p>
-          <p className="text-lg text-muted max-w-3xl mx-auto mb-8">
-            We are projecting over <span className="text-signal-green font-bold">$1,000,000 in member profits</span> generated from this card alone. The window to get positioned early is now — not fight week, not when the odds have already moved.
-          </p>
-          <Countdown className="justify-center mb-8" />
-          <Link href="/pricing" className="btn-primary text-xl px-12 py-4">
-            LOCK IN BEFORE THE ODDS MOVE
-          </Link>
-          <p className="text-xs text-muted mt-4">Projected profits based on member position sizing and read confidence. Not a guarantee of returns.</p>
         </div>
       </section>
 
-      {/* FREE PICK — dynamic from predictions.json */}
-      <section id="free-pick" className="py-16 px-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-8">
-            <div className="inline-block px-4 py-2 bg-signal-green/10 border border-signal-green rounded-full text-signal-green text-sm font-bold uppercase tracking-wider mb-4">
+      {/* ═══════════════════════════════════════════
+          FREE PICK — dynamic from predictions.json
+      ═══════════════════════════════════════════ */}
+      <section id="free-pick" style={{ padding: '84px 0' }}>
+        <div style={{ width: 'min(1180px, calc(100% - 32px))', margin: '0 auto' }}>
+
+          <div style={{ textAlign: 'center', maxWidth: 840, margin: '0 auto 28px' }}>
+            <div className="eyebrow" style={{ marginBottom: 18, display: 'inline-flex' }}>
+              <span className="eyebrow-dot" />
               Free Main Event Read
             </div>
-            <h2 className="text-4xl md:text-5xl font-extrabold mb-2">{eventName.toUpperCase()}</h2>
-            <p className="text-muted">{new Date(eventDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
+            <h2 style={{ fontSize: 'clamp(2.7rem, 6vw, 4.6rem)', lineHeight: 0.95, marginBottom: 10 }}>
+              One Honest Read. In Public.
+            </h2>
+            <p style={{ color: 'var(--muted)', fontSize: '1rem', lineHeight: 1.7, fontFamily: 'Inter, sans-serif' }}>
+              Before you commit to the full board, see how RUBAN frames a fight. Real analysis, in real language.
+            </p>
           </div>
 
-          <div className="card border-accent/40 shadow-xl">
-            <div className="flex justify-between items-center mb-6 flex-wrap gap-3">
-              <span className="text-sm text-muted uppercase tracking-wider">
-                {freePick.weight_class} · Main Event
-              </span>
-              <span className="px-3 py-1 bg-gold/20 text-gold text-xs font-bold rounded-full">
-                {freePick.tier || 'SELECT READ'}
-              </span>
-            </div>
-            <div className="text-center py-6 border-b border-accent/20 mb-6">
-              <h3 className="text-3xl font-extrabold mb-2 text-signal-green">{freePick.winner.toUpperCase()} WINS</h3>
-              <p className="text-muted mb-1">{freePick.fighter1} vs {freePick.fighter2}</p>
-              <p className="text-muted text-lg mb-5">{freePick.method} lean</p>
-              <div className="flex items-center justify-center gap-4 mb-2 flex-col sm:flex-row">
-                <div className="flex-1 max-w-md h-4 bg-elevated rounded-full overflow-hidden w-full">
-                  <div className="h-full bg-gradient-to-r from-signal-green to-green-400" style={{ width: `${freePick.confidence}%` }}></div>
+          {/* proof grid */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: '1.1fr 0.9fr',
+            gap: 18,
+            alignItems: 'stretch',
+          }} className="proof-grid-responsive">
+
+            {/* Sample read card */}
+            <div className="card" style={{ padding: 24 }}>
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: 12,
+                marginBottom: 18,
+                color: 'var(--muted)',
+                fontSize: '0.82rem',
+                textTransform: 'uppercase',
+                letterSpacing: '0.07em',
+                fontFamily: 'Inter, sans-serif',
+              }}>
+                <span>{freePick.weight_class} · Main Event · {eventName}</span>
+                <span style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  padding: '6px 10px',
+                  borderRadius: 999,
+                  background: 'rgba(251,191,36,0.12)',
+                  color: 'var(--gold)',
+                  border: '1px solid rgba(251,191,36,0.22)',
+                  fontWeight: 700,
+                }}>{freePick.tier || 'SELECT READ'}</span>
+              </div>
+
+              <h3 style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '2.5rem', color: 'var(--green)', marginBottom: 6 }}>
+                {freePick.winner} Wins
+              </h3>
+              <p style={{ color: 'var(--muted)', marginBottom: 0, fontFamily: 'Inter, sans-serif', fontSize: '0.95rem' }}>
+                {freePick.method} lean · {freePick.fighter1} vs {freePick.fighter2}
+              </p>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '18px 0' }}>
+                <div className="conf-bar">
+                  <span style={{ width: `${freePick.confidence}%` }} />
                 </div>
-                <span className="text-3xl font-mono font-bold text-signal-green">{freePick.confidence}%</span>
+                <div style={{
+                  fontFamily: 'Bebas Neue, sans-serif',
+                  fontSize: '2.5rem',
+                  color: 'var(--green)',
+                  lineHeight: 1,
+                }}>
+                  {freePick.confidence}%
+                </div>
               </div>
-            </div>
-            <div className="space-y-5">
-              <div>
-                <h4 className="text-xl font-bold mb-2 text-accent">THE READ</h4>
-                <p className="text-muted leading-relaxed">{freePick.analysis}</p>
-              </div>
-              {freePick.key_factors && (
+
+              <div style={{ display: 'grid', gap: 14 }}>
                 <div>
-                  <h4 className="text-xl font-bold mb-2 text-accent">KEY FACTORS</h4>
-                  <ul className="space-y-2 text-muted">
-                    {freePick.key_factors.slice(0, 3).map((f: string, i: number) => (
-                      <li key={i}>• {f}</li>
-                    ))}
-                  </ul>
+                  <h4 style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '1.3rem', marginBottom: 4 }}>The Structural Read</h4>
+                  <p style={{ color: 'var(--muted)', fontFamily: 'Inter, sans-serif', fontSize: '0.95rem', lineHeight: 1.6 }}>{freePick.analysis}</p>
                 </div>
-              )}
+                {freePick.key_factors && freePick.key_factors.slice(0, 2).map((f, i) => (
+                  <div key={i}>
+                    <h4 style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '1.3rem', marginBottom: 4 }}>
+                      {i === 0 ? 'Why This Direction' : 'Where The Risk Lives'}
+                    </h4>
+                    <p style={{ color: 'var(--muted)', fontFamily: 'Inter, sans-serif', fontSize: '0.95rem', lineHeight: 1.6 }}>{f}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Full board tease */}
+            <div className="card">
+              <h3 style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '1.5rem', marginBottom: 10 }}>
+                What The Full Board Includes
+              </h3>
+              <ul style={{ listStyle: 'none', display: 'grid', gap: 10, margin: '16px 0 22px', fontFamily: 'Inter, sans-serif' }}>
+                {[
+                  'Every meaningful fight on the card, not just the main event',
+                  'Confidence ratings and volatility flags on each read',
+                  'Fight-week notes as the market moves',
+                  'Private member delivery — no public forum noise',
+                  'Structured format for people who treat this like a business',
+                ].map((item, i) => (
+                  <li key={i} style={{ color: 'var(--muted)', paddingLeft: 16, position: 'relative', fontSize: '0.95rem' }}>
+                    <span style={{ position: 'absolute', left: 0, color: 'var(--green)', fontWeight: 800 }}>•</span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <Link href="/pricing" className="btn-primary" style={{ width: '100%', textAlign: 'center' }}>
+                Access The Full Board
+              </Link>
             </div>
           </div>
         </div>
       </section>
 
-      {/* LOCKED BOARD TEASE */}
-      <section className="py-16 px-4 bg-elevated/50">
-        <div className="max-w-5xl mx-auto text-center">
-          <h2 className="text-4xl font-extrabold mb-4">
-            {predictionsData.predictions.length - 1}+ MORE READS<br />
-            <span className="text-accent">LOCKED INSIDE DISCORD</span>
-          </h2>
-          <p className="text-xl text-muted mb-8">
-            The free read shows the standard. Members unlock the rest of the board, with every spot framed for conviction and risk.
-          </p>
-          <Link href="/pricing" className="btn-primary text-xl px-12 py-4">
-            UNLOCK THE FULL BOARD
-          </Link>
-          <p className="text-muted mt-4">Join at <Link href="https://discord.gg/yymtuNQwqC" target="_blank" className="text-accent underline">discord.gg/yymtuNQwqC</Link> after purchase.</p>
+      {/* ═══════════════════════════════════════════
+          LOCKED BOARD TEASE
+      ═══════════════════════════════════════════ */}
+      <section style={{ padding: '84px 0', borderTop: '1px solid var(--line)', borderBottom: '1px solid var(--line)' }}>
+        <div style={{ width: 'min(1180px, calc(100% - 32px))', margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', maxWidth: 840, margin: '0 auto' }}>
+            <h2 style={{ fontSize: 'clamp(2.7rem, 6vw, 4.6rem)', lineHeight: 0.95, marginBottom: 10 }}>
+              Why The White House Card Is Different
+            </h2>
+            <p style={{ color: 'var(--muted)', fontSize: '1rem', lineHeight: 1.7, marginBottom: 28, fontFamily: 'Inter, sans-serif' }}>
+              This is not a normal fight week. The attention is different. The money is different. The spots, when you find them, are bigger.
+            </p>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 16 }} className="triple-responsive">
+            <div className="card">
+              <h3 style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '1.5rem', marginBottom: 10 }}>Unusual Attention. Unusual Opportunity.</h3>
+              <p style={{ color: 'var(--muted)', fontFamily: 'Inter, sans-serif', fontSize: '0.95rem', lineHeight: 1.65 }}>UFC at the White House brings mainstream visibility that normal fight nights don&apos;t. More casual money flowing in means more structural opportunity for disciplined readers.</p>
+            </div>
+            <div className="card">
+              <h3 style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '1.5rem', marginBottom: 10 }}>Deep Card. Multiple Strong Spots.</h3>
+              <p style={{ color: 'var(--muted)', fontFamily: 'Inter, sans-serif', fontSize: '0.95rem', lineHeight: 1.65 }}>A fourteen-fight card with a historic main event creates room to find clean positions beyond the obvious headline. The whole board is worth mapping, not just the top.</p>
+            </div>
+            <div className="card">
+              <h3 style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '1.5rem', marginBottom: 10 }}>Selectivity, Not Volume.</h3>
+              <p style={{ color: 'var(--muted)', fontFamily: 'Inter, sans-serif', fontSize: '0.95rem', lineHeight: 1.65 }}>When RUBAN&apos;s confidence on a fight isn&apos;t high enough, members don&apos;t get a forced read. That discipline is the whole model — fewer, stronger positions.</p>
+            </div>
+          </div>
+          <div style={{ textAlign: 'center', marginTop: 36 }}>
+            <h3 style={{
+              fontFamily: 'Bebas Neue, sans-serif',
+              fontSize: 'clamp(2rem, 4vw, 3rem)',
+              marginBottom: 14,
+            }}>
+              {predictionsData.predictions.length - 1}+ More Reads
+              <span style={{
+                background: 'linear-gradient(135deg, var(--purple), var(--magenta))',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+              }}> Locked Inside Discord</span>
+            </h3>
+            <p style={{ fontSize: '1rem', color: 'var(--muted)', marginBottom: 28, fontFamily: 'Inter, sans-serif', lineHeight: 1.7 }}>
+              The free read shows the standard. Members unlock the rest of the board, with every spot framed for conviction and risk.
+            </p>
+            <Link href="/pricing" className="btn-primary" style={{ fontSize: '1rem', padding: '0 32px' }}>
+              Unlock The Full Board
+            </Link>
+            <p style={{ color: 'var(--muted)', marginTop: 14, fontFamily: 'Inter, sans-serif', fontSize: '0.92rem' }}>
+              Join at{' '}
+              <Link href="https://discord.gg/yymtuNQwqC" target="_blank" style={{ color: 'var(--purple)', textDecoration: 'underline' }}>
+                discord.gg/yymtuNQwqC
+              </Link>{' '}
+              after purchase.
+            </p>
+          </div>
         </div>
       </section>
 
-      {/* HOW IT WORKS */}
-      <section className="py-16 px-4">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-extrabold mb-4">HOW RUBAN WORKS</h2>
-            <p className="text-xl text-muted">Structure before action. Every time.</p>
+      {/* ═══════════════════════════════════════════
+          HOW IT WORKS
+      ═══════════════════════════════════════════ */}
+      <section style={{ padding: '84px 0' }}>
+        <div style={{ width: 'min(1180px, calc(100% - 32px))', margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', maxWidth: 840, margin: '0 auto 28px' }}>
+            <h2 style={{ fontSize: 'clamp(2.7rem, 6vw, 4.6rem)', lineHeight: 0.95, marginBottom: 10 }}>
+              Access The White House Board
+            </h2>
+            <p style={{ color: 'var(--muted)', fontSize: '1rem', lineHeight: 1.7, fontFamily: 'Inter, sans-serif' }}>
+              Two tiers. One system. Built for people who treat the card like a business, not a hobby.
+            </p>
           </div>
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="card text-center">
-              <div className="text-4xl font-extrabold text-accent mb-4">01</div>
-              <h3 className="text-2xl font-bold mb-3">Choose Access</h3>
-              <p className="text-muted">Select Operator ($20/mo) or Syndicate ($120/yr). Both unlock the full board and private Discord.</p>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 16, marginTop: 20 }} className="triple-responsive">
+            <div className="card">
+              <div style={{
+                fontFamily: 'Bebas Neue, sans-serif',
+                fontSize: '2.4rem',
+                color: 'var(--purple)',
+                lineHeight: 1,
+                marginBottom: 8,
+              }}>1</div>
+              <h3 style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '1.5rem', marginBottom: 10 }}>Choose Your Tier</h3>
+              <p style={{ color: 'var(--muted)', fontFamily: 'Inter, sans-serif', fontSize: '0.95rem', lineHeight: 1.65 }}>Monthly or annual. Both tiers get the same board, same confidence ratings, same private delivery.</p>
             </div>
-            <div className="card text-center">
-              <div className="text-4xl font-extrabold text-accent mb-4">02</div>
-              <h3 className="text-2xl font-bold mb-3">Join Discord</h3>
-              <p className="text-muted">Get your invite link and enter the private member room where the board lives, organized and updated.</p>
+            <div className="card">
+              <div style={{
+                fontFamily: 'Bebas Neue, sans-serif',
+                fontSize: '2.4rem',
+                color: 'var(--purple)',
+                lineHeight: 1,
+                marginBottom: 8,
+              }}>2</div>
+              <h3 style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '1.5rem', marginBottom: 10 }}>Get Your Member Path</h3>
+              <p style={{ color: 'var(--muted)', fontFamily: 'Inter, sans-serif', fontSize: '0.95rem', lineHeight: 1.65 }}>Join via Discord. You&apos;ll receive access instructions and the current board link — no waiting, no sales funnel.</p>
             </div>
-            <div className="card text-center">
-              <div className="text-4xl font-extrabold text-accent mb-4">03</div>
-              <h3 className="text-2xl font-bold mb-3">Work the Card</h3>
-              <p className="text-muted">Every position framed with confidence, volatility, and structural reasoning. No noise, no hype.</p>
+            <div className="card">
+              <div style={{
+                fontFamily: 'Bebas Neue, sans-serif',
+                fontSize: '2.4rem',
+                color: 'var(--purple)',
+                lineHeight: 1,
+                marginBottom: 8,
+              }}>3</div>
+              <h3 style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '1.5rem', marginBottom: 10 }}>Read The Board, Not The Noise</h3>
+              <p style={{ color: 'var(--muted)', fontFamily: 'Inter, sans-serif', fontSize: '0.95rem', lineHeight: 1.65 }}>Full card structure, confidence levels, and volatility flags. Your edge, delivered before fight week gets loud.</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* STICKY BOTTOM CTA */}
-      <div className="fixed bottom-0 left-0 right-0 bg-void/95 backdrop-blur-xl border-t border-gold/20 py-3 px-4 z-40">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
-          <p className="text-sm font-bold text-center sm:text-left">
-            White House card is live. $1M+ projected member pool. Early access closes when the odds move.
-          </p>
-          <Link href="/pricing" className="btn-primary text-sm px-6 py-2 w-full sm:w-auto text-center whitespace-nowrap">
-            LOCK IN NOW
+      {/* ═══════════════════════════════════════════
+          STICKY BOTTOM CTA
+      ═══════════════════════════════════════════ */}
+      <div style={{
+        position: 'fixed',
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 120,
+        background: 'rgba(6,7,11,0.92)',
+        backdropFilter: 'blur(18px)',
+        borderTop: '1px solid var(--line)',
+      }}>
+        <div style={{
+          width: 'min(1180px, calc(100% - 32px))',
+          margin: '0 auto',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 14,
+          padding: '12px 0',
+          flexWrap: 'wrap',
+        }}>
+          <div style={{ color: '#e5e7eb', fontSize: '0.92rem', fontFamily: 'Inter, sans-serif' }}>
+            The White House card is live. See the free main event read — or go straight to the full board.
+          </div>
+          <Link href="/pricing" className="btn-primary" style={{ minHeight: 44, padding: '0 20px', fontSize: '0.86rem' }}>
+            Access The Board
           </Link>
         </div>
       </div>
