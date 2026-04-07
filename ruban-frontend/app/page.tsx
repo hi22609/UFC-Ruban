@@ -10,10 +10,10 @@ export default function Home() {
   return (
     <>
       {/* HERO — RUBAN as the system */}
-      <section className="min-h-screen flex items-center justify-center px-4 py-16 relative overflow-hidden">
+      <section className="relative overflow-hidden px-4 py-16 lg:py-24 xl:py-28">
         <div className="absolute inset-0 bg-gradient-radial from-accent-glow via-transparent to-transparent opacity-20"></div>
-        <div className="max-w-6xl mx-auto relative z-10 grid lg:grid-cols-[1.1fr_0.9fr] gap-12 items-center">
-          <div>
+        <div className="max-w-6xl mx-auto relative z-10 grid gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(340px,0.9fr)] lg:gap-14 xl:gap-16 items-center">
+          <div className="max-w-3xl">
             <div className="inline-block mb-5 px-4 py-2 bg-accent/10 border border-accent/30 rounded-full text-accent text-sm font-bold uppercase tracking-wider">
               Premium Fight Intelligence System
             </div>
@@ -27,24 +27,24 @@ export default function Home() {
             <p className="text-lg text-muted mb-8 max-w-2xl leading-relaxed">
               Members receive the full board before the market moves, inside a private Discord where every position is framed for conviction and risk. No recycled tout language. No fake locks.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 mb-8">
+            <div className="flex flex-col sm:flex-row gap-4 mb-10">
               <Link href="/pricing" className="btn-primary text-center">GET ACCESS</Link>
               <Link href="/whitehouse" className="btn-secondary text-center">WHITE HOUSE CARD →</Link>
             </div>
-            <div className="grid md:grid-cols-3 gap-4">
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
               <div className="card"><p className="text-xs text-muted uppercase tracking-wider mb-2">Framework</p><p className="text-xl font-extrabold">Confidence + Volatility</p></div>
               <div className="card"><p className="text-xs text-muted uppercase tracking-wider mb-2">Delivery</p><p className="text-xl font-extrabold">Private Discord</p></div>
               <div className="card"><p className="text-xs text-muted uppercase tracking-wider mb-2">Model</p><p className="text-xl font-extrabold">Structural Reads</p></div>
             </div>
           </div>
-          <div className="relative min-h-[480px] flex items-center justify-center">
-            <div className="absolute w-[400px] h-[400px] rounded-full bg-accent/15 blur-3xl"></div>
-            <div className="relative z-10 card border-accent/30 max-w-sm w-full">
-              <div className="text-xs uppercase tracking-[0.18em] text-gold font-bold mb-4">White House Window</div>
-              <Countdown className="mb-4 justify-center" />
-              <div className="text-center">
-                <div className="text-4xl font-extrabold text-signal-green mb-1">$1M+</div>
-                <div className="text-sm text-muted mb-4">Projected member profit pool — White House card</div>
+          <div className="relative flex items-center lg:justify-end">
+            <div className="absolute left-1/2 top-1/2 h-[320px] w-[320px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/15 blur-3xl sm:h-[380px] sm:w-[380px]"></div>
+            <div className="relative z-10 w-full max-w-md rounded-[1.5rem] border border-accent/30 bg-[#141419]/95 p-6 shadow-[0_30px_80px_rgba(10,10,15,0.45)] sm:p-7">
+              <div className="text-xs uppercase tracking-[0.18em] text-gold font-bold mb-5">White House Window</div>
+              <Countdown className="mb-6 justify-center" />
+              <div className="text-center border-t border-white/5 pt-6">
+                <div className="text-4xl font-extrabold text-signal-green mb-2">$1M+</div>
+                <div className="text-sm text-muted mb-5 max-w-[16rem] mx-auto">Projected member profit pool — White House card</div>
               </div>
               <Link href="/whitehouse" className="btn-primary w-full text-center text-sm">SEE THE FULL CASE</Link>
             </div>
