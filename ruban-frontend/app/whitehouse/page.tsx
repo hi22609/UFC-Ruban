@@ -1,11 +1,18 @@
 import Link from 'next/link';
 import Countdown from '../components/Countdown';
-import predictionsData from '../data/predictions.json';
 
-const mainEvent =
-  predictionsData.predictions.find((p) => p.is_main_event) ||
-  predictionsData.predictions[0];
-const eventName = predictionsData.event_name;
+const mainEvent = {
+  fighter1: 'Ilia Topuria',
+  fighter2: 'Justin Gaethje',
+  weight_class: 'Lightweight',
+  winner: 'Ilia Topuria',
+  confidence: 68,
+  tier: 'Free Read',
+  method: 'KO/TKO',
+  analysis:
+    'Topuria carries the cleaner technical pressure, tighter shot selection, and better balance in the pocket. Against Gaethje, that creates a real finish lane if Justin is forced into extended exchanges and starts absorbing damage in combinations.',
+};
+const eventName = 'White House Card';
 
 const pillars = [
   {
@@ -315,7 +322,7 @@ export default function WhiteHousePage() {
                   letterSpacing: '0.08em',
                 }}
               >
-                {mainEvent.weight_class} · Main Event · {eventName}
+                White House Free Read · {mainEvent.weight_class}
               </span>
               <div style={{ display: 'flex', gap: 8 }}>
                 <span
@@ -515,7 +522,7 @@ export default function WhiteHousePage() {
                     marginBottom: 6,
                   }}
                 >
-                  {mainEvent.winner} Wins
+                  Ilia Topuria by KO/TKO
                 </h3>
                 <p
                   style={{
@@ -525,7 +532,7 @@ export default function WhiteHousePage() {
                     marginBottom: 18,
                   }}
                 >
-                  {mainEvent.method} lean · {mainEvent.fighter1} vs {mainEvent.fighter2}
+                  Free main event read · Ilia Topuria vs Justin Gaethje
                 </p>
 
                 {/* Confidence bar */}
