@@ -10,51 +10,55 @@ export default function Home() {
         <div className="max-w-6xl mx-auto relative z-10 grid lg:grid-cols-[1.05fr_0.95fr] gap-10 items-center">
           <div>
             <div className="inline-block mb-4 px-4 py-2 bg-signal-green/10 border border-signal-green rounded-full text-signal-green text-sm font-bold uppercase tracking-wider">
-              Historic White House Event • 13 Fights Tracked
+              This Week's Board • Premium Fight Intelligence
             </div>
 
             <h1 className="text-5xl md:text-7xl font-extrabold mb-5 leading-[0.92]">
-              UFC <span className="text-accent">WHITE HOUSE</span>
+              THIS WEEK'S <span className="text-accent">BOARD</span>
               <br />
-              WHERE SHARP MONEY LOOKS
+              SHARP FIGHT INTELLIGENCE, NOT HYPE
             </h1>
 
             <p className="text-xl text-white/90 mb-4 max-w-3xl leading-relaxed">
-              Historic event. 13 stacked fights. Unusual betting volume. This is not a “join before we hit $1M” pitch — this is a White House card where RUBAN members are positioned across multiple high-confidence spots and select edges.
+              Historic event. 13 fights on the board. RUBAN gives members a structured way to track the card with confidence scores, volatility framing, and select spots worth real attention.
             </p>
 
-            <p className="text-lg text-muted mb-4 max-w-3xl leading-relaxed">
-              We don’t chase. We select. Confidence bands, volatility ratings, and disciplined unit strategy — built for people who want calculated reads, not random picks.
+            <p className="text-lg text-muted mb-6 max-w-3xl leading-relaxed">
+              No fake locks. No recycled tout language. Just cleaner reads, disciplined unit logic, and premium Discord delivery for people who want context before they take action.
             </p>
 
-            <p className="text-2xl font-bold text-gold mb-2">
-              Projected collective member profit pool: $1.2M+
-            </p>
-            <p className="text-sm text-muted mb-8 max-w-3xl">
-              Projection based on member participation, tracked positions, and event-specific betting volume. Analysis only. Never guaranteed outcomes.
-            </p>
+            <div className="mb-8 rounded-2xl border border-gold/20 bg-gold/5 p-5 max-w-3xl">
+              <p className="text-sm font-bold uppercase tracking-[0.18em] text-gold mb-3">Why people buy</p>
+              <div className="grid sm:grid-cols-3 gap-3 text-sm">
+                <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">13 tracked fight reads for the event</div>
+                <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">Every spot framed with confidence + volatility</div>
+                <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">Member delivery happens inside Discord, where the board stays organized</div>
+              </div>
+              <p className="text-xs text-muted mt-3">Analysis only. Outcomes are never guaranteed.</p>
+            </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 mb-8">
+            <div className="flex flex-col sm:flex-row gap-4 mb-5">
               <Link href="/pricing" className="btn-primary text-center">
-                UNLOCK ALL 13 WHITE HOUSE PICKS
+                GET ACCESS
               </Link>
-              <Link href="/white-house" className="btn-secondary text-center">
-                ENTER THE WHITE HOUSE ROOM
+              <Link href="/methodology" className="btn-secondary text-center">
+                SEE HOW RUBAN FRAMES EDGE
               </Link>
             </div>
+            <p className="text-sm text-muted mb-8">Prefer to look inside first? Review the <Link href="/discord" className="text-accent underline">Discord delivery flow</Link>.</p>
 
             <div className="grid md:grid-cols-3 gap-4">
               <div className="card">
-                <p className="text-xs text-muted uppercase tracking-wider mb-2">Fight Intelligence</p>
-                <p className="text-2xl font-extrabold">13 Tracked Reads</p>
+                <p className="text-xs text-muted uppercase tracking-wider mb-2">Coverage</p>
+                <p className="text-2xl font-extrabold">13 Event Reads</p>
               </div>
               <div className="card">
-                <p className="text-xs text-muted uppercase tracking-wider mb-2">Approach</p>
-                <p className="text-2xl font-extrabold">Disciplined Unit Strategy</p>
+                <p className="text-xs text-muted uppercase tracking-wider mb-2">Framework</p>
+                <p className="text-2xl font-extrabold">Confidence + Volatility</p>
               </div>
               <div className="card">
-                <p className="text-xs text-muted uppercase tracking-wider mb-2">Delivery</p>
-                <p className="text-2xl font-extrabold">Discord + Charts</p>
+                <p className="text-xs text-muted uppercase tracking-wider mb-2">Access</p>
+                <p className="text-2xl font-extrabold">Discord Member Room</p>
               </div>
             </div>
           </div>
@@ -92,25 +96,25 @@ export default function Home() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-4xl md:text-5xl font-extrabold mb-4">
-              WHY THIS EVENT IS DIFFERENT
+              WHY THIS WEEK'S BOARD DESERVES ATTENTION
             </h2>
             <p className="text-xl text-muted max-w-3xl mx-auto">
-              Not every fight is worth touching. These are. The White House card brings rare attention, inflated handle, and more chances for disciplined bettors to isolate top-tier edges.
+              Not every fight card deserves urgency. This one does. The White House setting creates unusual public attention, heavier casual money, and a clearer need for disciplined filtering.
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
             <div className="card">
-              <h3 className="text-2xl font-bold mb-3">Historic Volume</h3>
-              <p className="text-muted">First White House UFC event. More public attention. More casual money. More market noise to exploit.</p>
+              <h3 className="text-2xl font-bold mb-3">Historic Attention</h3>
+              <p className="text-muted">A White House card pulls in a wider audience than a standard UFC weekend. More attention usually means more emotion in the market and more need for disciplined reads.</p>
             </div>
             <div className="card">
-              <h3 className="text-2xl font-bold mb-3">13 Select Positions</h3>
-              <p className="text-muted">The board is deep. The edge compounds when a full card offers multiple strong reads instead of one headline pick.</p>
+              <h3 className="text-2xl font-bold mb-3">Full-Card Coverage</h3>
+              <p className="text-muted">Instead of over-selling one main event angle, RUBAN tracks the entire event so members can evaluate multiple spots with context.</p>
             </div>
             <div className="card">
               <h3 className="text-2xl font-bold mb-3">Structured Delivery</h3>
-              <p className="text-muted">Confidence, volatility, and reasoning attached to every position so users see why the data leans strongest.</p>
+              <p className="text-muted">Confidence, volatility, and reasoning stay attached to each read so the product feels premium, organized, and transparent.</p>
             </div>
           </div>
         </div>
@@ -182,7 +186,7 @@ export default function Home() {
               <span className="text-accent">LOCKED INSIDE DISCORD</span>
             </h2>
             <p className="text-xl text-muted">
-              Select positions. Confidence scores. Volatility ratings. Premium event-week delivery.
+              The free read shows the standard. Members unlock the rest of the board, with each spot framed for conviction and risk.
             </p>
           </div>
 
@@ -215,9 +219,9 @@ export default function Home() {
 
           <div className="text-center">
             <Link href="/pricing" className="btn-primary text-xl px-12 py-4">
-              GET WHITE HOUSE ACCESS
+              UNLOCK THE FULL WHITE HOUSE BOARD
             </Link>
-            <p className="text-muted mt-4">Discord is where the full board, chart tracking, and event-night updates live.</p>
+            <p className="text-muted mt-4">Discord is where members receive the full board, structured notes, and event-night updates.</p>
           </div>
         </div>
       </section>
@@ -225,9 +229,9 @@ export default function Home() {
       <section className="py-16 px-4" id="performance-proof">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-extrabold mb-4">TRANSPARENCY BUILDS TRUST</h2>
+            <h2 className="text-4xl font-extrabold mb-4">TRANSPARENCY IS THE SALES ENGINE</h2>
             <p className="text-xl text-muted max-w-3xl mx-auto">
-              The edge only matters if users understand why it exists. RUBAN shows confidence, volatility, and reasoning so the product feels calculated — not random.
+              People buy faster when the offer feels structured. RUBAN reduces skepticism by showing how each read is framed instead of hiding behind generic “trust us” language.
             </p>
           </div>
 
@@ -235,10 +239,10 @@ export default function Home() {
             <div className="card">
               <h3 className="text-2xl font-bold mb-3">What Members See</h3>
               <ul className="space-y-3 text-muted">
-                <li>• Confidence-based reads, not fake locks</li>
-                <li>• Volatility labels so users know where variance lives</li>
-                <li>• Select positions instead of forced action on every angle</li>
-                <li>• Event-week and fight-day delivery, not channel spam</li>
+                <li>• Confidence-based reads instead of “100% lock” nonsense</li>
+                <li>• Volatility labels so variance is visible before action</li>
+                <li>• Select positions instead of forced plays on every fight</li>
+                <li>• Event-week and fight-day delivery without noisy channel spam</li>
               </ul>
             </div>
             <div className="card">
@@ -247,16 +251,16 @@ export default function Home() {
                 Opponent quality, form, striking profile, grappling profile, durability, context, confidence banding, and volatility assessment all feed the final read.
               </p>
               <p className="text-muted">
-                We don’t promise wins. We structure edge. <Link href="/methodology" className="text-accent underline">See methodology</Link>
+                We don’t promise wins. We explain the reasoning behind each position. <Link href="/methodology" className="text-accent underline">See methodology</Link>
               </p>
             </div>
           </div>
 
           <div className="card flex flex-col md:flex-row justify-between items-start md:items-center gap-5">
             <div>
-              <h3 className="text-2xl font-bold mb-2">Charts + Discord Visibility</h3>
+              <h3 className="text-2xl font-bold mb-2">Clear Member Experience</h3>
               <p className="text-muted max-w-3xl">
-                Elite dashboard visibility is now part of the product framing. Members can review performance charts on-site and receive premium chart snapshots in Discord when the data feed is finalized.
+                The premium promise is simple: cleaner reads on-site, then organized member delivery inside Discord. Performance visibility can deepen over time, but the current offer already lands when the framing stays honest.
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
@@ -270,10 +274,10 @@ export default function Home() {
       <div className="fixed bottom-0 left-0 right-0 bg-void/95 backdrop-blur-xl border-t border-accent/20 py-3 px-4 z-50">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
           <p className="text-sm font-bold text-center sm:text-left">
-            White House card live. 13 tracked reads. Discord is where the full board opens up.
+            White House coverage is live. 13 fight reads tracked. The full board opens inside Discord.
           </p>
           <Link href="/pricing" className="btn-primary text-sm px-6 py-2 w-full sm:w-auto text-center">
-            GET WHITE HOUSE ACCESS
+            UNLOCK ACCESS
           </Link>
         </div>
       </div>

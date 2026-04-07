@@ -1,210 +1,125 @@
-'use client';
-
-import { Canvas, useFrame } from '@react-three/fiber';
-import { Environment, Float, Html } from '@react-three/drei';
-import { motion, useScroll, useTransform, useMotionValueEvent } from 'framer-motion';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import * as THREE from 'three';
 import Link from 'next/link';
 
-function CagePosts() {
-  return (
-    <group>
-      {Array.from({ length: 8 }).map((_, i) => {
-        const angle = (i / 8) * Math.PI * 2;
-        const x = Math.cos(angle) * 3.5;
-        const z = Math.sin(angle) * 3.5;
-        return (
-          <mesh key={i} position={[x, 1.6, z]} castShadow>
-            <cylinderGeometry args={[0.045, 0.045, 3.2]} />
-            <meshStandardMaterial color="#4f46e5" metalness={0.9} roughness={0.18} />
-          </mesh>
-        );
-      })}
-    </group>
-  );
-}
-
-function Arena() {
-  return (
-    <group position={[0, -1.3, 0]}>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <circleGeometry args={[3.6, 8]} />
-        <meshStandardMaterial color="#111318" metalness={0.75} roughness={0.28} />
-      </mesh>
-      <mesh position={[0, 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[1.85, 1.95, 8]} />
-        <meshBasicMaterial color="#ef4444" />
-      </mesh>
-      <CagePosts />
-    </group>
-  );
-}
-
-function FighterSilhouette({ side, progress }: { side: 'left' | 'right'; progress: number }) {
-  const group = useRef<THREE.Group>(null!);
-  const direction = side === 'left' ? 1 : -1;
-  const color = side === 'left' ? '#ef4444' : '#3b82f6';
-
-  useFrame((state) => {
-    if (!group.current) return;
-    const bob = Math.sin(state.clock.elapsedTime * 1.8 + (side === 'left' ? 0 : Math.PI)) * 0.06;
-    const xStart = side === 'left' ? -4.2 : 4.2;
-    const xEnd = side === 'left' ? -1.45 : 1.45;
-    group.current.position.x = THREE.MathUtils.lerp(xStart, xEnd, progress);
-    group.current.position.y = bob;
-    group.current.rotation.y = THREE.MathUtils.lerp(side === 'left' ? 0.35 : -0.35, side === 'left' ? -0.1 : 0.1, progress);
-  });
-
-  return (
-    <group ref={group} position={[side === 'left' ? -4.2 : 4.2, 0, 0]}>
-      <Float speed={2} rotationIntensity={0.08} floatIntensity={0.12}>
-        <mesh position={[0, 1.65, 0]} castShadow>
-          <capsuleGeometry args={[0.42, 1.3, 10, 20]} />
-          <meshStandardMaterial color={color} metalness={0.25} roughness={0.48} emissive={color} emissiveIntensity={0.12} />
-        </mesh>
-        <mesh position={[0, 2.85, 0]} castShadow>
-          <sphereGeometry args={[0.34, 24, 24]} />
-          <meshStandardMaterial color={color} metalness={0.25} roughness={0.48} emissive={color} emissiveIntensity={0.1} />
-        </mesh>
-        <mesh position={[0.38 * direction, 2.05, 0]} rotation={[0, 0, side === 'left' ? -0.85 : 0.85]} castShadow>
-          <capsuleGeometry args={[0.12, 0.8, 6, 12]} />
-          <meshStandardMaterial color={color} metalness={0.2} roughness={0.5} />
-        </mesh>
-        <mesh position={[-0.38 * direction, 2.05, 0]} rotation={[0, 0, side === 'left' ? 0.45 : -0.45]} castShadow>
-          <capsuleGeometry args={[0.12, 0.8, 6, 12]} />
-          <meshStandardMaterial color={color} metalness={0.2} roughness={0.5} />
-        </mesh>
-        <mesh position={[0.18, 0.4, 0]} rotation={[0, 0, 0.1]} castShadow>
-          <capsuleGeometry args={[0.13, 1.0, 6, 12]} />
-          <meshStandardMaterial color={color} metalness={0.2} roughness={0.5} />
-        </mesh>
-        <mesh position={[-0.18, 0.4, 0]} rotation={[0, 0, -0.1]} castShadow>
-          <capsuleGeometry args={[0.13, 1.0, 6, 12]} />
-          <meshStandardMaterial color={color} metalness={0.2} roughness={0.5} />
-        </mesh>
-      </Float>
-
-      <Html position={[0, 3.8, 0]} center>
-        <div className="rounded-full border border-white/10 bg-black/55 px-3 py-2 text-center backdrop-blur-md min-w-[150px]">
-          <div className="text-sm font-bold text-white">{side === 'left' ? 'ILIA TOPURIA' : 'JUSTIN GAETHJE'}</div>
-          <div className="text-xs text-zinc-300">{side === 'left' ? '16-0 • Cleaner control' : '25-5 • Early danger'}</div>
-        </div>
-      </Html>
-    </group>
-  );
-}
-
-function Scene({ progress }: { progress: number }) {
-  const cameraRig = useRef<THREE.Group>(null!);
-
-  useFrame(() => {
-    if (!cameraRig.current) return;
-    cameraRig.current.position.z = THREE.MathUtils.lerp(7.2, 5.2, progress);
-    cameraRig.current.position.y = THREE.MathUtils.lerp(1.7, 1.25, progress);
-  });
-
-  return (
-    <group ref={cameraRig}>
-      <ambientLight intensity={0.45} />
-      <spotLight position={[5, 9, 6]} intensity={1.6} angle={0.3} penumbra={1} castShadow color="#ef4444" />
-      <spotLight position={[-5, 9, 6]} intensity={1.4} angle={0.34} penumbra={1} castShadow color="#3b82f6" />
-      <pointLight position={[0, 3.5, 2.5]} intensity={1.1} color="#fbbf24" />
-      <Arena />
-      <FighterSilhouette side="left" progress={progress} />
-      <FighterSilhouette side="right" progress={progress} />
-      <Environment preset="night" />
-    </group>
-  );
-}
+const pillars = [
+  {
+    title: 'Historic Attention',
+    body: 'Fourteen fights. One historic venue. More casual money, more public noise, and more bad framing flooding the market.',
+  },
+  {
+    title: 'Board Compression',
+    body: 'RUBAN organizes the full event before the attention spike turns every angle into a loud take.',
+  },
+  {
+    title: 'Disciplined Execution',
+    body: 'Confidence, volatility, and structural reads stay attached to each position so the board feels usable, not theatrical.',
+  },
+];
 
 export default function WhiteHousePage() {
-  const [scrollMode, setScrollMode] = useState(true);
-  const [progress, setProgress] = useState(0);
-  const { scrollYProgress } = useScroll();
-  const closeness = useTransform(scrollYProgress, [0, 0.85], [0, 1]);
-  const heroHeight = useMemo(() => 'min-h-[160vh]', []);
-
-  useMotionValueEvent(closeness, 'change', (latest) => {
-    if (scrollMode) setProgress(latest);
-  });
-
-  useEffect(() => {
-    if (!scrollMode) setProgress(0.52);
-  }, [scrollMode]);
-
   return (
-    <div className={`bg-gradient-to-b from-void to-graphite-dark ${heroHeight}`}>
-      <div className="sticky top-0 h-screen overflow-hidden">
-        <div className="absolute inset-0 z-10 pointer-events-none bg-[radial-gradient(circle_at_top,rgba(139,92,246,0.22),transparent_35%)]" />
+    <div className="min-h-screen py-24 px-4">
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center mb-12">
+          <div className="inline-block mb-4 px-4 py-2 bg-signal-red/10 border border-signal-red/40 rounded-full text-signal-red text-sm font-bold uppercase tracking-wider">
+            The War Room
+          </div>
+          <h1 className="text-5xl md:text-7xl font-extrabold mb-5 leading-[0.92]">
+            WHITE HOUSE <span className="text-accent">CARD</span>
+          </h1>
+          <p className="text-xl text-white/90 max-w-4xl mx-auto leading-relaxed">
+            Fourteen fights. One historic venue. Every casual bettor in America watching. RUBAN maps the board before the noise takes over.
+          </p>
+        </div>
 
-        <Canvas camera={{ position: [0, 1.6, 7.2], fov: 42 }} shadows>
-          <Scene progress={progress} />
-        </Canvas>
+        <div className="grid lg:grid-cols-[0.95fr_1.05fr] gap-8 items-stretch mb-12">
+          <div className="relative min-h-[460px] flex items-center justify-center rounded-3xl border border-accent/20 bg-gradient-to-b from-white/5 to-white/[0.02] overflow-hidden shadow-[0_24px_80px_rgba(0,0,0,0.35)]">
+            <div className="absolute w-[340px] h-[340px] rounded-full bg-accent/15 blur-3xl"></div>
+            <div className="absolute bottom-14 w-[260px] h-[260px] rotate-[22deg] rounded-[24%] border border-white/10 bg-white/5"></div>
 
-        <motion.div className="absolute inset-0 z-20 pointer-events-none" style={{ opacity: 1 }}>
-          <div className="absolute top-8 left-6 right-6 flex justify-between items-start pointer-events-auto">
-            <Link href="/" className="text-sm text-zinc-300 hover:text-white transition">
-              ← Back to Home
-            </Link>
-            <button
-              onClick={() => setScrollMode(!scrollMode)}
-              className="px-4 py-2 rounded-full border border-white/10 bg-black/40 text-white text-sm backdrop-blur-md"
-            >
-              {scrollMode ? 'Scroll Reactive' : 'Hero Locked'}
-            </button>
+            <div className="absolute left-4 md:left-8 top-14 w-[150px] md:w-[200px] h-[280px] md:h-[360px] rounded-3xl overflow-hidden border border-signal-red/30 shadow-[0_0_35px_rgba(239,68,68,0.18)] bg-gradient-to-b from-white/10 to-white/5">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent z-10"></div>
+              <div className="w-full h-full bg-[radial-gradient(circle_at_50%_20%,rgba(239,68,68,0.22),transparent_45%),linear-gradient(180deg,#1f2937,#0f172a)]"></div>
+              <div className="absolute bottom-4 left-4 right-4 z-20">
+                <p className="text-xl md:text-2xl font-extrabold">TOPURIA</p>
+                <p className="text-xs md:text-sm text-white/80">Pressure. Control. Cleaner phases.</p>
+              </div>
+            </div>
+
+            <div className="absolute right-4 md:right-8 top-14 w-[150px] md:w-[200px] h-[280px] md:h-[360px] rounded-3xl overflow-hidden border border-indigo/30 shadow-[0_0_35px_rgba(79,70,229,0.18)] bg-gradient-to-b from-white/10 to-white/5">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent z-10"></div>
+              <div className="w-full h-full bg-[radial-gradient(circle_at_50%_20%,rgba(79,70,229,0.22),transparent_45%),linear-gradient(180deg,#111827,#172554)]"></div>
+              <div className="absolute bottom-4 left-4 right-4 z-20 text-right">
+                <p className="text-xl md:text-2xl font-extrabold">GAETHJE</p>
+                <p className="text-xs md:text-sm text-white/80">Violence. Variance. Early danger.</p>
+              </div>
+            </div>
+
+            <div className="absolute w-20 h-20 md:w-24 md:h-24 rounded-full border border-gold/30 bg-gold/10 shadow-[0_0_35px_rgba(251,191,36,0.18)] flex items-center justify-center">
+              <span className="text-3xl md:text-4xl font-extrabold text-gold">VS</span>
+            </div>
           </div>
 
-          <div className="absolute top-24 left-1/2 -translate-x-1/2 text-center max-w-4xl px-6 pointer-events-auto">
-            <div className="inline-block px-4 py-2 bg-signal-red/20 border border-signal-red rounded-full mb-4 text-signal-red text-sm font-bold uppercase tracking-wider">
-              White House Main Event • Cinematic Hero
+          <div className="card border-accent/30">
+            <div className="flex justify-between items-center mb-6 flex-wrap gap-3">
+              <span className="text-sm text-muted uppercase tracking-wider">Main Event Module</span>
+              <span className="px-3 py-1 bg-gold/20 text-gold text-xs font-bold rounded-full">
+                MEDIUM VOLATILITY
+              </span>
             </div>
-            <h1 className="text-5xl md:text-7xl font-black text-white leading-[0.92] mb-4">
-              TOPURIA VS GAETHJE
-              <br />
-              <span className="text-gold">THE PRESSURE CLOSES</span>
-            </h1>
-            <p className="text-lg md:text-xl text-zinc-300 max-w-3xl mx-auto leading-relaxed">
-              This is not a poster. It is a live event hero built to create tension as the user scrolls deeper into the White House board. Cleaner side vs danger side. Control vs violence. Edge vs variance.
+
+            <div className="pb-6 border-b border-accent/20 mb-6">
+              <h2 className="text-4xl font-extrabold mb-3 text-signal-green">TOPURIA WINS</h2>
+              <p className="text-muted text-lg mb-5">Decision lean with late-finish upside</p>
+              <div className="flex items-center gap-4 flex-col sm:flex-row">
+                <div className="flex-1 h-4 bg-elevated rounded-full overflow-hidden w-full">
+                  <div className="h-full bg-gradient-to-r from-signal-green to-green-400" style={{ width: '68%' }}></div>
+                </div>
+                <span className="text-3xl font-mono font-bold text-signal-green">68%</span>
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-xl font-bold mb-2 text-accent">Structural Read</h3>
+                <p className="text-muted leading-relaxed">
+                  Topuria’s cleaner pressure, positional control, and more disciplined sequencing create the better five-round structure. If he keeps the fight inside those lanes, the read holds.
+                </p>
+              </div>
+              <div>
+                <h3 className="text-xl font-bold mb-2 text-accent">Risk Analysis</h3>
+                <p className="text-muted leading-relaxed">
+                  Gaethje still carries first-wave danger. The risk is not theoretical. Early knockout variance is the live counterweight to the cleaner technical side.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-6 mb-12">
+          {pillars.map((pillar) => (
+            <div key={pillar.title} className="card">
+              <h3 className="text-2xl font-bold mb-3">{pillar.title}</h3>
+              <p className="text-muted leading-relaxed">{pillar.body}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="card mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-5">
+          <div>
+            <h3 className="text-3xl font-extrabold mb-2">The full board is where the value compounds</h3>
+            <p className="text-muted max-w-3xl">
+              The main event gets attention. The rest of the card is where structure matters most when public noise starts distorting how people see the board.
             </p>
           </div>
-
-          <motion.div
-            className="absolute bottom-28 left-1/2 -translate-x-1/2 w-full max-w-5xl px-4 pointer-events-auto"
-            style={{ y: useTransform(scrollYProgress, [0, 1], [0, -80]) }}
-          >
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="rounded-2xl border border-signal-red/20 bg-black/45 backdrop-blur-xl p-5">
-                <p className="text-xs uppercase tracking-wider text-zinc-400 mb-2">Left Side</p>
-                <h3 className="text-2xl font-extrabold text-white mb-2">Ilia Topuria</h3>
-                <p className="text-sm text-zinc-300">16-0 • Cleaner sequencing, defensive wrestling, better phase control.</p>
-              </div>
-              <div className="rounded-2xl border border-gold/20 bg-black/45 backdrop-blur-xl p-5 text-center">
-                <p className="text-xs uppercase tracking-wider text-zinc-400 mb-2">Main Event Read</p>
-                <div className="text-4xl font-extrabold text-gold mb-1">68%</div>
-                <p className="text-sm text-zinc-300">High-confidence spot. Medium volatility.</p>
-              </div>
-              <div className="rounded-2xl border border-indigo/20 bg-black/45 backdrop-blur-xl p-5">
-                <p className="text-xs uppercase tracking-wider text-zinc-400 mb-2">Right Side</p>
-                <h3 className="text-2xl font-extrabold text-white mb-2">Justin Gaethje</h3>
-                <p className="text-sm text-zinc-300">25-5 • Early danger, chaos upside, knockout variance in rounds 1–2.</p>
-              </div>
-            </div>
-
-            <div className="mt-5 flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/pricing" className="btn-primary text-center pointer-events-auto">
-                UNLOCK ALL 13 WHITE HOUSE PICKS
-              </Link>
-              <Link href="/methodology" className="btn-secondary text-center pointer-events-auto">
-                SEE HOW WE FRAME EDGE
-              </Link>
-            </div>
-          </motion.div>
-
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-xs uppercase tracking-[0.22em] text-zinc-400 text-center px-4">
-            Scroll to tighten the scene • fighters close as the board opens
+          <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+            <Link href="/pricing" className="btn-primary text-center">ACCESS THE FULL BOARD</Link>
+            <Link href="/#free-pick" className="btn-secondary text-center">SEE THE FREE MAIN EVENT READ</Link>
           </div>
-        </motion.div>
+        </div>
+
+        <div className="text-center text-sm text-muted border-t border-white/10 pt-8">
+          No win-rate guarantees. No spam picks. Structured analysis for people who treat the card like a business.
+        </div>
       </div>
     </div>
   );

@@ -21,27 +21,33 @@ export default function RootLayout({
               RUBAN
             </Link>
             <div className="hidden md:flex items-center gap-6 flex-wrap justify-end">
-              <Link href="/white-house" className="text-white font-semibold hover:text-accent transition">
-                White House Card
-              </Link>
-              <Link href="/tonights-card" className="text-muted hover:text-white transition">
-                Full Card Tease
-              </Link>
-              <Link href="/pricing" className="text-muted hover:text-white transition">
-                Access
-              </Link>
-              <Link href="/discord" className="text-muted hover:text-white transition">
-                Discord
+              <Link href="/#free-pick" className="text-white font-semibold hover:text-accent transition">
+                Free Read
               </Link>
               <Link href="/methodology" className="text-muted hover:text-white transition">
-                Methodology
+                How It Works
+              </Link>
+              <Link href="/track-record" className="text-muted hover:text-white transition">
+                Board
+              </Link>
+              <Link href="https://t.me/RUBAN_UFC_Bot" className="text-muted hover:text-white transition">
+                Telegram
               </Link>
               <Link href="/pricing" className="btn-primary text-sm px-6 py-2">
-                GET WHITE HOUSE ACCESS
+                GET ACCESS
               </Link>
             </div>
           </div>
         </nav>
+        <div className="border-b border-accent/10 bg-elevated/40 backdrop-blur-xl">
+          <div className="max-w-7xl mx-auto px-4 py-3 text-center text-sm text-white/85">
+            <Link href="/white-house" className="inline-flex items-center gap-2 hover:text-accent transition">
+              <span className="font-semibold">Special Event Live</span>
+              <span className="text-accent">→</span>
+              <span>White House Card</span>
+            </Link>
+          </div>
+        </div>
         <main>{children}</main>
         <footer className="border-t border-accent/20 py-12 px-4 text-center text-muted text-sm">
           <div className="max-w-7xl mx-auto">
