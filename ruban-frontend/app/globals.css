@@ -558,6 +558,21 @@
   }
 }
 
+/* ── Stats grid responsive ── */
+@media (max-width: 780px) {
+  .stats-grid-responsive {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+  .fight-card-responsive {
+    grid-template-columns: 1fr !important;
+  }
+}
+@media (max-width: 480px) {
+  .stats-grid-responsive {
+    grid-template-columns: 1fr 1fr !important;
+  }
+}
+
 /* ── Mobile overrides ── */
 @media (max-width: 980px) {
   .hero-stage { min-height: 620px; }

@@ -5,6 +5,11 @@ import predictionsData from './data/predictions.json';
 const freePick = predictionsData.predictions.find((p) => p.is_main_event) || predictionsData.predictions[0];
 const eventName = predictionsData.event_name;
 const eventDate = predictionsData.event_date;
+const f1Name = freePick.fighter1.split(' ').slice(-1)[0];
+const f2Name = freePick.fighter2.split(' ').slice(-1)[0];
+const lockCount = predictionsData.predictions.filter((p) => p.tier === 'LOCK').length;
+const totalFightsOnCard = predictionsData.predictions.length;
+const lockRate = Math.round((lockCount / totalFightsOnCard) * 100);
 
 export default function Home() {
   return (
@@ -113,7 +118,7 @@ export default function Home() {
             {/* ── Right: cinematic fight stage ── */}
             <div className="hero-stage">
               <div className="hero-aura" />
-              <div className="stage-tag">Main Event Focus</div>
+              <div className="stage-tag">{eventName}</div>
 
               {/* side info card */}
               <div className="stage-side-card">
@@ -125,8 +130,8 @@ export default function Home() {
               <div className="hero-rings" />
               <div className="stage-lines" />
 
-              {/* Left fighter — Topuria */}
-              <div className="fighter left" aria-label="Ilia Topuria stylized silhouette">
+              {/* Left fighter */}
+              <div className="fighter left" aria-label={`${freePick.fighter1} stylized silhouette`}>
                 <div className="fighter-rim" />
                 <div className="fighter-core">
                   <div className="fighter-part fighter-head" />
@@ -141,13 +146,13 @@ export default function Home() {
                   <div className="fighter-part fighter-leg leg-l2" />
                 </div>
                 <div className="fighter-label">
-                  <div className="fighter-name">Topuria</div>
+                  <div className="fighter-name">{f1Name}</div>
                   <div className="fighter-meta">Pressure • Control • Tight phases</div>
                 </div>
               </div>
 
-              {/* Right fighter — Gaethje */}
-              <div className="fighter right" aria-label="Justin Gaethje stylized silhouette">
+              {/* Right fighter */}
+              <div className="fighter right" aria-label={`${freePick.fighter2} stylized silhouette`}>
                 <div className="fighter-rim" />
                 <div className="fighter-core">
                   <div className="fighter-part fighter-head" />
@@ -162,7 +167,7 @@ export default function Home() {
                   <div className="fighter-part fighter-leg leg-l2" />
                 </div>
                 <div className="fighter-label">
-                  <div className="fighter-name">Gaethje</div>
+                  <div className="fighter-name">{f2Name}</div>
                   <div className="fighter-meta">Violence • Variance • Early danger</div>
                 </div>
               </div>
@@ -170,7 +175,7 @@ export default function Home() {
               <div className="hero-vs"><span>VS</span></div>
 
               <div className="story-card">
-                <div className="kicker">Main Event · Topuria vs Gaethje</div>
+                <div className="kicker">Main Event · {freePick.fighter1} vs {freePick.fighter2}</div>
                 <h3>Control vs Chaos</h3>
                 <p>
                   One man compresses the fight. One man detonates it. RUBAN tells you where the structure holds — and where the danger lives.
@@ -340,6 +345,48 @@ export default function Home() {
               <Link href="/pricing" className="btn-primary" style={{ width: '100%', textAlign: 'center' }}>
                 Access The Full Board
               </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════
+          SYSTEM PERFORMANCE
+      ═══════════════════════════════════════════ */}
+      <section style={{ padding: '84px 0', borderTop: '1px solid var(--line)' }}>
+        <div style={{ width: 'min(1180px, calc(100% - 32px))', margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', maxWidth: 840, margin: '0 auto 40px' }}>
+            <div className="eyebrow" style={{ marginBottom: 18, display: 'inline-flex' }}>
+              <span className="eyebrow-dot" />
+              Verified Performance
+            </div>
+            <h2 style={{ fontSize: 'clamp(2.7rem, 6vw, 4.6rem)', lineHeight: 0.95, marginBottom: 10 }}>
+              THE NUMBERS DON&apos;T LIE
+            </h2>
+            <p style={{ color: 'var(--muted)', fontSize: '1rem', lineHeight: 1.7, fontFamily: 'Inter, sans-serif' }}>
+              System output. No narrative.
+            </p>
+          </div>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+            gap: 16,
+          }} className="stats-grid-responsive">
+            <div className="card" style={{ textAlign: 'center', padding: '32px 20px' }}>
+              <div style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '3.8rem', color: 'var(--purple)', lineHeight: 1, marginBottom: 10 }}>—</div>
+              <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--muted)', fontWeight: 700 }}>Total Fights Analyzed</div>
+            </div>
+            <div className="card" style={{ textAlign: 'center', padding: '32px 20px' }}>
+              <div style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '3.8rem', color: 'var(--green)', lineHeight: 1, marginBottom: 10 }}>—</div>
+              <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--muted)', fontWeight: 700 }}>Correct Picks</div>
+            </div>
+            <div className="card" style={{ textAlign: 'center', padding: '32px 20px' }}>
+              <div style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '3.8rem', color: 'var(--gold)', lineHeight: 1, marginBottom: 10 }}>—</div>
+              <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--muted)', fontWeight: 700 }}>Win Rate</div>
+            </div>
+            <div className="card" style={{ textAlign: 'center', padding: '32px 20px' }}>
+              <div style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '3.8rem', color: 'var(--magenta)', lineHeight: 1, marginBottom: 10 }}>{lockRate}%</div>
+              <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--muted)', fontWeight: 700 }}>Lock Rate This Card</div>
             </div>
           </div>
         </div>
