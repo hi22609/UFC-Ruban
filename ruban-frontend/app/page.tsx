@@ -39,7 +39,7 @@ export default function Home() {
             <div>
               <div className="eyebrow" style={{ marginBottom: 18 }}>
                 <span className="eyebrow-dot" />
-                UFC · White House Event · April 2026
+                UFC · {eventName}
               </div>
 
               <h1 style={{
@@ -47,8 +47,8 @@ export default function Home() {
                 lineHeight: 0.84,
                 marginBottom: 16,
               }}>
-                THE WHITE<br />
-                <span className="text-gradient-hero">HOUSE CARD.</span>
+                THIS WEEK'S<br />
+                <span className="text-gradient-hero">BOARD.</span>
               </h1>
 
               <p style={{
@@ -59,7 +59,7 @@ export default function Home() {
                 marginBottom: 14,
                 fontFamily: 'Inter, sans-serif',
               }}>
-                Fourteen fights. One historic venue. Every casual bettor in America watching. RUBAN maps the board before the noise takes over.
+                Premium fight intelligence for disciplined operators. Confidence levels, volatility flags, and full-card reads — delivered before the market moves.
               </p>
               <p style={{
                 fontSize: '0.98rem',
@@ -86,8 +86,8 @@ export default function Home() {
                 marginBottom: 14,
               }}>
                 <div className="mini-card">
-                  <div className="kicker">Event</div>
-                  <div className="value">White House · April 2026</div>
+                  <div className="kicker">Current Event</div>
+                  <div className="value">{eventName}</div>
                 </div>
                 <div className="mini-card">
                   <div className="kicker">Coverage</div>
@@ -113,13 +113,13 @@ export default function Home() {
             {/* ── Right: cinematic fight stage ── */}
             <div className="hero-stage">
               <div className="hero-aura" />
-              <div className="stage-tag">White House Event · Main Event</div>
+              <div className="stage-tag">Main Event Focus</div>
 
               {/* side info card */}
               <div className="stage-side-card">
-                <div className="label">The opportunity</div>
-                <h3>Historic card. More casual money. Bigger spreads.</h3>
-                <p>High-attention events pull in noise that disciplined readers can work against.</p>
+                <div className="label">This week</div>
+                <h3>{freePick.fighter1}<br />vs<br />{freePick.fighter2}</h3>
+                <p>{freePick.weight_class} · Main Event</p>
               </div>
 
               <div className="hero-rings" />
