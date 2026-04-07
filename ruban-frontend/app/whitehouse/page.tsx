@@ -2,33 +2,27 @@ import Link from 'next/link';
 import Countdown from '../components/Countdown';
 import predictionsData from '../data/predictions.json';
 
-const freePick = predictionsData.predictions.find((p) => p.is_main_event) || predictionsData.predictions[0];
+const mainEvent =
+  predictionsData.predictions.find((p) => p.is_main_event) ||
+  predictionsData.predictions[0];
 const eventName = predictionsData.event_name;
-const f1Name = freePick.fighter1.split(' ').slice(-1)[0];
-const f2Name = freePick.fighter2.split(' ').slice(-1)[0];
 
 const pillars = [
   {
-    title: 'The Casual Money Flood',
-    body: 'The White House card pulls in the widest casual audience UFC has seen in years. Mainstream attention means millions of untrained bettors flooding lines with emotional, unstructured money. That irrational volume spikes favorites, inflates props, and creates specific distortions fight by fight.',
+    title: 'Casual Money Flood',
+    body:
+      'The White House card pulls in the widest casual audience UFC has seen in years. Millions of untrained bettors flooding lines with emotional, unstructured money. That irrational volume spikes favorites, inflates props, and creates specific distortions fight by fight.',
   },
   {
-    title: 'The Early Position Window',
-    body: 'Edges exist before fight week. After the attention spike, lines move fast and the value compresses. Members who get the full board now — before the casual money floods in — get reads at better numbers, with cleaner framing before the noise takes over.',
+    title: 'Early Position Window',
+    body:
+      'Edges exist before fight week. After the attention spike, lines move fast and value compresses. Members who get the full board now — before the casual money floods in — get reads at better numbers with cleaner framing.',
   },
   {
-    title: 'The $1M Projection',
-    body: 'Based on member position sizing, board depth, and historical read confidence, we project over $1,000,000 in combined member profits from this card alone. That is not a guarantee. It is a structural case built on 14 fights, an abnormal attention spike, and disciplined execution.',
+    title: 'Board Depth',
+    body:
+      'A fourteen-fight card with a historic main event creates room to find clean positions beyond the obvious headline. The whole board is worth mapping. When confidence on a fight isn&apos;t high enough, members don&apos;t get a forced read.',
   },
-];
-
-const boardFeatures = [
-  { label: '14 Fights', desc: 'Full card coverage, every position framed' },
-  { label: 'Pre-Movement Reads', desc: 'Delivered before fight-week line compression' },
-  { label: 'Confidence Scoring', desc: 'No fake locks — every read comes with a number' },
-  { label: 'Volatility Tags', desc: 'Know the risk before you act' },
-  { label: 'Structural Reasoning', desc: 'Why the read exists, not just who to pick' },
-  { label: 'Private Discord', desc: 'Board lives in the member room, organized by fight' },
 ];
 
 export default function WhiteHousePage() {
@@ -37,76 +31,99 @@ export default function WhiteHousePage() {
       {/* ══════════════════════════════════════
           HERO
       ══════════════════════════════════════ */}
-      <section style={{
-        padding: '84px 0 68px',
-        borderBottom: '1px solid var(--line)',
-        position: 'relative',
-        overflow: 'hidden',
-        textAlign: 'center',
-      }}>
-        <div style={{
-          position: 'absolute',
-          inset: '0 0 auto 0',
-          height: 480,
-          background: 'radial-gradient(circle at 50% 10%, rgba(251,191,36,0.07), transparent 32%)',
-          pointerEvents: 'none',
-        }} />
-        <div style={{ width: 'min(1180px, calc(100% - 32px))', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+      <section
+        style={{
+          padding: '84px 0 72px',
+          textAlign: 'center',
+          position: 'relative',
+          overflow: 'hidden',
+        }}
+      >
+        {/* Gold glow */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: '0 0 auto 0',
+            height: 400,
+            background:
+              'radial-gradient(ellipse at 50% 0%, rgba(251,191,36,0.1) 0%, transparent 60%)',
+            pointerEvents: 'none',
+          }}
+        />
+
+        <div className="wrap" style={{ position: 'relative', zIndex: 1 }}>
           <div className="eyebrow" style={{ marginBottom: 20, display: 'inline-flex' }}>
             <span className="eyebrow-dot" />
             Special Event · War Room
           </div>
 
-          <div style={{
-            display: 'inline-block',
-            margin: '0 auto 18px',
-            padding: '7px 16px',
-            borderRadius: 999,
-            background: 'rgba(239,68,68,0.1)',
-            border: '1px solid rgba(239,68,68,0.35)',
-            color: '#ef4444',
-            fontSize: '0.78rem',
-            fontWeight: 800,
-            textTransform: 'uppercase',
-            letterSpacing: '0.1em',
-            fontFamily: 'Inter, sans-serif',
-          }}>
+          <span
+            style={{
+              display: 'inline-block',
+              padding: '6px 14px',
+              borderRadius: 999,
+              background: 'rgba(239,68,68,0.1)',
+              border: '1px solid rgba(239,68,68,0.3)',
+              color: '#ef4444',
+              fontSize: '0.76rem',
+              fontWeight: 700,
+              fontFamily: 'Inter, sans-serif',
+              textTransform: 'uppercase',
+              letterSpacing: '0.1em',
+              marginBottom: 16,
+            }}
+          >
             April 12 · 2026 · Live Event
-          </div>
+          </span>
 
-          <h1 style={{
-            fontSize: 'clamp(4.4rem, 10vw, 8.4rem)',
-            lineHeight: 0.84,
-            marginBottom: 22,
-          }}>
-            WHITE HOUSE<br />
-            <span style={{
-              background: 'linear-gradient(135deg, var(--gold), #fef08a)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-            }}>CARD · 2026</span>
+          <h1
+            style={{
+              fontSize: 'clamp(4rem, 9vw, 8rem)',
+              lineHeight: 0.87,
+              marginBottom: 22,
+            }}
+          >
+            White House<br />
+            <span className="text-gradient-gold">Card · 2026</span>
           </h1>
 
-          <p style={{
-            fontSize: '1.18rem',
-            lineHeight: 1.58,
-            color: '#edf2f7',
-            maxWidth: 680,
-            margin: '0 auto 22px',
-            fontFamily: 'Inter, sans-serif',
-          }}>
-            Fourteen fights. One historic venue. Every casual bettor in America watching. RUBAN maps the board before the noise takes over.
+          <p
+            style={{
+              fontSize: '1.12rem',
+              lineHeight: 1.65,
+              color: '#d1d9e8',
+              maxWidth: 640,
+              margin: '0 auto 28px',
+              fontFamily: 'Inter, sans-serif',
+            }}
+          >
+            Fourteen fights. One historic venue. Every casual bettor in America watching.
+            RUBAN maps the full board before the noise takes over.
           </p>
 
-          <Countdown className="justify-center mb-8" />
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              marginBottom: 32,
+            }}
+          >
+            <Countdown />
+          </div>
 
-          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center', marginTop: 26 }}>
-            <Link href="/pricing" className="btn-primary" style={{ fontSize: '1rem', padding: '0 32px' }}>
-              ACCESS THE FULL BOARD
+          <div
+            style={{
+              display: 'flex',
+              gap: 12,
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+            }}
+          >
+            <Link href="/pricing" className="btn-primary" style={{ padding: '0 36px' }}>
+              Access The Full Board
             </Link>
-            <Link href="/#free-pick" className="btn-secondary" style={{ fontSize: '1rem', padding: '0 32px' }}>
-              SEE THE FREE READ
+            <Link href="/#free-pick" className="btn-secondary" style={{ padding: '0 36px' }}>
+              See The Free Read
             </Link>
           </div>
         </div>
@@ -115,47 +132,68 @@ export default function WhiteHousePage() {
       {/* ══════════════════════════════════════
           $1M PROJECTION
       ══════════════════════════════════════ */}
-      <section style={{ padding: '84px 0', background: 'rgba(14,17,27,0.55)' }}>
-        <div style={{ width: 'min(1180px, calc(100% - 32px))', margin: '0 auto', textAlign: 'center' }}>
+      <section
+        style={{
+          padding: '80px 0',
+          borderTop: '1px solid var(--line)',
+          borderBottom: '1px solid var(--line)',
+          background: 'rgba(12,14,22,0.55)',
+          textAlign: 'center',
+        }}
+      >
+        <div className="wrap">
           <div className="eyebrow" style={{ marginBottom: 20, display: 'inline-flex' }}>
             <span className="eyebrow-dot" />
             Profit Projection
           </div>
-          <h2 style={{
-            fontSize: 'clamp(3.5rem, 8vw, 6.5rem)',
-            lineHeight: 0.9,
-            marginBottom: 12,
-            color: 'var(--gold)',
-          }}>
+          <p
+            style={{
+              fontFamily: 'Bebas Neue, sans-serif',
+              fontSize: 'clamp(4rem, 10vw, 7rem)',
+              color: 'var(--gold)',
+              lineHeight: 0.9,
+              marginBottom: 12,
+            }}
+          >
             $1,000,000+
-          </h2>
-          <p style={{
-            fontSize: '1.2rem',
-            color: 'var(--gold)',
-            fontWeight: 700,
-            marginBottom: 20,
-            fontFamily: 'Inter, sans-serif',
-          }}>
+          </p>
+          <p
+            style={{
+              fontSize: '1.1rem',
+              color: 'var(--gold)',
+              fontWeight: 700,
+              marginBottom: 20,
+              fontFamily: 'Inter, sans-serif',
+            }}
+          >
             Projected member profits — White House card alone
           </p>
-          <p style={{
-            fontSize: '1.05rem',
-            lineHeight: 1.68,
-            color: 'var(--muted)',
-            maxWidth: 740,
-            margin: '0 auto 18px',
-            fontFamily: 'Inter, sans-serif',
-          }}>
-            This is not a marketing number. It is a structural case. 14 fights. Abnormal casual money volume creating specific distortions. RUBAN has been generating exceptional prediction accuracy across events. Members who are positioned early — before the lines move — capture the most value.
+          <p
+            style={{
+              fontSize: '1rem',
+              lineHeight: 1.7,
+              color: 'var(--muted)',
+              maxWidth: 700,
+              margin: '0 auto 14px',
+              fontFamily: 'Inter, sans-serif',
+            }}
+          >
+            This is not a marketing number. It&apos;s a structural case. 14 fights.
+            Abnormal casual money volume creating specific distortions. Members who are
+            positioned early — before lines move — capture the most value.
           </p>
-          <p style={{
-            fontSize: '0.82rem',
-            color: 'rgba(156,163,175,0.65)',
-            maxWidth: 540,
-            margin: '0 auto',
-            fontFamily: 'Inter, sans-serif',
-          }}>
-            Projected profits represent estimated member opportunity based on position sizing and read confidence. Not a guarantee of returns. Past analysis accuracy does not guarantee future results.
+          <p
+            style={{
+              fontSize: '0.78rem',
+              color: '#4b5563',
+              maxWidth: 520,
+              margin: '0 auto',
+              fontFamily: 'Inter, sans-serif',
+              lineHeight: 1.6,
+            }}
+          >
+            Projected profits represent estimated member opportunity based on position sizing
+            and read confidence. Not a guarantee of returns.
           </p>
         </div>
       </section>
@@ -163,18 +201,49 @@ export default function WhiteHousePage() {
       {/* ══════════════════════════════════════
           THREE PILLARS
       ══════════════════════════════════════ */}
-      <section style={{ padding: '84px 0', borderTop: '1px solid var(--line)' }}>
-        <div style={{ width: 'min(1180px, calc(100% - 32px))', margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', maxWidth: 840, margin: '0 auto 42px' }}>
-            <h2 style={{ fontSize: 'clamp(2.7rem, 6vw, 4.6rem)', lineHeight: 0.95 }}>
-              WHY THIS CARD IS DIFFERENT
+      <section style={{ padding: '80px 0' }}>
+        <div className="wrap">
+          <div style={{ textAlign: 'center', maxWidth: 640, margin: '0 auto 48px' }}>
+            <h2
+              style={{
+                fontSize: 'clamp(2.4rem, 5vw, 4rem)',
+                lineHeight: 0.95,
+                marginBottom: 12,
+              }}
+            >
+              Why This Card Is Different
             </h2>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 16 }} className="triple-responsive">
+
+          <div
+            className="three-col"
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3, minmax(0,1fr))',
+              gap: 20,
+            }}
+          >
             {pillars.map((p) => (
               <div key={p.title} className="card">
-                <h3 style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '1.5rem', marginBottom: 12 }}>{p.title}</h3>
-                <p style={{ color: 'var(--muted)', fontFamily: 'Inter, sans-serif', fontSize: '0.95rem', lineHeight: 1.65 }}>{p.body}</p>
+                <h3
+                  style={{
+                    fontFamily: 'Bebas Neue, sans-serif',
+                    fontSize: '1.5rem',
+                    marginBottom: 12,
+                    color: 'var(--gold)',
+                  }}
+                >
+                  {p.title}
+                </h3>
+                <p
+                  style={{
+                    color: 'var(--muted)',
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '0.9rem',
+                    lineHeight: 1.65,
+                  }}
+                  dangerouslySetInnerHTML={{ __html: p.body }}
+                />
               </div>
             ))}
           </div>
@@ -184,171 +253,326 @@ export default function WhiteHousePage() {
       {/* ══════════════════════════════════════
           MAIN EVENT MODULE
       ══════════════════════════════════════ */}
-      <section style={{ padding: '84px 0', background: 'rgba(14,17,27,0.55)', borderTop: '1px solid var(--line)' }}>
-        <div style={{ width: 'min(1180px, calc(100% - 32px))', margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: 42 }}>
+      <section
+        style={{
+          padding: '80px 0',
+          borderTop: '1px solid var(--line)',
+          background: 'rgba(12,14,22,0.55)',
+        }}
+      >
+        <div className="wrap">
+          <div style={{ textAlign: 'center', marginBottom: 48 }}>
             <div className="eyebrow" style={{ marginBottom: 18, display: 'inline-flex' }}>
               <span className="eyebrow-dot" />
               Free Read
             </div>
-            <h2 style={{ fontSize: 'clamp(2.7rem, 6vw, 4.6rem)', lineHeight: 0.95, marginBottom: 10 }}>
-              MAIN EVENT · FREE READ
+            <h2
+              style={{
+                fontSize: 'clamp(2.4rem, 5vw, 4rem)',
+                lineHeight: 0.95,
+                marginBottom: 10,
+              }}
+            >
+              Main Event · Public Read
             </h2>
-            <p style={{ color: 'var(--muted)', fontFamily: 'Inter, sans-serif', fontSize: '1rem' }}>
-              RUBAN&apos;s public position on the headline fight
+            <p
+              style={{
+                color: 'var(--muted)',
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '0.95rem',
+              }}
+            >
+              RUBAN&apos;s structural position on the headline fight
             </p>
           </div>
 
-          <div className="card" style={{ border: '1px solid rgba(139,92,246,0.3)', maxWidth: 900, margin: '0 auto', padding: '28px 28px' }}>
+          <div
+            className="card"
+            style={{
+              border: '1px solid rgba(139,92,246,0.25)',
+              maxWidth: 860,
+              margin: '0 auto',
+              padding: 32,
+            }}
+          >
             {/* Header row */}
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: 26,
-              flexWrap: 'wrap',
-              gap: 12,
-            }}>
-              <span style={{
-                fontSize: '0.82rem',
-                color: 'var(--muted)',
-                textTransform: 'uppercase',
-                letterSpacing: '0.07em',
-                fontFamily: 'Inter, sans-serif',
-              }}>
-                {freePick.weight_class} · Main Event · {eventName}
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                gap: 10,
+                marginBottom: 24,
+              }}
+            >
+              <span
+                style={{
+                  fontSize: '0.78rem',
+                  color: 'var(--muted)',
+                  fontFamily: 'Inter, sans-serif',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.08em',
+                }}
+              >
+                {mainEvent.weight_class} · Main Event · {eventName}
               </span>
-              <span style={{
-                padding: '6px 12px',
-                borderRadius: 999,
-                background: 'rgba(251,191,36,0.15)',
-                color: 'var(--gold)',
-                fontSize: '0.78rem',
-                fontWeight: 800,
-                border: '1px solid rgba(251,191,36,0.25)',
-                fontFamily: 'Inter, sans-serif',
-                textTransform: 'uppercase',
-                letterSpacing: '0.06em',
-              }}>
-                MEDIUM VOLATILITY
-              </span>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <span
+                  style={{
+                    padding: '5px 12px',
+                    borderRadius: 999,
+                    background: 'rgba(251,191,36,0.1)',
+                    border: '1px solid rgba(251,191,36,0.2)',
+                    color: 'var(--gold)',
+                    fontSize: '0.72rem',
+                    fontWeight: 800,
+                    fontFamily: 'Inter, sans-serif',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.08em',
+                  }}
+                >
+                  {mainEvent.tier}
+                </span>
+                <span
+                  style={{
+                    padding: '5px 12px',
+                    borderRadius: 999,
+                    background: 'rgba(255,255,255,0.04)',
+                    border: '1px solid var(--card-border)',
+                    color: 'var(--muted)',
+                    fontSize: '0.72rem',
+                    fontWeight: 700,
+                    fontFamily: 'Inter, sans-serif',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.08em',
+                  }}
+                >
+                  Medium Volatility
+                </span>
+              </div>
             </div>
 
-            {/* Two-col layout: fighter stage + analysis */}
-            <div style={{ display: 'grid', gridTemplateColumns: '0.9fr 1.1fr', gap: 28, alignItems: 'center' }} className="fight-card-responsive">
-
-              {/* Fighter visual */}
-              <div style={{
-                position: 'relative',
-                minHeight: 300,
-                borderRadius: 22,
-                border: '1px solid rgba(255,255,255,0.08)',
-                background: 'linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01))',
-                overflow: 'hidden',
-                display: 'flex',
+            <div
+              className="two-col"
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '0.85fr 1.15fr',
+                gap: 32,
                 alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-                {/* gold top glow */}
-                <div style={{
-                  position: 'absolute',
-                  inset: '-10% 10% auto',
-                  height: 160,
-                  background: 'radial-gradient(circle, rgba(251,191,36,0.14), transparent 56%)',
-                  filter: 'blur(20px)',
-                  opacity: 0.8,
-                  pointerEvents: 'none',
-                }} />
+              }}
+            >
+              {/* Fighter visual */}
+              <div
+                style={{
+                  minHeight: 280,
+                  borderRadius: 20,
+                  border: '1px solid var(--card-border)',
+                  background:
+                    'linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01))',
+                  overflow: 'hidden',
+                  position: 'relative',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                {/* top glow */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: 140,
+                    background:
+                      'radial-gradient(ellipse at 50% 0%, rgba(251,191,36,0.15) 0%, transparent 70%)',
+                    pointerEvents: 'none',
+                  }}
+                />
 
                 {/* Left fighter card */}
-                <div style={{
-                  position: 'absolute',
-                  left: 12,
-                  top: 20,
-                  width: 120,
-                  height: 220,
-                  borderRadius: 20,
-                  overflow: 'hidden',
-                  border: '1px solid rgba(239,68,68,0.32)',
-                  background: 'radial-gradient(circle at 50% 20%, rgba(239,68,68,0.22), transparent 46%), linear-gradient(180deg, #1f2937, #0f172a)',
-                }}>
-                  <div style={{ position: 'absolute', bottom: 12, left: 12, right: 12 }}>
-                    <p style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '1.25rem', lineHeight: 1, marginBottom: 3 }}>{f1Name}</p>
-                    <p style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.65)', fontFamily: 'Inter, sans-serif', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Pressure · Control</p>
-                  </div>
-                </div>
-
-                {/* Right fighter card */}
-                <div style={{
-                  position: 'absolute',
-                  right: 12,
-                  top: 20,
-                  width: 120,
-                  height: 220,
-                  borderRadius: 20,
-                  overflow: 'hidden',
-                  border: '1px solid rgba(79,70,229,0.32)',
-                  background: 'radial-gradient(circle at 50% 20%, rgba(79,70,229,0.22), transparent 46%), linear-gradient(180deg, #111827, #172554)',
-                }}>
-                  <div style={{ position: 'absolute', bottom: 12, left: 12, right: 12, textAlign: 'right' }}>
-                    <p style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '1.25rem', lineHeight: 1, marginBottom: 3 }}>{f2Name}</p>
-                    <p style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.65)', fontFamily: 'Inter, sans-serif', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Violence · Variance</p>
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: 10,
+                    top: 16,
+                    width: '42%',
+                    bottom: 16,
+                    borderRadius: 16,
+                    border: '1px solid rgba(239,68,68,0.3)',
+                    background:
+                      'radial-gradient(ellipse at 50% 20%, rgba(239,68,68,0.2) 0%, transparent 55%), linear-gradient(180deg, #1f2937, #0f172a)',
+                    display: 'flex',
+                    alignItems: 'flex-end',
+                    padding: 10,
+                  }}
+                >
+                  <div>
+                    <p
+                      style={{
+                        fontFamily: 'Bebas Neue, sans-serif',
+                        fontSize: '1.1rem',
+                        lineHeight: 1,
+                        marginBottom: 3,
+                      }}
+                    >
+                      {mainEvent.fighter1.split(' ').slice(-1)[0]}
+                    </p>
+                    <p
+                      style={{
+                        fontSize: '0.6rem',
+                        color: 'rgba(255,255,255,0.5)',
+                        fontFamily: 'Inter, sans-serif',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.04em',
+                      }}
+                    >
+                      Pressure
+                    </p>
                   </div>
                 </div>
 
                 {/* VS badge */}
-                <div style={{
-                  width: 64,
-                  height: 64,
-                  borderRadius: '50%',
-                  border: '1px solid rgba(251,191,36,0.3)',
-                  background: 'radial-gradient(circle, rgba(251,191,36,0.26), rgba(9,10,14,0.78))',
-                  boxShadow: '0 0 32px rgba(251,191,36,0.18)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  zIndex: 2,
-                }}>
-                  <span style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '1.7rem', color: 'var(--gold)' }}>VS</span>
+                <div
+                  style={{
+                    width: 52,
+                    height: 52,
+                    borderRadius: '50%',
+                    border: '1px solid rgba(251,191,36,0.3)',
+                    background: 'radial-gradient(circle, rgba(251,191,36,0.22), rgba(6,7,11,0.9))',
+                    boxShadow: '0 0 24px rgba(251,191,36,0.18)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 2,
+                    flexShrink: 0,
+                  }}
+                >
+                  <span
+                    style={{
+                      fontFamily: 'Bebas Neue, sans-serif',
+                      fontSize: '1.4rem',
+                      color: 'var(--gold)',
+                    }}
+                  >
+                    VS
+                  </span>
+                </div>
+
+                {/* Right fighter card */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    right: 10,
+                    top: 16,
+                    width: '42%',
+                    bottom: 16,
+                    borderRadius: 16,
+                    border: '1px solid rgba(79,70,229,0.3)',
+                    background:
+                      'radial-gradient(ellipse at 50% 20%, rgba(79,70,229,0.2) 0%, transparent 55%), linear-gradient(180deg, #111827, #172554)',
+                    display: 'flex',
+                    alignItems: 'flex-end',
+                    padding: 10,
+                    textAlign: 'right',
+                  }}
+                >
+                  <div style={{ width: '100%' }}>
+                    <p
+                      style={{
+                        fontFamily: 'Bebas Neue, sans-serif',
+                        fontSize: '1.1rem',
+                        lineHeight: 1,
+                        marginBottom: 3,
+                      }}
+                    >
+                      {mainEvent.fighter2.split(' ').slice(-1)[0]}
+                    </p>
+                    <p
+                      style={{
+                        fontSize: '0.6rem',
+                        color: 'rgba(255,255,255,0.5)',
+                        fontFamily: 'Inter, sans-serif',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.04em',
+                      }}
+                    >
+                      Variance
+                    </p>
+                  </div>
                 </div>
               </div>
 
               {/* Analysis */}
               <div>
-                <h3 style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '2.6rem', color: 'var(--green)', marginBottom: 6, lineHeight: 1 }}>
-                  {freePick.winner} WINS
-                </h3>
-                <p style={{ color: 'var(--muted)', marginBottom: 20, fontFamily: 'Inter, sans-serif', fontSize: '0.95rem' }}>
-                  {freePick.method} lean with finish upside
-                </p>
-
-                {/* Confidence bar */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 22 }}>
-                  <div className="conf-bar">
-                    <span style={{ width: `${freePick.confidence}%` }} />
-                  </div>
-                  <span style={{
+                <h3
+                  style={{
                     fontFamily: 'Bebas Neue, sans-serif',
                     fontSize: '2.4rem',
                     color: 'var(--green)',
                     lineHeight: 1,
-                  }}>
-                    {freePick.confidence}%
+                    marginBottom: 6,
+                  }}
+                >
+                  {mainEvent.winner} Wins
+                </h3>
+                <p
+                  style={{
+                    color: 'var(--muted)',
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '0.88rem',
+                    marginBottom: 18,
+                  }}
+                >
+                  {mainEvent.method} lean · {mainEvent.fighter1} vs {mainEvent.fighter2}
+                </p>
+
+                {/* Confidence bar */}
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 14,
+                    marginBottom: 20,
+                  }}
+                >
+                  <div className="conf-bar">
+                    <span style={{ width: `${mainEvent.confidence}%` }} />
+                  </div>
+                  <span
+                    style={{
+                      fontFamily: 'Bebas Neue, sans-serif',
+                      fontSize: '2rem',
+                      color: 'var(--green)',
+                      lineHeight: 1,
+                      flexShrink: 0,
+                    }}
+                  >
+                    {mainEvent.confidence}%
                   </span>
                 </div>
 
-                <p style={{
-                  color: 'var(--muted)',
-                  lineHeight: 1.65,
-                  marginBottom: 22,
-                  fontFamily: 'Inter, sans-serif',
-                  fontSize: '0.93rem',
-                }}>
-                  {freePick.analysis.slice(0, 220)}&hellip;
+                <p
+                  style={{
+                    color: 'var(--muted)',
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '0.9rem',
+                    lineHeight: 1.65,
+                    marginBottom: 22,
+                  }}
+                >
+                  {mainEvent.analysis.length > 220
+                    ? mainEvent.analysis.slice(0, 220) + '…'
+                    : mainEvent.analysis}
                 </p>
 
-                <Link href="/pricing" className="btn-primary" style={{ width: '100%', textAlign: 'center' }}>
-                  UNLOCK THE FULL BOARD
+                <Link
+                  href="/pricing"
+                  className="btn-primary"
+                  style={{ width: '100%', display: 'flex', justifyContent: 'center' }}
+                >
+                  Unlock The Full Board
                 </Link>
               </div>
             </div>
@@ -357,61 +581,89 @@ export default function WhiteHousePage() {
       </section>
 
       {/* ══════════════════════════════════════
-          WHAT MEMBERS GET
+          CTA BLOCK
       ══════════════════════════════════════ */}
-      <section style={{ padding: '84px 0', borderTop: '1px solid var(--line)' }}>
-        <div style={{ width: 'min(1180px, calc(100% - 32px))', margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', maxWidth: 840, margin: '0 auto 42px' }}>
-            <h2 style={{ fontSize: 'clamp(2.7rem, 6vw, 4.6rem)', lineHeight: 0.95 }}>
-              WHAT MEMBERS GET
-            </h2>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 16, marginBottom: 40 }} className="triple-responsive">
-            {boardFeatures.map((f) => (
-              <div key={f.label} className="card">
-                <p style={{ color: 'var(--green)', fontWeight: 700, marginBottom: 6, fontFamily: 'Inter, sans-serif', fontSize: '0.95rem' }}>{f.label}</p>
-                <p style={{ color: 'var(--muted)', fontFamily: 'Inter, sans-serif', fontSize: '0.88rem', lineHeight: 1.55 }}>{f.desc}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* CTA card */}
-          <div className="card" style={{ border: '1px solid rgba(251,191,36,0.25)', padding: '28px 28px' }}>
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              gap: 20,
-            }}>
+      <section
+        style={{
+          padding: '80px 0',
+          borderTop: '1px solid var(--line)',
+        }}
+      >
+        <div className="wrap">
+          <div
+            className="card"
+            style={{
+              border: '1px solid rgba(251,191,36,0.2)',
+              padding: '40px 36px',
+              maxWidth: 820,
+              margin: '0 auto',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                gap: 24,
+              }}
+            >
               <div>
-                <h3 style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '1.8rem', marginBottom: 8 }}>
-                  The window closes when the odds move
-                </h3>
-                <p style={{ color: 'var(--muted)', fontFamily: 'Inter, sans-serif', fontSize: '0.95rem' }}>
-                  Once fight-week money floods in, the best numbers are gone.
+                <h2
+                  style={{
+                    fontFamily: 'Bebas Neue, sans-serif',
+                    fontSize: 'clamp(1.8rem, 3.5vw, 2.5rem)',
+                    lineHeight: 0.95,
+                    marginBottom: 10,
+                  }}
+                >
+                  The window closes<br />when the odds move
+                </h2>
+                <p
+                  style={{
+                    color: 'var(--muted)',
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '0.95rem',
+                    lineHeight: 1.55,
+                    maxWidth: 420,
+                  }}
+                >
+                  Once fight-week money floods in, the best numbers are gone. Early
+                  members get the full board before the market gets loud.
                 </p>
               </div>
-              <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-                <Link href="/pricing" className="btn-primary">ACCESS THE FULL BOARD</Link>
-                <Link href="https://discord.gg/yymtuNQwqC" target="_blank" className="btn-secondary">JOIN DISCORD</Link>
+              <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', flexShrink: 0 }}>
+                <Link href="/pricing" className="btn-primary">
+                  Access The Full Board
+                </Link>
+                <Link
+                  href="https://discord.gg/yymtuNQwqC"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-secondary"
+                >
+                  Join Discord
+                </Link>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* FOOTER NOTE */}
-      <div style={{
-        padding: '28px 16px',
-        textAlign: 'center',
-        borderTop: '1px solid var(--line)',
-        color: 'var(--muted)',
-        fontSize: '0.86rem',
-        fontFamily: 'Inter, sans-serif',
-      }}>
-        No win-rate guarantees. No spam picks. Structured analysis for people who treat the card like a business.
+      {/* Disclaimer */}
+      <div
+        style={{
+          padding: '24px 16px',
+          borderTop: '1px solid var(--line)',
+          textAlign: 'center',
+          color: 'var(--muted)',
+          fontSize: '0.8rem',
+          fontFamily: 'Inter, sans-serif',
+          lineHeight: 1.6,
+        }}
+      >
+        Analysis only — not financial or betting advice. Structured fight intelligence
+        for informational purposes. Bet responsibly.
       </div>
     </>
   );

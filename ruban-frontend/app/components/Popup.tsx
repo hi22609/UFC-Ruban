@@ -22,20 +22,87 @@ export default function Popup() {
   if (!visible) return null;
 
   return (
-    <div className="fixed bottom-4 right-4 z-[9999] max-w-sm w-full">
-      <div className="card border-gold/40 shadow-[0_0_40px_rgba(251,191,36,0.18)] relative">
+    <div
+      style={{
+        position: 'fixed',
+        bottom: 20,
+        right: 20,
+        zIndex: 9999,
+        maxWidth: 340,
+        width: 'calc(100% - 40px)',
+      }}
+    >
+      <div
+        className="card"
+        style={{
+          border: '1px solid rgba(251,191,36,0.35)',
+          boxShadow: '0 0 48px rgba(251,191,36,0.14), 0 25px 70px rgba(0,0,0,0.6)',
+          padding: 24,
+          position: 'relative',
+        }}
+      >
         <button
           onClick={dismiss}
-          className="absolute top-3 right-3 text-muted hover:text-white text-xl leading-none"
+          style={{
+            position: 'absolute',
+            top: 12,
+            right: 14,
+            background: 'none',
+            border: 'none',
+            color: 'var(--muted)',
+            fontSize: '1.4rem',
+            lineHeight: 1,
+            cursor: 'pointer',
+            padding: 0,
+          }}
           aria-label="Dismiss"
-        >×</button>
-        <div className="text-xs uppercase tracking-[0.18em] text-gold font-bold mb-3">White House Window Closing</div>
-        <Countdown className="mb-3" />
-        <p className="text-sm text-muted mb-4 leading-relaxed">
-          $1M+ projected member profits from this card. Early access means pre-movement odds.
+        >
+          ×
+        </button>
+
+        <p
+          style={{
+            fontSize: '0.68rem',
+            textTransform: 'uppercase',
+            letterSpacing: '0.18em',
+            color: 'var(--gold)',
+            fontWeight: 800,
+            fontFamily: 'Inter, sans-serif',
+            marginBottom: 12,
+          }}
+        >
+          White House Window Closing
         </p>
-        <Link href="/pricing" className="btn-primary w-full text-center text-sm">
-          GET ACCESS NOW
+
+        <div style={{ marginBottom: 14 }}>
+          <Countdown />
+        </div>
+
+        <p
+          style={{
+            fontSize: '0.85rem',
+            color: 'var(--muted)',
+            fontFamily: 'Inter, sans-serif',
+            lineHeight: 1.55,
+            marginBottom: 16,
+          }}
+        >
+          $1M+ projected member profits from this card. Early access means
+          pre-movement odds.
+        </p>
+
+        <Link
+          href="/pricing"
+          className="btn-primary"
+          style={{
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            fontSize: '0.82rem',
+            minHeight: 44,
+          }}
+        >
+          Get Access Now
         </Link>
       </div>
     </div>

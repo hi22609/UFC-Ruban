@@ -2,347 +2,676 @@ import Link from 'next/link';
 import Countdown from './components/Countdown';
 import predictionsData from './data/predictions.json';
 
-const freePick = predictionsData.predictions.find((p) => p.is_main_event) || predictionsData.predictions[0];
-const eventName = predictionsData.event_name;
-const eventDate = predictionsData.event_date;
-const f1Name = freePick.fighter1.split(' ').slice(-1)[0];
-const f2Name = freePick.fighter2.split(' ').slice(-1)[0];
-const lockCount = predictionsData.predictions.filter((p) => p.tier === 'LOCK').length;
-const totalFightsOnCard = predictionsData.predictions.length;
-const lockRate = Math.round((lockCount / totalFightsOnCard) * 100);
+// ── Data helpers ─────────────────────────────────────────
+const monthlyLink =
+  process.env.NEXT_PUBLIC_STRIPE_MONTHLY_LINK || 'https://discord.gg/yymtuNQwqC';
+const annualLink =
+  process.env.NEXT_PUBLIC_STRIPE_ANNUAL_LINK || 'https://discord.gg/yymtuNQwqC';
+
+const mainEvent =
+  predictionsData.predictions.find((p) => p.is_main_event) ||
+  predictionsData.predictions[0];
+const eventName  = predictionsData.event_name;
+const lockCount  = predictionsData.predictions.filter((p) => p.tier === 'LOCK').length;
+const totalCount = predictionsData.predictions.length;
+const lockRate   = Math.round((lockCount / totalCount) * 100);
+
+const sectionStyle = {
+  padding: '96px 0',
+} as React.CSSProperties;
+
+const dividerStyle = {
+  borderTop: '1px solid var(--line)',
+} as React.CSSProperties;
 
 export default function Home() {
   return (
     <>
-      {/* ═══════════════════════════════════════════
-          HERO
-      ═══════════════════════════════════════════ */}
-      <section
-        className="hero"
-        id="hook"
-        style={{ position: 'relative', padding: '32px 0 58px' }}
-      >
-        {/* top gold glow */}
-        <div style={{
-          content: '',
-          position: 'absolute',
-          inset: '0 0 auto 0',
-          height: 560,
-          background: 'radial-gradient(circle at 65% 18%, rgba(251,191,36,0.07), transparent 22%)',
-          pointerEvents: 'none',
-        }} />
-
-        <div style={{ width: 'min(1180px, calc(100% - 32px))', margin: '0 auto' }}>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'minmax(0, 0.96fr) minmax(0, 1.04fr)',
-            gap: 30,
-            alignItems: 'center',
-          }} className="hero-grid-responsive">
-
-            {/* ── Left: copy ── */}
+      {/* ══════════════════════════════════════════════════
+          SECTION 1 — HERO
+      ══════════════════════════════════════════════════ */}
+      <section style={{ ...sectionStyle, paddingTop: 80 }}>
+        <div className="wrap">
+          <div
+            className="hero-grid"
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr)',
+              gap: 40,
+              alignItems: 'center',
+            }}
+          >
+            {/* ── Left: Copy ── */}
             <div>
-              <div className="eyebrow" style={{ marginBottom: 18 }}>
+              <div className="eyebrow" style={{ marginBottom: 22 }}>
                 <span className="eyebrow-dot" />
-                UFC · {eventName}
+                Premium Fight Intelligence
               </div>
 
-              <h1 style={{
-                fontSize: 'clamp(4.4rem, 10vw, 8.4rem)',
-                lineHeight: 0.84,
-                marginBottom: 16,
-              }}>
-                THIS WEEK'S<br />
-                <span className="text-gradient-hero">BOARD.</span>
+              <h1
+                style={{
+                  fontSize: 'clamp(3.8rem, 8vw, 7rem)',
+                  lineHeight: 0.88,
+                  marginBottom: 24,
+                }}
+              >
+                THE EDGE IS<br />
+                IN THE{' '}
+                <span className="text-gradient">STRUCTURE.</span>
               </h1>
 
-              <p style={{
-                fontSize: '1.18rem',
-                lineHeight: 1.58,
-                color: '#edf2f7',
-                maxWidth: 590,
-                marginBottom: 14,
-                fontFamily: 'Inter, sans-serif',
-              }}>
-                Premium fight intelligence for disciplined operators. Confidence levels, volatility flags, and full-card reads — delivered before the market moves.
+              <p
+                style={{
+                  fontSize: '1.12rem',
+                  lineHeight: 1.65,
+                  color: '#d1d9e8',
+                  maxWidth: 520,
+                  marginBottom: 10,
+                  fontFamily: 'Inter, sans-serif',
+                }}
+              >
+                Full-card reads delivered before the market moves.
+                Confidence levels, volatility flags, and structured analysis — 
+                not picks, not predictions.
               </p>
-              <p style={{
-                fontSize: '0.98rem',
-                lineHeight: 1.65,
-                color: 'var(--muted)',
-                maxWidth: 570,
-                marginBottom: 24,
-                fontFamily: 'Inter, sans-serif',
-              }}>
-                Not picks. Not predictions. A structured read of the full card — confidence levels, volatility flags, and fight-by-fight framing — delivered privately before fight week gets loud.
+              <p
+                style={{
+                  fontSize: '0.95rem',
+                  lineHeight: 1.65,
+                  color: 'var(--muted)',
+                  maxWidth: 500,
+                  marginBottom: 32,
+                  fontFamily: 'Inter, sans-serif',
+                }}
+              >
+                For operators who treat the card like a business.
               </p>
 
-              <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 22 }}>
-                <Link href="/pricing" className="btn-primary">Access The Full Board</Link>
-                <Link href="#free-pick" className="btn-secondary">See The Free Main Event Read</Link>
+              <div
+                style={{
+                  display: 'flex',
+                  gap: 12,
+                  flexWrap: 'wrap',
+                }}
+              >
+                <Link href="/pricing" className="btn-primary">
+                  Get Access
+                </Link>
+                <Link href="#free-pick" className="btn-secondary">
+                  See Free Read
+                </Link>
               </div>
-
-              {/* mini stats */}
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
-                gap: 12,
-                maxWidth: 640,
-                marginBottom: 14,
-              }}>
-                <div className="mini-card">
-                  <div className="kicker">Current Event</div>
-                  <div className="value">{eventName}</div>
-                </div>
-                <div className="mini-card">
-                  <div className="kicker">Coverage</div>
-                  <div className="value">Full card, not just the main</div>
-                </div>
-                <div className="mini-card">
-                  <div className="kicker">Delivery</div>
-                  <div className="value">Private members only</div>
-                </div>
-              </div>
-
-              <p style={{
-                maxWidth: 620,
-                color: '#cfd6df',
-                fontSize: '0.86rem',
-                lineHeight: 1.55,
-                fontFamily: 'Inter, sans-serif',
-              }}>
-                No win-rate guarantees. No spam picks. Structured analysis for people who treat the card like a business.
-              </p>
             </div>
 
-            {/* ── Right: cinematic fight stage ── */}
-            <div className="hero-stage">
-              <div className="hero-aura" />
-              <div className="stage-tag">{eventName}</div>
+            {/* ── Right: This Week's Board panel ── */}
+            <div
+              style={{
+                background: 'var(--card-bg)',
+                border: '1px solid var(--card-border)',
+                borderRadius: 24,
+                padding: 28,
+                boxShadow: 'var(--shadow)',
+                position: 'relative',
+                overflow: 'hidden',
+              }}
+            >
+              {/* Subtle top glow */}
+              <div
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: 120,
+                  background:
+                    'radial-gradient(ellipse at 50% 0%, rgba(139,92,246,0.15) 0%, transparent 70%)',
+                  pointerEvents: 'none',
+                }}
+              />
 
-              {/* side info card */}
-              <div className="stage-side-card">
-                <div className="label">This week</div>
-                <h3>{freePick.fighter1}<br />vs<br />{freePick.fighter2}</h3>
-                <p>{freePick.weight_class} · Main Event</p>
+              <div style={{ position: 'relative', zIndex: 1 }}>
+                {/* Header */}
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginBottom: 20,
+                    flexWrap: 'wrap',
+                    gap: 8,
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: '0.68rem',
+                      fontFamily: 'Inter, sans-serif',
+                      fontWeight: 800,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.18em',
+                      color: 'var(--muted)',
+                    }}
+                  >
+                    This Week&apos;s Board
+                  </span>
+                  <span
+                    style={{
+                      padding: '5px 10px',
+                      borderRadius: 999,
+                      background: 'rgba(16,185,129,0.1)',
+                      border: '1px solid rgba(16,185,129,0.25)',
+                      color: 'var(--green)',
+                      fontSize: '0.68rem',
+                      fontWeight: 700,
+                      fontFamily: 'Inter, sans-serif',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.1em',
+                    }}
+                  >
+                    Live
+                  </span>
+                </div>
+
+                {/* Event name */}
+                <h2
+                  style={{
+                    fontSize: '1.1rem',
+                    fontFamily: 'Bebas Neue, sans-serif',
+                    letterSpacing: '0.04em',
+                    color: 'var(--muted)',
+                    marginBottom: 4,
+                    fontWeight: 400,
+                  }}
+                >
+                  {eventName}
+                </h2>
+
+                {/* Main event fighters */}
+                <div
+                  style={{
+                    margin: '16px 0',
+                    padding: '16px 0',
+                    borderTop: '1px solid var(--line)',
+                    borderBottom: '1px solid var(--line)',
+                  }}
+                >
+                  <p
+                    style={{
+                      fontSize: '0.68rem',
+                      fontFamily: 'Inter, sans-serif',
+                      fontWeight: 700,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.14em',
+                      color: 'var(--gold)',
+                      marginBottom: 10,
+                    }}
+                  >
+                    Main Event · {mainEvent.weight_class}
+                  </p>
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: '1fr auto 1fr',
+                      alignItems: 'center',
+                      gap: 12,
+                    }}
+                  >
+                    <div>
+                      <p
+                        style={{
+                          fontFamily: 'Bebas Neue, sans-serif',
+                          fontSize: '1.5rem',
+                          lineHeight: 1,
+                          marginBottom: 3,
+                        }}
+                      >
+                        {mainEvent.fighter1}
+                      </p>
+                      <p
+                        style={{
+                          fontSize: '0.72rem',
+                          color: 'var(--muted)',
+                          fontFamily: 'Inter, sans-serif',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.06em',
+                        }}
+                      >
+                        Pressure · Control
+                      </p>
+                    </div>
+                    <span
+                      style={{
+                        fontFamily: 'Bebas Neue, sans-serif',
+                        fontSize: '1.2rem',
+                        color: 'var(--gold)',
+                        lineHeight: 1,
+                      }}
+                    >
+                      VS
+                    </span>
+                    <div style={{ textAlign: 'right' }}>
+                      <p
+                        style={{
+                          fontFamily: 'Bebas Neue, sans-serif',
+                          fontSize: '1.5rem',
+                          lineHeight: 1,
+                          marginBottom: 3,
+                        }}
+                      >
+                        {mainEvent.fighter2}
+                      </p>
+                      <p
+                        style={{
+                          fontSize: '0.72rem',
+                          color: 'var(--muted)',
+                          fontFamily: 'Inter, sans-serif',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.06em',
+                        }}
+                      >
+                        Violence · Variance
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Confidence */}
+                <div>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      marginBottom: 8,
+                      fontFamily: 'Inter, sans-serif',
+                      fontSize: '0.76rem',
+                    }}
+                  >
+                    <span style={{ color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 600 }}>
+                      Confidence
+                    </span>
+                    <span style={{ color: 'var(--green)', fontWeight: 800 }}>
+                      {mainEvent.confidence}%
+                    </span>
+                  </div>
+                  <div className="conf-bar">
+                    <span style={{ width: `${mainEvent.confidence}%` }} />
+                  </div>
+                </div>
+
+                {/* CTA */}
+                <div style={{ marginTop: 20 }}>
+                  <Link
+                    href="/pricing"
+                    className="btn-primary"
+                    style={{
+                      width: '100%',
+                      display: 'flex',
+                      justifyContent: 'center',
+                      fontSize: '0.82rem',
+                      minHeight: 44,
+                    }}
+                  >
+                    Unlock Full Board
+                  </Link>
+                </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-              <div className="hero-rings" />
-              <div className="stage-lines" />
+      {/* ══════════════════════════════════════════════════
+          SECTION 2 — WHITE HOUSE URGENCY
+      ══════════════════════════════════════════════════ */}
+      <section
+        style={{
+          ...sectionStyle,
+          ...dividerStyle,
+          borderBottom: '1px solid var(--line)',
+          background: 'rgba(12,14,22,0.5)',
+        }}
+      >
+        <div className="wrap">
+          <div
+            style={{
+              border: '1px solid rgba(251,191,36,0.2)',
+              borderRadius: 24,
+              padding: '48px 40px',
+              background: 'rgba(251,191,36,0.03)',
+              textAlign: 'center',
+              maxWidth: 860,
+              margin: '0 auto',
+            }}
+          >
+            <div className="eyebrow" style={{ marginBottom: 20, display: 'inline-flex' }}>
+              <span className="eyebrow-dot" />
+              Special Event · April 12, 2026
+            </div>
 
-              {/* Left fighter */}
-              <div className="fighter left" aria-label={`${freePick.fighter1} stylized silhouette`}>
-                <div className="fighter-rim" />
-                <div className="fighter-core">
-                  <div className="fighter-part fighter-head" />
-                  <div className="fighter-part fighter-torso" />
-                  <div className="fighter-part fighter-arm arm-a1" />
-                  <div className="fighter-part fighter-arm arm-a2" />
-                  <div className="fighter-part fighter-forearm forearm-f1" />
-                  <div className="fighter-part fighter-forearm forearm-f2" />
-                  <div className="fighter-part fighter-glove glove-g1" />
-                  <div className="fighter-part fighter-glove glove-g2" />
-                  <div className="fighter-part fighter-leg leg-l1" />
-                  <div className="fighter-part fighter-leg leg-l2" />
-                </div>
-                <div className="fighter-label">
-                  <div className="fighter-name">{f1Name}</div>
-                  <div className="fighter-meta">Pressure • Control • Tight phases</div>
-                </div>
-              </div>
+            <h2
+              style={{
+                fontSize: 'clamp(2.4rem, 5vw, 4rem)',
+                lineHeight: 0.95,
+                marginBottom: 14,
+              }}
+            >
+              White House Card
+              <br />
+              <span className="text-gradient-gold">Window Closing</span>
+            </h2>
 
-              {/* Right fighter */}
-              <div className="fighter right" aria-label={`${freePick.fighter2} stylized silhouette`}>
-                <div className="fighter-rim" />
-                <div className="fighter-core">
-                  <div className="fighter-part fighter-head" />
-                  <div className="fighter-part fighter-torso" />
-                  <div className="fighter-part fighter-arm arm-a1" />
-                  <div className="fighter-part fighter-arm arm-a2" />
-                  <div className="fighter-part fighter-forearm forearm-f1" />
-                  <div className="fighter-part fighter-forearm forearm-f2" />
-                  <div className="fighter-part fighter-glove glove-g1" />
-                  <div className="fighter-part fighter-glove glove-g2" />
-                  <div className="fighter-part fighter-leg leg-l1" />
-                  <div className="fighter-part fighter-leg leg-l2" />
-                </div>
-                <div className="fighter-label">
-                  <div className="fighter-name">{f2Name}</div>
-                  <div className="fighter-meta">Violence • Variance • Early danger</div>
-                </div>
-              </div>
+            <p
+              style={{
+                fontSize: '1.05rem',
+                lineHeight: 1.65,
+                color: '#d1d9e8',
+                maxWidth: 620,
+                margin: '0 auto 28px',
+                fontFamily: 'Inter, sans-serif',
+              }}
+            >
+              The biggest casual money event UFC has seen in years. Lines move
+              fast once fight week starts. Members locked in now get reads at
+              pre-movement numbers.
+            </p>
 
-              <div className="hero-vs"><span>VS</span></div>
-
-              <div className="story-card">
-                <div className="kicker">Main Event · {freePick.fighter1} vs {freePick.fighter2}</div>
-                <h3>Control vs Chaos</h3>
-                <p>
-                  One man compresses the fight. One man detonates it. RUBAN tells you where the structure holds — and where the danger lives.
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 32,
+                flexWrap: 'wrap',
+                marginBottom: 28,
+              }}
+            >
+              <Countdown />
+              <div style={{ textAlign: 'center' }}>
+                <p
+                  style={{
+                    fontFamily: 'Bebas Neue, sans-serif',
+                    fontSize: '2.8rem',
+                    color: 'var(--gold)',
+                    lineHeight: 1,
+                  }}
+                >
+                  $1M+
+                </p>
+                <p
+                  style={{
+                    fontSize: '0.72rem',
+                    color: 'var(--muted)',
+                    fontFamily: 'Inter, sans-serif',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.12em',
+                    fontWeight: 700,
+                  }}
+                >
+                  Projected Member Pool
                 </p>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
 
-      {/* ═══════════════════════════════════════════
-          WHITE HOUSE URGENCY BLOCK
-      ═══════════════════════════════════════════ */}
-      <section style={{ padding: '84px 0', borderTop: '1px solid var(--line)', borderBottom: '1px solid var(--line)' }}>
-        <div style={{ width: 'min(1180px, calc(100% - 32px))', margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', maxWidth: 840, margin: '0 auto' }}>
-            <div className="eyebrow" style={{ marginBottom: 18, display: 'inline-flex' }}>
-              <span className="eyebrow-dot" />
-              Biggest Event of the Year
-            </div>
-            <h2 style={{ fontSize: 'clamp(2.7rem, 6vw, 4.6rem)', lineHeight: 0.95, marginBottom: 16 }}>
-              White House Card · April 12 · 2026
-            </h2>
-            <p style={{
-              fontSize: '1.18rem',
-              lineHeight: 1.58,
-              color: '#edf2f7',
-              marginBottom: 14,
-              fontFamily: 'Inter, sans-serif',
-            }}>
-              The largest influx of casual money UFC has seen in years floods this card. Mainstream attention spikes favorites, inflates certain lines, and creates edges that disappear by fight week. Members who are locked in before that happens get the full board read before the market gets loud.
-            </p>
-            <p style={{
-              fontSize: '1rem',
-              lineHeight: 1.7,
-              color: 'var(--muted)',
-              marginBottom: 28,
-              fontFamily: 'Inter, sans-serif',
-            }}>
-              We are projecting over{' '}
-              <span style={{ color: 'var(--green)', fontWeight: 800 }}>$1,000,000 in member profits</span>{' '}
-              generated from this card alone. The window to get positioned early is now — not fight week, not when the odds have already moved.
-            </p>
-            <Countdown className="justify-center mb-8" />
-            <div style={{ marginTop: 28 }}>
-              <Link href="/pricing" className="btn-primary" style={{ fontSize: '1rem', padding: '0 32px' }}>
-                Lock In Before The Odds Move
-              </Link>
-            </div>
-            <p style={{ fontSize: '0.78rem', color: 'var(--muted)', marginTop: 14, fontFamily: 'Inter, sans-serif' }}>
-              Projected profits based on member position sizing and read confidence. Not a guarantee of returns.
+            <Link href="/pricing" className="btn-primary" style={{ fontSize: '0.95rem', padding: '0 36px' }}>
+              Lock In Before The Odds Move
+            </Link>
+
+            <p
+              style={{
+                fontSize: '0.74rem',
+                color: 'var(--muted)',
+                marginTop: 14,
+                fontFamily: 'Inter, sans-serif',
+              }}
+            >
+              Projected from member position sizing and read confidence. Not a
+              guarantee of returns.
             </p>
           </div>
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════
-          FREE PICK — dynamic from predictions.json
-      ═══════════════════════════════════════════ */}
-      <section id="free-pick" style={{ padding: '84px 0' }}>
-        <div style={{ width: 'min(1180px, calc(100% - 32px))', margin: '0 auto' }}>
-
-          <div style={{ textAlign: 'center', maxWidth: 840, margin: '0 auto 28px' }}>
+      {/* ══════════════════════════════════════════════════
+          SECTION 3 — FREE PICK
+      ══════════════════════════════════════════════════ */}
+      <section id="free-pick" style={{ ...sectionStyle }}>
+        <div className="wrap">
+          <div style={{ textAlign: 'center', maxWidth: 720, margin: '0 auto 40px' }}>
             <div className="eyebrow" style={{ marginBottom: 18, display: 'inline-flex' }}>
               <span className="eyebrow-dot" />
               Free Main Event Read
             </div>
-            <h2 style={{ fontSize: 'clamp(2.7rem, 6vw, 4.6rem)', lineHeight: 0.95, marginBottom: 10 }}>
+            <h2
+              style={{
+                fontSize: 'clamp(2.4rem, 5vw, 4rem)',
+                lineHeight: 0.95,
+                marginBottom: 12,
+              }}
+            >
               One Honest Read. In Public.
             </h2>
-            <p style={{ color: 'var(--muted)', fontSize: '1rem', lineHeight: 1.7, fontFamily: 'Inter, sans-serif' }}>
-              Before you commit to the full board, see how RUBAN frames a fight. Real analysis, in real language.
+            <p
+              style={{
+                color: 'var(--muted)',
+                fontSize: '1rem',
+                lineHeight: 1.7,
+                fontFamily: 'Inter, sans-serif',
+              }}
+            >
+              Before you commit to the full board, see how RUBAN frames a fight.
             </p>
           </div>
 
-          {/* proof grid */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: '1.1fr 0.9fr',
-            gap: 18,
-            alignItems: 'stretch',
-          }} className="proof-grid-responsive">
-
-            {/* Sample read card */}
-            <div className="card" style={{ padding: 24 }}>
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                flexWrap: 'wrap',
-                gap: 12,
-                marginBottom: 18,
-                color: 'var(--muted)',
-                fontSize: '0.82rem',
-                textTransform: 'uppercase',
-                letterSpacing: '0.07em',
-                fontFamily: 'Inter, sans-serif',
-              }}>
-                <span>{freePick.weight_class} · Main Event · {eventName}</span>
-                <span style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  padding: '6px 10px',
-                  borderRadius: 999,
-                  background: 'rgba(251,191,36,0.12)',
-                  color: 'var(--gold)',
-                  border: '1px solid rgba(251,191,36,0.22)',
-                  fontWeight: 700,
-                }}>{freePick.tier || 'SELECT READ'}</span>
+          <div
+            className="two-col"
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1.2fr 0.8fr',
+              gap: 20,
+              alignItems: 'stretch',
+            }}
+          >
+            {/* Main read card */}
+            <div className="card" style={{ padding: 28 }}>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-start',
+                  marginBottom: 20,
+                  flexWrap: 'wrap',
+                  gap: 10,
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: '0.76rem',
+                    color: 'var(--muted)',
+                    fontFamily: 'Inter, sans-serif',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.08em',
+                  }}
+                >
+                  {mainEvent.weight_class} · Main Event · {eventName}
+                </span>
+                <span
+                  style={{
+                    padding: '5px 10px',
+                    borderRadius: 999,
+                    background: 'rgba(251,191,36,0.1)',
+                    border: '1px solid rgba(251,191,36,0.2)',
+                    color: 'var(--gold)',
+                    fontSize: '0.7rem',
+                    fontWeight: 800,
+                    fontFamily: 'Inter, sans-serif',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.08em',
+                  }}
+                >
+                  {mainEvent.tier}
+                </span>
               </div>
 
-              <h3 style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '2.5rem', color: 'var(--green)', marginBottom: 6 }}>
-                {freePick.winner} Wins
-              </h3>
-              <p style={{ color: 'var(--muted)', marginBottom: 0, fontFamily: 'Inter, sans-serif', fontSize: '0.95rem' }}>
-                {freePick.method} lean · {freePick.fighter1} vs {freePick.fighter2}
-              </p>
-
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '18px 0' }}>
-                <div className="conf-bar">
-                  <span style={{ width: `${freePick.confidence}%` }} />
-                </div>
-                <div style={{
+              <h3
+                style={{
                   fontFamily: 'Bebas Neue, sans-serif',
-                  fontSize: '2.5rem',
+                  fontSize: '2.4rem',
                   color: 'var(--green)',
                   lineHeight: 1,
-                }}>
-                  {freePick.confidence}%
+                  marginBottom: 4,
+                }}
+              >
+                {mainEvent.winner} Wins
+              </h3>
+              <p
+                style={{
+                  color: 'var(--muted)',
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '0.88rem',
+                  marginBottom: 18,
+                }}
+              >
+                {mainEvent.method} lean · {mainEvent.fighter1} vs {mainEvent.fighter2}
+              </p>
+
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 14,
+                  marginBottom: 22,
+                }}
+              >
+                <div className="conf-bar">
+                  <span style={{ width: `${mainEvent.confidence}%` }} />
                 </div>
+                <span
+                  style={{
+                    fontFamily: 'Bebas Neue, sans-serif',
+                    fontSize: '2.2rem',
+                    color: 'var(--green)',
+                    lineHeight: 1,
+                    flexShrink: 0,
+                  }}
+                >
+                  {mainEvent.confidence}%
+                </span>
               </div>
 
-              <div style={{ display: 'grid', gap: 14 }}>
+              <div style={{ display: 'grid', gap: 16 }}>
                 <div>
-                  <h4 style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '1.3rem', marginBottom: 4 }}>The Structural Read</h4>
-                  <p style={{ color: 'var(--muted)', fontFamily: 'Inter, sans-serif', fontSize: '0.95rem', lineHeight: 1.6 }}>{freePick.analysis}</p>
+                  <h4
+                    style={{
+                      fontFamily: 'Bebas Neue, sans-serif',
+                      fontSize: '1.1rem',
+                      marginBottom: 6,
+                      color: 'var(--white)',
+                    }}
+                  >
+                    The Structural Read
+                  </h4>
+                  <p
+                    style={{
+                      color: 'var(--muted)',
+                      fontFamily: 'Inter, sans-serif',
+                      fontSize: '0.9rem',
+                      lineHeight: 1.65,
+                    }}
+                  >
+                    {mainEvent.analysis}
+                  </p>
                 </div>
-                {freePick.key_factors && freePick.key_factors.slice(0, 2).map((f, i) => (
+                {mainEvent.key_factors.slice(0, 2).map((f, i) => (
                   <div key={i}>
-                    <h4 style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '1.3rem', marginBottom: 4 }}>
+                    <h4
+                      style={{
+                        fontFamily: 'Bebas Neue, sans-serif',
+                        fontSize: '1.1rem',
+                        marginBottom: 6,
+                        color: 'var(--white)',
+                      }}
+                    >
                       {i === 0 ? 'Why This Direction' : 'Where The Risk Lives'}
                     </h4>
-                    <p style={{ color: 'var(--muted)', fontFamily: 'Inter, sans-serif', fontSize: '0.95rem', lineHeight: 1.6 }}>{f}</p>
+                    <p
+                      style={{
+                        color: 'var(--muted)',
+                        fontFamily: 'Inter, sans-serif',
+                        fontSize: '0.9rem',
+                        lineHeight: 1.65,
+                      }}
+                    >
+                      {f}
+                    </p>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Full board tease */}
-            <div className="card">
-              <h3 style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '1.5rem', marginBottom: 10 }}>
-                What The Full Board Includes
-              </h3>
-              <ul style={{ listStyle: 'none', display: 'grid', gap: 10, margin: '16px 0 22px', fontFamily: 'Inter, sans-serif' }}>
-                {[
-                  'Every meaningful fight on the card, not just the main event',
-                  'Confidence ratings and volatility flags on each read',
-                  'Fight-week notes as the market moves',
-                  'Private member delivery — no public forum noise',
-                  'Structured format for people who treat this like a business',
-                ].map((item, i) => (
-                  <li key={i} style={{ color: 'var(--muted)', paddingLeft: 16, position: 'relative', fontSize: '0.95rem' }}>
-                    <span style={{ position: 'absolute', left: 0, color: 'var(--green)', fontWeight: 800 }}>•</span>
-                    {item}
-                  </li>
-                ))}
-              </ul>
-              <Link href="/pricing" className="btn-primary" style={{ width: '100%', textAlign: 'center' }}>
+            {/* Board teaser */}
+            <div
+              className="card"
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+              }}
+            >
+              <div>
+                <h3
+                  style={{
+                    fontFamily: 'Bebas Neue, sans-serif',
+                    fontSize: '1.5rem',
+                    marginBottom: 16,
+                  }}
+                >
+                  What The Full Board Includes
+                </h3>
+                <ul
+                  style={{
+                    listStyle: 'none',
+                    display: 'grid',
+                    gap: 12,
+                    marginBottom: 0,
+                  }}
+                >
+                  {[
+                    'Every meaningful fight — not just the main event',
+                    'Confidence ratings and volatility flags per read',
+                    'Fight-week notes as the market moves',
+                    'Private Discord delivery — no public noise',
+                    'Structured format for disciplined operators',
+                  ].map((item, i) => (
+                    <li
+                      key={i}
+                      style={{
+                        color: 'var(--muted)',
+                        paddingLeft: 18,
+                        position: 'relative',
+                        fontSize: '0.88rem',
+                        fontFamily: 'Inter, sans-serif',
+                        lineHeight: 1.55,
+                      }}
+                    >
+                      <span
+                        style={{
+                          position: 'absolute',
+                          left: 0,
+                          color: 'var(--green)',
+                          fontWeight: 800,
+                        }}
+                      >
+                        ✓
+                      </span>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <Link
+                href="/pricing"
+                className="btn-primary"
+                style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: 24 }}
+              >
                 Access The Full Board
               </Link>
             </div>
@@ -350,188 +679,428 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════
-          SYSTEM PERFORMANCE
-      ═══════════════════════════════════════════ */}
-      <section style={{ padding: '84px 0', borderTop: '1px solid var(--line)' }}>
-        <div style={{ width: 'min(1180px, calc(100% - 32px))', margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', maxWidth: 840, margin: '0 auto 40px' }}>
+      {/* ══════════════════════════════════════════════════
+          SECTION 4 — SYSTEM STATS
+      ══════════════════════════════════════════════════ */}
+      <section style={{ ...sectionStyle, ...dividerStyle }}>
+        <div className="wrap">
+          <div style={{ textAlign: 'center', maxWidth: 600, margin: '0 auto 48px' }}>
             <div className="eyebrow" style={{ marginBottom: 18, display: 'inline-flex' }}>
               <span className="eyebrow-dot" />
-              Verified Performance
+              System Output
             </div>
-            <h2 style={{ fontSize: 'clamp(2.7rem, 6vw, 4.6rem)', lineHeight: 0.95, marginBottom: 10 }}>
-              THE NUMBERS DON&apos;T LIE
+            <h2
+              style={{
+                fontSize: 'clamp(2.4rem, 5vw, 3.8rem)',
+                lineHeight: 0.95,
+                marginBottom: 12,
+              }}
+            >
+              The Numbers
             </h2>
-            <p style={{ color: 'var(--muted)', fontSize: '1rem', lineHeight: 1.7, fontFamily: 'Inter, sans-serif' }}>
-              System output. No narrative.
+            <p
+              style={{
+                color: 'var(--muted)',
+                fontSize: '0.95rem',
+                lineHeight: 1.65,
+                fontFamily: 'Inter, sans-serif',
+              }}
+            >
+              Current event data from the live board.
             </p>
           </div>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
-            gap: 16,
-          }} className="stats-grid-responsive">
-            <div className="card" style={{ textAlign: 'center', padding: '32px 20px' }}>
-              <div style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '3.8rem', color: 'var(--purple)', lineHeight: 1, marginBottom: 10 }}>—</div>
-              <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--muted)', fontWeight: 700 }}>Total Fights Analyzed</div>
-            </div>
-            <div className="card" style={{ textAlign: 'center', padding: '32px 20px' }}>
-              <div style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '3.8rem', color: 'var(--green)', lineHeight: 1, marginBottom: 10 }}>—</div>
-              <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--muted)', fontWeight: 700 }}>Correct Picks</div>
-            </div>
-            <div className="card" style={{ textAlign: 'center', padding: '32px 20px' }}>
-              <div style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '3.8rem', color: 'var(--gold)', lineHeight: 1, marginBottom: 10 }}>—</div>
-              <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--muted)', fontWeight: 700 }}>Win Rate</div>
-            </div>
-            <div className="card" style={{ textAlign: 'center', padding: '32px 20px' }}>
-              <div style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '3.8rem', color: 'var(--magenta)', lineHeight: 1, marginBottom: 10 }}>{lockRate}%</div>
-              <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--muted)', fontWeight: 700 }}>Lock Rate This Card</div>
-            </div>
+
+          <div
+            className="four-col"
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+              gap: 16,
+            }}
+          >
+            {[
+              { value: totalCount.toString(), label: 'Fights This Card', color: 'var(--purple)' },
+              { value: '—', label: 'Historical Win Rate', color: 'var(--green)' },
+              { value: `${lockRate}%`, label: 'Lock Tier Rate', color: 'var(--gold)' },
+              { value: `${totalCount}`, label: 'Current Event Reads', color: 'var(--magenta)' },
+            ].map((stat, i) => (
+              <div
+                key={i}
+                className="card"
+                style={{ textAlign: 'center', padding: '32px 16px' }}
+              >
+                <p
+                  style={{
+                    fontFamily: 'Bebas Neue, sans-serif',
+                    fontSize: '3.2rem',
+                    color: stat.color,
+                    lineHeight: 1,
+                    marginBottom: 10,
+                  }}
+                >
+                  {stat.value}
+                </p>
+                <p
+                  style={{
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '0.72rem',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.12em',
+                    color: 'var(--muted)',
+                    fontWeight: 700,
+                  }}
+                >
+                  {stat.label}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════
-          LOCKED BOARD TEASE
-      ═══════════════════════════════════════════ */}
-      <section style={{ padding: '84px 0', borderTop: '1px solid var(--line)', borderBottom: '1px solid var(--line)' }}>
-        <div style={{ width: 'min(1180px, calc(100% - 32px))', margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', maxWidth: 840, margin: '0 auto' }}>
-            <h2 style={{ fontSize: 'clamp(2.7rem, 6vw, 4.6rem)', lineHeight: 0.95, marginBottom: 10 }}>
-              Why The White House Card Is Different
+      {/* ══════════════════════════════════════════════════
+          SECTION 5 — HOW IT WORKS
+      ══════════════════════════════════════════════════ */}
+      <section style={{ ...sectionStyle, ...dividerStyle }}>
+        <div className="wrap">
+          <div style={{ textAlign: 'center', maxWidth: 600, margin: '0 auto 48px' }}>
+            <h2
+              style={{
+                fontSize: 'clamp(2.4rem, 5vw, 3.8rem)',
+                lineHeight: 0.95,
+                marginBottom: 12,
+              }}
+            >
+              How It Works
             </h2>
-            <p style={{ color: 'var(--muted)', fontSize: '1rem', lineHeight: 1.7, marginBottom: 28, fontFamily: 'Inter, sans-serif' }}>
-              This is not a normal fight week. The attention is different. The money is different. The spots, when you find them, are bigger.
+            <p
+              style={{
+                color: 'var(--muted)',
+                fontSize: '0.95rem',
+                lineHeight: 1.65,
+                fontFamily: 'Inter, sans-serif',
+              }}
+            >
+              Three steps. No funnel. No noise.
             </p>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 16 }} className="triple-responsive">
-            <div className="card">
-              <h3 style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '1.5rem', marginBottom: 10 }}>Unusual Attention. Unusual Opportunity.</h3>
-              <p style={{ color: 'var(--muted)', fontFamily: 'Inter, sans-serif', fontSize: '0.95rem', lineHeight: 1.65 }}>UFC at the White House brings mainstream visibility that normal fight nights don&apos;t. More casual money flowing in means more structural opportunity for disciplined readers.</p>
-            </div>
-            <div className="card">
-              <h3 style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '1.5rem', marginBottom: 10 }}>Deep Card. Multiple Strong Spots.</h3>
-              <p style={{ color: 'var(--muted)', fontFamily: 'Inter, sans-serif', fontSize: '0.95rem', lineHeight: 1.65 }}>A fourteen-fight card with a historic main event creates room to find clean positions beyond the obvious headline. The whole board is worth mapping, not just the top.</p>
-            </div>
-            <div className="card">
-              <h3 style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '1.5rem', marginBottom: 10 }}>Selectivity, Not Volume.</h3>
-              <p style={{ color: 'var(--muted)', fontFamily: 'Inter, sans-serif', fontSize: '0.95rem', lineHeight: 1.65 }}>When RUBAN&apos;s confidence on a fight isn&apos;t high enough, members don&apos;t get a forced read. That discipline is the whole model — fewer, stronger positions.</p>
-            </div>
-          </div>
-          <div style={{ textAlign: 'center', marginTop: 36 }}>
-            <h3 style={{
-              fontFamily: 'Bebas Neue, sans-serif',
-              fontSize: 'clamp(2rem, 4vw, 3rem)',
-              marginBottom: 14,
-            }}>
-              {predictionsData.predictions.length - 1}+ More Reads
-              <span style={{
-                background: 'linear-gradient(135deg, var(--purple), var(--magenta))',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}> Locked Inside Discord</span>
-            </h3>
-            <p style={{ fontSize: '1rem', color: 'var(--muted)', marginBottom: 28, fontFamily: 'Inter, sans-serif', lineHeight: 1.7 }}>
-              The free read shows the standard. Members unlock the rest of the board, with every spot framed for conviction and risk.
-            </p>
-            <Link href="/pricing" className="btn-primary" style={{ fontSize: '1rem', padding: '0 32px' }}>
-              Unlock The Full Board
-            </Link>
-            <p style={{ color: 'var(--muted)', marginTop: 14, fontFamily: 'Inter, sans-serif', fontSize: '0.92rem' }}>
-              Join at{' '}
-              <Link href="https://discord.gg/yymtuNQwqC" target="_blank" style={{ color: 'var(--purple)', textDecoration: 'underline' }}>
-                discord.gg/yymtuNQwqC
-              </Link>{' '}
-              after purchase.
-            </p>
+
+          <div
+            className="three-col"
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+              gap: 20,
+            }}
+          >
+            {[
+              {
+                num: '01',
+                title: 'Choose Access',
+                body: 'Monthly or annual. Both tiers get the same board, same confidence ratings, same private delivery.',
+              },
+              {
+                num: '02',
+                title: 'Join Discord',
+                body: "Get your invite after purchase. The board lives in the member room — organized by fight, updated through fight week.",
+              },
+              {
+                num: '03',
+                title: 'Work The Card',
+                body: 'Full card structure, confidence levels, and volatility flags. Your edge delivered before the noise takes over.',
+              },
+            ].map((step) => (
+              <div key={step.num} className="card">
+                <p
+                  style={{
+                    fontFamily: 'Bebas Neue, sans-serif',
+                    fontSize: '3rem',
+                    color: 'var(--purple)',
+                    lineHeight: 1,
+                    marginBottom: 10,
+                    opacity: 0.6,
+                  }}
+                >
+                  {step.num}
+                </p>
+                <h3
+                  style={{
+                    fontFamily: 'Bebas Neue, sans-serif',
+                    fontSize: '1.5rem',
+                    marginBottom: 10,
+                  }}
+                >
+                  {step.title}
+                </h3>
+                <p
+                  style={{
+                    color: 'var(--muted)',
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '0.9rem',
+                    lineHeight: 1.65,
+                  }}
+                >
+                  {step.body}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════
-          HOW IT WORKS
-      ═══════════════════════════════════════════ */}
-      <section style={{ padding: '84px 0' }}>
-        <div style={{ width: 'min(1180px, calc(100% - 32px))', margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', maxWidth: 840, margin: '0 auto 28px' }}>
-            <h2 style={{ fontSize: 'clamp(2.7rem, 6vw, 4.6rem)', lineHeight: 0.95, marginBottom: 10 }}>
-              Access The White House Board
+      {/* ══════════════════════════════════════════════════
+          SECTION 6 — PRICING PREVIEW
+      ══════════════════════════════════════════════════ */}
+      <section
+        style={{
+          ...sectionStyle,
+          ...dividerStyle,
+          borderBottom: '1px solid var(--line)',
+          background: 'rgba(12,14,22,0.4)',
+        }}
+      >
+        <div className="wrap">
+          <div style={{ textAlign: 'center', maxWidth: 600, margin: '0 auto 48px' }}>
+            <h2
+              style={{
+                fontSize: 'clamp(2.4rem, 5vw, 3.8rem)',
+                lineHeight: 0.95,
+                marginBottom: 12,
+              }}
+            >
+              Access
             </h2>
-            <p style={{ color: 'var(--muted)', fontSize: '1rem', lineHeight: 1.7, fontFamily: 'Inter, sans-serif' }}>
-              Two tiers. One system. Built for people who treat the card like a business, not a hobby.
+            <p
+              style={{
+                color: 'var(--muted)',
+                fontSize: '0.95rem',
+                lineHeight: 1.65,
+                fontFamily: 'Inter, sans-serif',
+              }}
+            >
+              Two tiers. One system. Built for people who treat the card like a
+              business.
             </p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 16, marginTop: 20 }} className="triple-responsive">
-            <div className="card">
-              <div style={{
-                fontFamily: 'Bebas Neue, sans-serif',
-                fontSize: '2.4rem',
-                color: 'var(--purple)',
-                lineHeight: 1,
-                marginBottom: 8,
-              }}>1</div>
-              <h3 style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '1.5rem', marginBottom: 10 }}>Choose Your Tier</h3>
-              <p style={{ color: 'var(--muted)', fontFamily: 'Inter, sans-serif', fontSize: '0.95rem', lineHeight: 1.65 }}>Monthly or annual. Both tiers get the same board, same confidence ratings, same private delivery.</p>
+          <div
+            className="two-col"
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+              gap: 20,
+              maxWidth: 820,
+              margin: '0 auto',
+            }}
+          >
+            {/* Operator */}
+            <div className="card" style={{ padding: 32 }}>
+              <h3
+                style={{
+                  fontFamily: 'Bebas Neue, sans-serif',
+                  fontSize: '1.8rem',
+                  marginBottom: 4,
+                }}
+              >
+                Operator
+              </h3>
+              <p
+                style={{
+                  color: 'var(--muted)',
+                  fontSize: '0.88rem',
+                  fontFamily: 'Inter, sans-serif',
+                  marginBottom: 20,
+                }}
+              >
+                Monthly access for active fight weeks
+              </p>
+              <p
+                style={{
+                  fontFamily: 'Bebas Neue, sans-serif',
+                  fontSize: '3.5rem',
+                  lineHeight: 1,
+                  marginBottom: 4,
+                }}
+              >
+                $20
+                <span
+                  style={{
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '1rem',
+                    color: 'var(--muted)',
+                    fontWeight: 400,
+                  }}
+                >
+                  /mo
+                </span>
+              </p>
+              <ul
+                style={{
+                  listStyle: 'none',
+                  display: 'grid',
+                  gap: 10,
+                  margin: '20px 0 24px',
+                }}
+              >
+                {[
+                  'Full card reads every event',
+                  'Confidence + volatility ratings',
+                  'Discord premium access',
+                  'Fight-day updates',
+                  'Structured member delivery',
+                ].map((f, i) => (
+                  <li
+                    key={i}
+                    style={{
+                      color: 'var(--muted)',
+                      fontSize: '0.88rem',
+                      fontFamily: 'Inter, sans-serif',
+                      paddingLeft: 18,
+                      position: 'relative',
+                    }}
+                  >
+                    <span
+                      style={{
+                        position: 'absolute',
+                        left: 0,
+                        color: 'var(--green)',
+                        fontWeight: 800,
+                      }}
+                    >
+                      ✓
+                    </span>
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <a
+                href={monthlyLink}
+                className="btn-secondary"
+                style={{ width: '100%', display: 'flex', justifyContent: 'center' }}
+              >
+                Get Operator Access
+              </a>
             </div>
-            <div className="card">
-              <div style={{
-                fontFamily: 'Bebas Neue, sans-serif',
-                fontSize: '2.4rem',
-                color: 'var(--purple)',
-                lineHeight: 1,
-                marginBottom: 8,
-              }}>2</div>
-              <h3 style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '1.5rem', marginBottom: 10 }}>Get Your Member Path</h3>
-              <p style={{ color: 'var(--muted)', fontFamily: 'Inter, sans-serif', fontSize: '0.95rem', lineHeight: 1.65 }}>Join via Discord. You&apos;ll receive access instructions and the current board link — no waiting, no sales funnel.</p>
-            </div>
-            <div className="card">
-              <div style={{
-                fontFamily: 'Bebas Neue, sans-serif',
-                fontSize: '2.4rem',
-                color: 'var(--purple)',
-                lineHeight: 1,
-                marginBottom: 8,
-              }}>3</div>
-              <h3 style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '1.5rem', marginBottom: 10 }}>Read The Board, Not The Noise</h3>
-              <p style={{ color: 'var(--muted)', fontFamily: 'Inter, sans-serif', fontSize: '0.95rem', lineHeight: 1.65 }}>Full card structure, confidence levels, and volatility flags. Your edge, delivered before fight week gets loud.</p>
+
+            {/* Syndicate */}
+            <div
+              className="card"
+              style={{
+                padding: 32,
+                border: '1px solid rgba(251,191,36,0.25)',
+                position: 'relative',
+              }}
+            >
+              <span
+                style={{
+                  position: 'absolute',
+                  top: -12,
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  padding: '5px 14px',
+                  borderRadius: 999,
+                  background: 'linear-gradient(135deg, var(--gold), #fef08a)',
+                  color: '#06070b',
+                  fontSize: '0.68rem',
+                  fontWeight: 800,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.1em',
+                  fontFamily: 'Inter, sans-serif',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                Best Value
+              </span>
+              <h3
+                style={{
+                  fontFamily: 'Bebas Neue, sans-serif',
+                  fontSize: '1.8rem',
+                  marginBottom: 4,
+                  color: 'var(--gold)',
+                }}
+              >
+                Syndicate
+              </h3>
+              <p
+                style={{
+                  color: 'var(--muted)',
+                  fontSize: '0.88rem',
+                  fontFamily: 'Inter, sans-serif',
+                  marginBottom: 20,
+                }}
+              >
+                Annual access — save $120/year
+              </p>
+              <p
+                style={{
+                  fontFamily: 'Bebas Neue, sans-serif',
+                  fontSize: '3.5rem',
+                  lineHeight: 1,
+                  marginBottom: 4,
+                }}
+              >
+                $120
+                <span
+                  style={{
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '1rem',
+                    color: 'var(--muted)',
+                    fontWeight: 400,
+                  }}
+                >
+                  /yr
+                </span>
+              </p>
+              <ul
+                style={{
+                  listStyle: 'none',
+                  display: 'grid',
+                  gap: 10,
+                  margin: '20px 0 24px',
+                }}
+              >
+                {[
+                  'Everything in Operator',
+                  'Earlier event-week access',
+                  'Top-tier spots surfaced faster',
+                  'Priority access as product expands',
+                  'Deepest reporting as new modules go live',
+                ].map((f, i) => (
+                  <li
+                    key={i}
+                    style={{
+                      color: 'var(--muted)',
+                      fontSize: '0.88rem',
+                      fontFamily: 'Inter, sans-serif',
+                      paddingLeft: 18,
+                      position: 'relative',
+                    }}
+                  >
+                    <span
+                      style={{
+                        position: 'absolute',
+                        left: 0,
+                        color: 'var(--green)',
+                        fontWeight: 800,
+                      }}
+                    >
+                      ✓
+                    </span>
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <a
+                href={annualLink}
+                className="btn-primary"
+                style={{ width: '100%', display: 'flex', justifyContent: 'center' }}
+              >
+                Get Syndicate Access
+              </a>
             </div>
           </div>
         </div>
       </section>
-
-      {/* ═══════════════════════════════════════════
-          STICKY BOTTOM CTA
-      ═══════════════════════════════════════════ */}
-      <div style={{
-        position: 'fixed',
-        left: 0,
-        right: 0,
-        bottom: 0,
-        zIndex: 120,
-        background: 'rgba(6,7,11,0.92)',
-        backdropFilter: 'blur(18px)',
-        borderTop: '1px solid var(--line)',
-      }}>
-        <div style={{
-          width: 'min(1180px, calc(100% - 32px))',
-          margin: '0 auto',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: 14,
-          padding: '12px 0',
-          flexWrap: 'wrap',
-        }}>
-          <div style={{ color: '#e5e7eb', fontSize: '0.92rem', fontFamily: 'Inter, sans-serif' }}>
-            The White House card is live. See the free main event read — or go straight to the full board.
-          </div>
-          <Link href="/pricing" className="btn-primary" style={{ minHeight: 44, padding: '0 20px', fontSize: '0.86rem' }}>
-            Access The Board
-          </Link>
-        </div>
-      </div>
     </>
   );
 }
