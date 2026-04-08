@@ -57,7 +57,7 @@ async function processPayment(paymentData) {
     return {
       status: 'pending',
       message: 'Discord link required',
-      inviteUrl: process.env.DISCORD_INVITE_URL
+      inviteUrl: process.env.DISCORD_INVITE_URL || process.env.DISCORD_INVITE || 'https://discord.gg/yymtuNQwqC'
     };
   }
 }

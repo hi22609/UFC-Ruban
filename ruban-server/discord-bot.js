@@ -9,7 +9,7 @@ require('dotenv').config({ path: path.join(__dirname, '.env') });
 // Configuration
 const CONFIG = {
   TOKEN: process.env.DISCORD_BOT_TOKEN,
-  GUILD_ID: process.env.DISCORD_GUILD_ID,
+  GUILD_ID: process.env.DISCORD_GUILD_ID || process.env.DISCORD_SERVER_ID,
   PREMIUM_ROLE_NAME: 'Premium Member',
   CHANNELS: {
     welcome: '👋・welcome',
@@ -18,6 +18,7 @@ const CONFIG = {
     general: '💬・general'
   },
   PAYMENT_URL: process.env.PAYMENT_URL || 'https://www.ruban.live/pricing',
+  INVITE_URL: process.env.DISCORD_INVITE_URL || process.env.DISCORD_INVITE || 'https://discord.gg/yymtuNQwqC',
   BRAND_COLOR: 0x4F46E5, // Indigo
   MEMBER_FILE: path.join(__dirname, 'members.json')
 };
