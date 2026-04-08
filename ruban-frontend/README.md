@@ -16,7 +16,26 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Mission Control route
+
+The premium local operator dashboard for RUBAN is available at:
+
+- [http://localhost:3000/mission-control](http://localhost:3000/mission-control)
+
+Use it on desktop for the best layout. It includes the requested board schema:
+
+- Task ID
+- Title
+- Type
+- Priority
+- Inputs
+- Assigned Agent
+- Status
+- Output
+- Logs
+- Dependencies
+
+You can start editing the page by modifying `app/page.tsx` or `app/mission-control/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
