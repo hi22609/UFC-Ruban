@@ -1,11 +1,11 @@
 // RUBAN Payment → Discord Workflow
 // Triggered by Stripe webhook to grant Discord access
 
-const discordBot = require('../discord-bot');
+const discordBot = require('./discord-bot');
 const fs = require('fs').promises;
 const path = require('path');
 
-const PENDING_FILE = path.join(__dirname, '..', 'pending-invites.json');
+const PENDING_FILE = path.join(__dirname, 'pending-invites.json');
 
 // Load pending invites
 async function loadPending() {

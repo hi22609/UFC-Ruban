@@ -1,78 +1,94 @@
 // RUBAN Daily Content Automation
-// Runs on schedule to post free picks and premium intel
+// Runs on schedule to post free picks and premium intel from the live site data source
 
-const discordBot = require('../discord-bot');
+const fs = require('fs').promises;
+const path = require('path');
+const discordBot = require('./discord-bot');
 
-// Sample fight data structure
-const SAMPLE_FIGHT = {
-  fighter1: 'Ilia Topuria',
-  fighter2: 'Justin Gaethje',
-  event: 'UFC 322: White House',
-  date: 'April 19, 2026',
-  pick: 'Ilia Topuria',
-  confidence: 68,
-  method: 'KO/TKO Round 2-3',
-  analysis: `Topuria's precision striking and grappling pressure will overwhelm Gaethje's traditional brawling style. The champion's technical superiority becomes more apparent as the fight progresses.`,
-  risks: `Gaethje's legendary durability and power could catch Topuria early. If this becomes a pure striking war, anything can happen.`
-};
+const PREDICTIONS_FILE = path.join(__dirname, '..', 'ruban-frontend', 'app', 'data', 'predictions.json');
 
-const SAMPLE_CARD = {
-  event: 'UFC 322: White House',
-  date: 'April 19, 2026',
-  mainCard: `
-**Main Event:** Topuria def. Gaethje (KO R3) - 68% confidence
-**Co-Main:** Contender A def. Contender B (Dec) - 72% confidence
-**Fight 3:** Fighter X def. Fighter Y (Sub R2) - 61% confidence
-**Fight 4:** Fighter Z def. Opponent (TKO R1) - 75% confidence
-**Fight 5:** Underdog win expected - 58% confidence
-  `,
-  prelims: `
-**Prelim Analysis:** 6 fights analyzed
-- 4 favorites to win
-- 2 potential upsets
-- High-value parlay opportunities
-  `,
-  insights: `
-🔥 **Key Takeaways:**
-- Main card favors technical strikers
-- Weather may impact cardio fights
-- Two grudge matches = potential chaos
-- Betting value in undercard
-  `
-};
+async function loadPredictions() {
+  const raw = await fs.readFile(PREDICTIONS_FILE, 'utf8');
+  return JSON.parse(raw);
+}
 
-// Post daily free pick (9 AM ET)
+function getMainEvent(data) {
+  return data.predictions.find((fight) => fight.is_main_event) || data.predictions[0];
+}
+
+function buildFreePickPayload(data) {
+  const fight = getMainEvent(data);
+
+  return {
+    fighter1: fight.fighter1,
+    fighter2: fight.fighter2,
+    event: data.event_name,
+    date: data.event_date,
+    pick: fight.winner,
+    confidence: fight.confidence,
+    method: fight.method,
+    analysis: fight.analysis,
+    risks: Array.isArray(fight.key_factors) && fight.key_factors.length
+      ? fight.key_factors.slice(0, 3).join('\n• ')
+      : 'Fight-week volatility remains live.',
+    tier: fight.tier,
+    weightClass: fight.weight_class,
+  };
+}
+
+function buildPremiumPayload(data) {
+  const mainCard = data.predictions
+    .map((fight) => `• ${fight.fighter1} vs ${fight.fighter2} → **${fight.winner}** (${fight.method}) · ${fight.confidence}% · ${fight.tier}`)
+    .join('\n');
+
+  const parlayLines = [];
+  if (data.parlay?.two_leg) {
+    parlayLines.push(`Two-Leg: ${data.parlay.two_leg.picks.join(' + ')} · ${data.parlay.two_leg.combined_confidence}%`);
+  }
+  if (data.parlay?.three_leg) {
+    parlayLines.push(`Three-Leg: ${data.parlay.three_leg.picks.join(' + ')} · ${data.parlay.three_leg.combined_confidence}%`);
+  }
+
+  const insights = [
+    `Location: ${data.location}`,
+    `Generated: ${data.generated_at}`,
+    ...parlayLines,
+  ].join('\n');
+
+  return {
+    event: data.event_name,
+    date: data.event_date,
+    mainCard,
+    prelims: 'Current card board loaded from the live RUBAN prediction file.',
+    insights,
+  };
+}
+
 async function postDailyFreePick() {
   try {
     console.log('📅 Running daily free pick...');
-    
-    // In production, fetch from your prediction model
-    await discordBot.postFreePick(SAMPLE_FIGHT);
-    
+    const data = await loadPredictions();
+    await discordBot.postFreePick(buildFreePickPayload(data));
     console.log('✅ Daily free pick posted');
   } catch (error) {
     console.error('❌ Error posting daily free pick:', error);
   }
 }
 
-// Post premium intel (6 hours before event)
 async function postPremiumIntel() {
   try {
     console.log('📅 Running premium intel drop...');
-    
-    // In production, fetch full card analysis
-    await discordBot.postPremiumIntel(SAMPLE_CARD);
-    
+    const data = await loadPredictions();
+    await discordBot.postPremiumIntel(buildPremiumPayload(data));
     console.log('✅ Premium intel posted');
   } catch (error) {
     console.error('❌ Error posting premium intel:', error);
   }
 }
 
-// Manual triggers for testing
 if (require.main === module) {
   const command = process.argv[2];
-  
+
   if (command === 'free-pick') {
     postDailyFreePick();
   } else if (command === 'premium') {
@@ -84,5 +100,8 @@ if (require.main === module) {
 
 module.exports = {
   postDailyFreePick,
-  postPremiumIntel
+  postPremiumIntel,
+  loadPredictions,
+  buildFreePickPayload,
+  buildPremiumPayload,
 };

@@ -4,6 +4,7 @@
 const { Client, GatewayIntentBits, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 const fs = require('fs').promises;
 const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 // Configuration
 const CONFIG = {
@@ -16,7 +17,7 @@ const CONFIG = {
     premiumIntel: '💎・premium-intel',
     general: '💬・general'
   },
-  PAYMENT_URL: process.env.PAYMENT_URL || 'https://ruban.com/pricing',
+  PAYMENT_URL: process.env.PAYMENT_URL || 'https://www.ruban.live/pricing',
   BRAND_COLOR: 0x4F46E5, // Indigo
   MEMBER_FILE: path.join(__dirname, 'members.json')
 };
@@ -123,10 +124,10 @@ async function sendWelcomeMessage(member) {
     .addFields(
       { name: '📊 What We Deliver', value: 'Data-driven fight analysis, card breakdowns, and structured picks before every event.' },
       { name: '🎯 No hype. No guarantees. Just signal.', value: '\u200B' },
-      { name: '🆓 Free Members', value: 'Access to /card main event teaser, /record, and #fight-chat' },
-      { name: '💎 Pro — $9/mo', value: 'Full card breakdowns, all picks, props, and parlay of the night' },
-      { name: '💠 Elite — $9/mo', value: 'Everything in Pro + live fight updates + #elite-room access' },
-      { name: '📖 How to Subscribe', value: `Head to #subscribe to unlock Pro or Elite` },
+      { name: '🆓 Free Members', value: 'Free read access, public record, and fight-week conversation.' },
+      { name: '💎 Operator — $20/mo', value: 'Weekly board access, premium reads, and structured fight-week intel.' },
+      { name: '🏛️ Syndicate — $120/yr', value: 'Full RUBAN access, deeper drops, and premium event campaigns.' },
+      { name: '📖 How to Subscribe', value: `Use the payment link in #subscribe or visit ${CONFIG.PAYMENT_URL}` },
       { name: '⚖️ Disclaimer', value: 'RUBAN | UFC Intelligence • Analysis only, never a guarantee' }
     )
     .setFooter({ text: 'Black Label Intelligence' })
@@ -171,7 +172,7 @@ async function grantPremiumAccess(userId, email, tier) {
       .setDescription(`Welcome to **${tier === 'annual' ? 'RUBAN Syndicate' : 'RUBAN Operator'}**!`)
       .addFields(
         { name: '🔓 Unlocked', value: '#premium-intel channel' },
-        { name: '📊 Access', value: 'Full fight card analysis\nLive updates\nInsider intel' },
+        { name: '📊 Access', value: 'Weekly board access\nPremium reads\nFight-week intel' },
         { name: '🎯 Next Steps', value: 'Check #premium-intel for tonight\'s card' }
       )
       .setFooter({ text: 'Questions? DM the mods' })
@@ -227,14 +228,16 @@ async function postFreePick(fightData) {
     .setTitle(`🆓 FREE PICK: ${fightData.fighter1} vs ${fightData.fighter2}`)
     .setDescription(`**${fightData.event}** • ${fightData.date}`)
     .addFields(
-      { name: '🎯 Pick', value: `**${fightData.pick}** to win`, inline: true },
+      { name: '🎯 Pick', value: `**${fightData.pick}**`, inline: true },
       { name: '📊 Confidence', value: `${fightData.confidence}%`, inline: true },
-      { name: '⚡ Method', value: fightData.method, inline: true },
-      { name: '📈 Analysis', value: fightData.analysis },
-      { name: '⚠️ Risk Factors', value: fightData.risks },
-      { name: '💎 Want the Full Card?', value: `Unlock 12+ premium picks\n[Get Access →](${CONFIG.PAYMENT_URL})` }
+      { name: '⚡ Method', value: fightData.method || 'Live read', inline: true },
+      { name: '🏷️ Tier', value: fightData.tier || 'FREE', inline: true },
+      { name: '🥊 Division', value: fightData.weightClass || 'Open weight note', inline: true },
+      { name: '📈 Read', value: fightData.analysis || 'Fight-week read loading.' },
+      { name: '⚠️ Key Factors', value: fightData.risks || 'Volatility remains live.' },
+      { name: '💎 Want the Full Card?', value: `[Get Access →](${CONFIG.PAYMENT_URL})` }
     )
-    .setFooter({ text: 'Black Label Intelligence • Track Record: 67% Win Rate' })
+    .setFooter({ text: 'RUBAN • Free read from the live weekly board' })
     .setTimestamp();
   
   await channel.send({ embeds: [embed] });
@@ -251,14 +254,14 @@ async function postPremiumIntel(cardData) {
   const embed = new EmbedBuilder()
     .setColor(CONFIG.BRAND_COLOR)
     .setTitle(`💎 PREMIUM INTEL: ${cardData.event}`)
-    .setDescription(`Full card analysis for ${cardData.date}`)
+    .setDescription(`Full card board for ${cardData.date}`)
     .addFields(
-      { name: '🎯 Main Card Picks', value: cardData.mainCard },
-      { name: '📊 Prelims Analysis', value: cardData.prelims },
-      { name: '⚡ Live Updates', value: 'Fight night commentary in this channel' },
+      { name: '🎯 Weekly Board', value: cardData.mainCard },
+      { name: '📊 Card Notes', value: cardData.prelims },
+      { name: '⚡ Live Updates', value: 'Fight-night commentary drops here.' },
       { name: '🔥 Key Insights', value: cardData.insights }
     )
-    .setFooter({ text: 'Black Label Intelligence • Premium Members Only' })
+    .setFooter({ text: 'RUBAN • Premium members only' })
     .setTimestamp();
   
   await channel.send({ content: '@everyone', embeds: [embed] });
