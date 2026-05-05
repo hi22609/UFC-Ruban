@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Countdown from './components/Countdown';
 import predictionsData from './data/predictions.json';
+import trackRecordData from './data/trackRecord.json';
 
 // ── Data helpers ─────────────────────────────────────────
 const monthlyLink =
@@ -28,7 +29,7 @@ export default function Home() {
   return (
     <>
       {/* ══════════════════════════════════════════════════
-          SECTION 1 — HERO
+          SECTION 1 - HERO
       ══════════════════════════════════════════════════ */}
       <section style={{ ...sectionStyle, paddingTop: 80 }}>
         <div className="wrap">
@@ -71,7 +72,7 @@ export default function Home() {
                 }}
               >
                 Full-card reads delivered before the market moves.
-                Confidence levels, volatility flags, and structured analysis — 
+                Confidence levels, volatility flags, and structured analysis -
                 not picks, not predictions.
               </p>
               <p
@@ -320,7 +321,7 @@ export default function Home() {
       </section>
 
       {/* ══════════════════════════════════════════════════
-          SECTION 2 — WHITE HOUSE URGENCY
+          SECTION 2 - WHITE HOUSE URGENCY
       ══════════════════════════════════════════════════ */}
       <section
         style={{
@@ -431,7 +432,7 @@ export default function Home() {
       </section>
 
       {/* ══════════════════════════════════════════════════
-          SECTION 3 — FREE PICK
+          SECTION 3 - FREE PICK
       ══════════════════════════════════════════════════ */}
       <section id="free-pick" style={{ ...sectionStyle }}>
         <div className="wrap">
@@ -635,10 +636,10 @@ export default function Home() {
                   }}
                 >
                   {[
-                    'Every meaningful fight — not just the main event',
+                    'Every meaningful fight - not just the main event',
                     'Confidence ratings and volatility flags per read',
                     'Fight-week notes as the market moves',
-                    'Private Discord delivery — no public noise',
+                    'Private Discord delivery - no public noise',
                     'Structured format for disciplined operators',
                   ].map((item, i) => (
                     <li
@@ -680,7 +681,7 @@ export default function Home() {
       </section>
 
       {/* ══════════════════════════════════════════════════
-          SECTION 4 — SYSTEM STATS
+          SECTION 4 - SYSTEM STATS
       ══════════════════════════════════════════════════ */}
       <section style={{ ...sectionStyle, ...dividerStyle }}>
         <div className="wrap">
@@ -720,7 +721,7 @@ export default function Home() {
           >
             {[
               { value: totalCount.toString(), label: 'Fights This Card', color: 'var(--purple)' },
-              { value: '—', label: 'Historical Win Rate', color: 'var(--green)' },
+              { value: `${trackRecordData.summary.winRate}%`, label: 'Historical Win Rate', color: 'var(--green)' },
               { value: `${lockRate}%`, label: 'Lock Tier Rate', color: 'var(--gold)' },
               { value: `${totalCount}`, label: 'Current Event Reads', color: 'var(--magenta)' },
             ].map((stat, i) => (
@@ -759,7 +760,7 @@ export default function Home() {
       </section>
 
       {/* ══════════════════════════════════════════════════
-          SECTION 5 — HOW IT WORKS
+          SECTION 5 - HOW IT WORKS
       ══════════════════════════════════════════════════ */}
       <section style={{ ...sectionStyle, ...dividerStyle }}>
         <div className="wrap">
@@ -802,7 +803,7 @@ export default function Home() {
               {
                 num: '02',
                 title: 'Join Discord',
-                body: "Get your invite after purchase. The board lives in the member room — organized by fight, updated through fight week.",
+                body: "Get your invite after purchase. The board lives in the member room - organized by fight, updated through fight week.",
               },
               {
                 num: '03',
@@ -849,7 +850,7 @@ export default function Home() {
       </section>
 
       {/* ══════════════════════════════════════════════════
-          SECTION 6 — PRICING PREVIEW
+          SECTION 6 - PRICING PREVIEW
       ══════════════════════════════════════════════════ */}
       <section
         style={{
@@ -1029,7 +1030,7 @@ export default function Home() {
                   marginBottom: 20,
                 }}
               >
-                Annual access — save $120/year
+                Annual access - save $120/year
               </p>
               <p
                 style={{

@@ -1,15 +1,7 @@
 import Link from 'next/link';
+import trackRecordData from '../data/trackRecord.json';
 
-const recordRows = [
-  {
-    event: 'UFC Fight Night: Moicano vs. Duncan',
-    fight: 'Renato Moicano vs Drew Duncan',
-    call: 'Renato Moicano',
-    confidence: 68,
-    result: 'Correct',
-    note: 'Main-event read landed. Correctly called by RUBAN.',
-  },
-];
+const { summary, lastRecorded, rows } = trackRecordData;
 
 export default function TrackRecordPage() {
   return (
@@ -48,28 +40,32 @@ export default function TrackRecordPage() {
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', gap: 20, flexWrap: 'wrap', alignItems: 'center' }}>
             <div>
-              <p style={{ color: 'var(--green)', fontSize: '0.76rem', fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase', fontFamily: 'Inter, sans-serif', marginBottom: 8 }}>
-                Last Recorded Hit
+              <p style={{ color: lastRecorded.result === 'Correct' ? 'var(--green)' : '#ef4444', fontSize: '0.76rem', fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase', fontFamily: 'Inter, sans-serif', marginBottom: 8 }}>
+                Last Recorded Result
               </p>
               <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3.2rem)', lineHeight: 0.92, marginBottom: 10 }}>
-                Renato Moicano ✅
+                {lastRecorded.fighter} {lastRecorded.result === 'Correct' ? '✅' : '❌'}
               </h2>
               <p style={{ color: 'var(--muted)', fontFamily: 'Inter, sans-serif', lineHeight: 1.65, maxWidth: 520 }}>
-                RUBAN called Moicano correctly on the previous card. Clean read. Logged result.
+                {lastRecorded.note}
               </p>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(110px, 1fr))', gap: 12, minWidth: 'min(100%, 360px)' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(88px, 1fr))', gap: 12, minWidth: 'min(100%, 420px)' }}>
               <div className="card" style={{ padding: '16px 14px' }}>
-                <div style={{ fontSize: '0.7rem', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.12em', fontFamily: 'Inter, sans-serif', marginBottom: 6 }}>Call</div>
-                <div style={{ fontSize: '1.4rem', lineHeight: 0.95 }}>Moicano</div>
+                <div style={{ fontSize: '0.7rem', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.12em', fontFamily: 'Inter, sans-serif', marginBottom: 6 }}>Wins</div>
+                <div style={{ fontSize: '1.4rem', lineHeight: 0.95 }}>{summary.wins}</div>
               </div>
               <div className="card" style={{ padding: '16px 14px' }}>
-                <div style={{ fontSize: '0.7rem', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.12em', fontFamily: 'Inter, sans-serif', marginBottom: 6 }}>Confidence</div>
-                <div style={{ fontSize: '1.4rem', lineHeight: 0.95 }}>68%</div>
+                <div style={{ fontSize: '0.7rem', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.12em', fontFamily: 'Inter, sans-serif', marginBottom: 6 }}>Losses</div>
+                <div style={{ fontSize: '1.4rem', lineHeight: 0.95 }}>{summary.losses}</div>
               </div>
               <div className="card" style={{ padding: '16px 14px' }}>
-                <div style={{ fontSize: '0.7rem', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.12em', fontFamily: 'Inter, sans-serif', marginBottom: 6 }}>Result</div>
-                <div style={{ fontSize: '1.4rem', lineHeight: 0.95, color: 'var(--green)' }}>Hit</div>
+                <div style={{ fontSize: '0.7rem', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.12em', fontFamily: 'Inter, sans-serif', marginBottom: 6 }}>Rate</div>
+                <div style={{ fontSize: '1.4rem', lineHeight: 0.95 }}>{summary.winRate}%</div>
+              </div>
+              <div className="card" style={{ padding: '16px 14px' }}>
+                <div style={{ fontSize: '0.7rem', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.12em', fontFamily: 'Inter, sans-serif', marginBottom: 6 }}>Last Call</div>
+                <div style={{ fontSize: '1.1rem', lineHeight: 1 }}>{lastRecorded.confidence}%</div>
               </div>
             </div>
           </div>
@@ -87,13 +83,13 @@ export default function TrackRecordPage() {
               </tr>
             </thead>
             <tbody>
-              {recordRows.map((row) => (
-                <tr key={row.fight} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+              {rows.map((row) => (
+                <tr key={`${row.event}-${row.fight}`} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                   <td style={{ padding: '18px 0', color: 'var(--muted)' }}>{row.event}</td>
                   <td style={{ padding: '18px 0', color: 'var(--text)' }}>{row.fight}</td>
                   <td style={{ padding: '18px 0', fontWeight: 700 }}>{row.call}</td>
                   <td style={{ padding: '18px 0' }}>{row.confidence}%</td>
-                  <td style={{ padding: '18px 0', color: 'var(--green)', fontWeight: 700 }}>{row.result}</td>
+                  <td style={{ padding: '18px 0', color: row.result === 'Correct' ? 'var(--green)' : '#ef4444', fontWeight: 700 }}>{row.result}</td>
                 </tr>
               ))}
             </tbody>
@@ -103,10 +99,10 @@ export default function TrackRecordPage() {
         <div className="card" style={{ maxWidth: 920, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 20, flexWrap: 'wrap' }}>
           <div>
             <p style={{ color: 'var(--gold)', fontSize: '0.76rem', fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase', fontFamily: 'Inter, sans-serif', marginBottom: 8 }}>
-              Next Layer
+              Public Tracking
             </p>
             <p style={{ color: 'var(--muted)', fontFamily: 'Inter, sans-serif', lineHeight: 1.65, maxWidth: 520 }}>
-              More verified results will be added here as the tracked record grows. Current fight-week reads stay inside Discord.
+              This page updates as major public reads get logged. Current fight-week premium structure still lives inside Discord.
             </p>
           </div>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>

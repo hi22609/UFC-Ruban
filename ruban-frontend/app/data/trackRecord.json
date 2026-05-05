@@ -1,0 +1,32 @@
+{
+  "summary": {
+    "wins": 1,
+    "losses": 1,
+    "pushes": 0,
+    "winRate": 50
+  },
+  "lastRecorded": {
+    "fighter": "Jiri Prochazka",
+    "confidence": 62,
+    "result": "Loss",
+    "note": "RUBAN leaned Jiri Prochazka over Carlos Ulberg and the read missed. Logged publicly to keep the record honest."
+  },
+  "rows": [
+    {
+      "event": "UFC Fight Night: Prochazka vs. Ulberg",
+      "fight": "Jiri Prochazka vs Carlos Ulberg",
+      "call": "Jiri Prochazka",
+      "confidence": 62,
+      "result": "Loss",
+      "note": "Lean missed. Added to keep public tracking honest."
+    },
+    {
+      "event": "UFC Fight Night: Moicano vs. Duncan",
+      "fight": "Renato Moicano vs Drew Duncan",
+      "call": "Renato Moicano",
+      "confidence": 68,
+      "result": "Correct",
+      "note": "Main-event read landed. Correctly called by RUBAN."
+    }
+  ]
+}
