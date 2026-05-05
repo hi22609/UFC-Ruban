@@ -1,29 +1,29 @@
 {
-  "event_name": "UFC Fight Night: Prochazka vs. Ulberg",
-  "event_date": "2026-04-12",
-  "location": "UFC Apex, Las Vegas",
-  "generated_at": "2026-04-07T00:00:00Z",
+  "event_name": "UFC 319: Chimaev vs. Strickland",
+  "event_date": "2026-08-16",
+  "location": "Chicago, Illinois",
+  "generated_at": "2026-05-05T20:00:00Z",
   "predictions": [
     {
-      "fighter1": "Jiri Prochazka",
-      "fighter2": "Carlos Ulberg",
-      "weight_class": "Light Heavyweight",
+      "fighter1": "Khamzat Chimaev",
+      "fighter2": "Sean Strickland",
+      "weight_class": "Middleweight",
       "is_main_event": true,
-      "winner": "Jiri Prochazka",
-      "confidence": 62,
+      "winner": "Khamzat Chimaev",
+      "confidence": 66,
       "tier": "LEAN",
-      "method": "KO/TKO",
-      "method_breakdown": { "KO_TKO": 58, "Submission": 8, "Decision": 34 },
+      "method": "Decision",
+      "method_breakdown": { "KO_TKO": 19, "Submission": 27, "Decision": 54 },
       "key_factors": [
-        "Prochazka's unorthodox striking creates serious problems for linear fighters",
-        "Ulberg has never faced a striker with Jiri's chaos and unpredictability",
-        "Prochazka's finishing ability is elite — 9 of 16 wins by KO/TKO",
-        "Ulberg is durable but gets touched clean by pressure fighters"
+        "Chimaev's early pressure and control wrestling can steal minutes fast",
+        "Strickland's jab and pace keep him live over five rounds if he survives the opening phase",
+        "The biggest variable is whether Khamzat can hold control without fading late",
+        "If Strickland forces extended striking stretches, volatility rises quickly"
       ],
-      "analysis": "Prochazka brings a level of striking unpredictability that Ulberg has never faced. Jiri's style is disorganized by design — angles, pace changes, and constant finish hunting. Ulberg is a solid striker but linear. Lean toward Prochazka by stoppage, with medium volatility — Jiri can get hit clean too.",
-      "ml_confidence": 60,
-      "market_implied": 61,
-      "elo_edge": 5
+      "analysis": "This is a style clash between Khamzat's front-loaded control and Strickland's attritional volume. Chimaev's early wrestling threat is the structural edge, but the cardio question keeps this out of LOCK territory. Lean Khamzat if he banks control early and stays efficient.",
+      "ml_confidence": 64,
+      "market_implied": 62,
+      "elo_edge": 6
     },
     {
       "fighter1": "Brendan Allen",
