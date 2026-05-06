@@ -5,8 +5,9 @@
   "main": "server/index.js",
   "scripts": {
     "start": "node server/index.js",
+    "worker": "node scheduler.js",
     "bot": "node scheduler.js",
-    "dev": "node server/index.js & node scheduler.js"
+    "dev": "node start.js"
   },
   "dependencies": {
     "better-sqlite3": "^9.4.3",

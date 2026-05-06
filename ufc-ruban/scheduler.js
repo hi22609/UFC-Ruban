@@ -4,6 +4,7 @@
 const { Client, Intents, MessageEmbed } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
+const { generateCardPredictions } = require('./engine/auto-card');
 require('dotenv').config();
 
 const POLL_INTERVAL_MS  = 6 * 60 * 60 * 1000;
@@ -422,10 +423,15 @@ async function runCycle() {
     try {
       const card = await fetchUpcomingCard();
       if (!card) return;
+      console.log('[Bot] No predictions yet for this card - generating now');
+      await generateCardPredictions();
       data = loadPredictions();
-      if (!data || data.event_name !== card.name) return;
+      if (!data || data.event_name !== card.name) {
+        console.log('[Bot] Prediction generation failed or returned wrong event');
+        return;
+      }
     } catch (err) {
-      console.error('[Bot] Fetch error:', err.message);
+      console.error('[Bot] Fetch/generation error:', err.message);
       return;
     }
   }
