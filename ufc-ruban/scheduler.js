@@ -468,3 +468,11 @@ process.on('uncaughtException', (err) => console.error('[Bot] Uncaught:', err.me
 process.on('unhandledRejection', (r) => console.error('[Bot] Rejection:', r));
 
 client.login(DISCORD_TOKEN).catch(err => console.error('[Bot] Login FAILED:', err.message));
+
+module.exports = {
+  runCycle,
+  checkSchedule,
+  fetchUpcomingCard,
+  loadPredictions,
+  postPredictions
+};

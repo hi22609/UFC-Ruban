@@ -12,6 +12,8 @@ const { handleStripeWebhook, createCheckoutSession, createCustomerPortalSession 
 const referral = require('./referral');
 const { getSubscriber, isProSubscriber } = require('./auth');
 const db = require('./db');
+const bot = require('../scheduler');
+const { generateCardPredictions } = require('../engine/auto-card');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -226,6 +228,39 @@ app.get('/api/referral/list', (req, res) => {
   if (adminKey !== process.env.ADMIN_SECRET) return res.status(401).json({ error: 'Unauthorized' });
   res.json(referral.listAffiliates());
 });
+// MANUAL BOT TRIGGER (admin)
+// ─────────────────────────────────────────────
+app.post('/api/admin/trigger-picks', async (req, res) => {
+  const adminKey = req.headers['x-admin-key'] || req.body.adminKey;
+  if (adminKey !== process.env.ADMIN_SECRET) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  try {
+    let data = bot.loadPredictions();
+    const card = await bot.fetchUpcomingCard();
+
+    if (!card) {
+      return res.status(404).json({ error: 'No upcoming UFC card found' });
+    }
+
+    if (!data || data.event_name !== card.name) {
+      await generateCardPredictions();
+      data = bot.loadPredictions();
+    }
+
+    if (!data || data.event_name !== card.name) {
+      return res.status(500).json({ error: 'Prediction generation failed or mismatched event' });
+    }
+
+    const posted = await bot.postPredictions(data);
+    return res.json({ ok: posted, event: data.event_name, generated_at: data.generated_at || null });
+  } catch (err) {
+    console.error('Manual trigger error:', err.message);
+    return res.status(500).json({ error: err.message || 'Manual trigger failed' });
+  }
+});
+
 // SERVE PAGES
 // ─────────────────────────────────────────────
 app.get('/', (req, res) => {
